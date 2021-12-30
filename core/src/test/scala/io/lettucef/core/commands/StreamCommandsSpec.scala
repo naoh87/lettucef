@@ -3,6 +3,7 @@ package io.lettucef.core.commands
 import java.nio.ByteBuffer
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
+import io.lettuce.core.Range.Boundary
 import io.lettuce.core.cluster.ClusterClientOptions
 import io.lettuce.core.cluster.RedisClusterClient
 import io.lettuce.core.codec.RedisCodec
@@ -10,6 +11,7 @@ import io.lettuce.core.codec.StringCodec
 import io.lettuce.core.protocol.ProtocolVersion
 import io.lettucef.core.RedisClientF
 import io.lettucef.core.RedisClusterCommandsF
+import io.lettucef.core.models.RedisData.RedisArray
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 import scala.concurrent.duration.DurationInt
@@ -25,15 +27,17 @@ class StreamCommandsSpec extends AnyFreeSpec with Matchers {
       _ <- c.xadd("key".asKey, Map("c".asKey -> "2".asValue))
       r <- c.xinfoStream("key".asKey)
     } yield {
-      println(r)
+      println(RedisArray(r.toList))
     }
   }
 
   "bb" in RedisTest.commands { c =>
+    val script = """return {false, {true}, {{"F", "fuga"}, 123}}"""
     for {
-      r <- c.eval("""return {false, {{"F", "fuga"}, 123}}""", Nil, Nil)
-      r <- c.evalsha("1234", Nil, Nil)
+      r <- c.eval(script, Nil, Nil)
+      g <- c.evalsha(c.digest(script), Nil, Nil)
     } yield {
+      r shouldBe g
       println("result: " + r)
     }
   }
@@ -57,7 +61,9 @@ object RedisTest {
 
   case class RedisKey(key: String)
 
-  case class RedisValue(value: String)
+  case class RedisValue(value: String) {
+    override def toString: String = value
+  }
 
   object syntax {
     implicit class StringOps(expr: String) {

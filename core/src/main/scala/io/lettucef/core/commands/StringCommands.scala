@@ -4,11 +4,11 @@ package io.lettucef.core.commands
 import cats.syntax.functor._
 import io.lettuce.core.BitFieldArgs
 import io.lettuce.core.GetExArgs
-import io.lettuce.core.KeyValue
 import io.lettuce.core.SetArgs
 import io.lettuce.core.StrAlgoArgs
 import io.lettuce.core.StringMatchResult
 import io.lettuce.core.api.async._
+import io.lettucef.core.util.LettuceValueConverter
 import io.lettucef.core.util.{JavaFutureUtil => JF}
 import scala.jdk.CollectionConverters._
 
@@ -83,8 +83,8 @@ trait StringCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def incrbyfloat(key: K, amount: Double): F[Double] =
     JF.toAsync(underlying.incrbyfloat(key, amount)).map(Double2double)
   
-  def mget(keys: K*): F[Seq[KeyValue[K, V]]] =
-    JF.toAsync(underlying.mget(keys: _*)).map(_.asScala.toSeq)
+  def mget(keys: K*): F[Seq[(K, Option[V])]] =
+    JF.toAsync(underlying.mget(keys: _*)).map(_.asScala.toSeq.map(kv => LettuceValueConverter.fromKeyValue(kv)))
   
   def mset(map: Map[K, V]): F[String] =
     JF.toAsync(underlying.mset(map.asJava))

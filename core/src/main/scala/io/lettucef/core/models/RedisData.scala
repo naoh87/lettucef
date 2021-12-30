@@ -20,7 +20,9 @@ object RedisData {
 
   case class RedisError(message: String) extends RedisData[Nothing]
 
-  case class RedisArray[V](arr: List[RedisData[V]]) extends RedisData[V]
+  case class RedisArray[V](arr: List[RedisData[V]]) extends RedisData[V] {
+    override def toString: String = arr.mkString("RedisArray(", ", ", ")")
+  }
 
   case class RedisBulk[V](value: V) extends RedisData[V]
 

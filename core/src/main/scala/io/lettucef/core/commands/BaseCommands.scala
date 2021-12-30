@@ -4,6 +4,7 @@ package io.lettucef.core.commands
 import cats.syntax.functor._
 import io.lettuce.core.api.async._
 import io.lettucef.core.models._
+import io.lettucef.core.util.LettuceValueConverter
 import io.lettucef.core.util.{JavaFutureUtil => JF}
 import scala.jdk.CollectionConverters._
 

@@ -2,18 +2,16 @@
 package io.lettucef.core.commands
 
 import cats.syntax.functor._
-import io.lettuce.core.KeyValue
 import io.lettuce.core.Limit
 import io.lettuce.core.Range
 import io.lettuce.core.ScanArgs
 import io.lettuce.core.ScanCursor
-import io.lettuce.core.ScoredValue
 import io.lettuce.core.ScoredValueScanCursor
 import io.lettuce.core.ZAddArgs
 import io.lettuce.core.ZAggregateArgs
 import io.lettuce.core.ZStoreArgs
 import io.lettuce.core.api.async._
-import io.lettuce.core.output.ScoredValueStreamingChannel
+import io.lettucef.core.util.LettuceValueConverter
 import io.lettucef.core.util.{JavaFutureUtil => JF}
 import scala.jdk.CollectionConverters._
 
@@ -22,29 +20,29 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
 
   protected val underlying: RedisSortedSetAsyncCommands[K, V]
   
-  def bzpopmin(timeout: Long, keys: K*): F[KeyValue[K, ScoredValue[V]]] =
-    JF.toAsync(underlying.bzpopmin(timeout, keys: _*))
+  def bzpopmin(timeout: Long, keys: K*): F[(K, Option[(Double, V)])] =
+    JF.toAsync(underlying.bzpopmin(timeout, keys: _*)).map(kv => LettuceValueConverter.fromKeyValue(kv).fmap(_.map(LettuceValueConverter.fromScoredValueUnsafe)))
   
-  def bzpopmin(timeout: Double, keys: K*): F[KeyValue[K, ScoredValue[V]]] =
-    JF.toAsync(underlying.bzpopmin(timeout, keys: _*))
+  def bzpopmin(timeout: Double, keys: K*): F[(K, Option[(Double, V)])] =
+    JF.toAsync(underlying.bzpopmin(timeout, keys: _*)).map(kv => LettuceValueConverter.fromKeyValue(kv).fmap(_.map(LettuceValueConverter.fromScoredValueUnsafe)))
   
-  def bzpopmax(timeout: Long, keys: K*): F[KeyValue[K, ScoredValue[V]]] =
-    JF.toAsync(underlying.bzpopmax(timeout, keys: _*))
+  def bzpopmax(timeout: Long, keys: K*): F[(K, Option[(Double, V)])] =
+    JF.toAsync(underlying.bzpopmax(timeout, keys: _*)).map(kv => LettuceValueConverter.fromKeyValue(kv).fmap(_.map(LettuceValueConverter.fromScoredValueUnsafe)))
   
-  def bzpopmax(timeout: Double, keys: K*): F[KeyValue[K, ScoredValue[V]]] =
-    JF.toAsync(underlying.bzpopmax(timeout, keys: _*))
+  def bzpopmax(timeout: Double, keys: K*): F[(K, Option[(Double, V)])] =
+    JF.toAsync(underlying.bzpopmax(timeout, keys: _*)).map(kv => LettuceValueConverter.fromKeyValue(kv).fmap(_.map(LettuceValueConverter.fromScoredValueUnsafe)))
   
   def zadd(key: K, score: Double, member: V): F[Long] =
     JF.toAsync(underlying.zadd(key, score, member)).map(Long2long)
   
-  def zadd(key: K, scoredValues: ScoredValue[V]*): F[Long] =
-    JF.toAsync(underlying.zadd(key, scoredValues: _*)).map(Long2long)
+  def zadd(key: K, scoredValues: (Double, V)*): F[Long] =
+    JF.toAsync(underlying.zadd(key, scoredValues.map(LettuceValueConverter.toScoredValue): _*)).map(Long2long)
   
   def zadd(key: K, zAddArgs: ZAddArgs, score: Double, member: V): F[Long] =
     JF.toAsync(underlying.zadd(key, zAddArgs, score, member)).map(Long2long)
   
-  def zadd(key: K, zAddArgs: ZAddArgs, scoredValues: ScoredValue[V]*): F[Long] =
-    JF.toAsync(underlying.zadd(key, zAddArgs, scoredValues: _*)).map(Long2long)
+  def zadd(key: K, zAddArgs: ZAddArgs, scoredValues: (Double, V)*): F[Long] =
+    JF.toAsync(underlying.zadd(key, zAddArgs, scoredValues.map(LettuceValueConverter.toScoredValue): _*)).map(Long2long)
   
   def zaddincr(key: K, score: Double, member: V): F[Double] =
     JF.toAsync(underlying.zaddincr(key, score, member)).map(Double2double)
@@ -64,8 +62,8 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def zdiffstore(destKey: K, srcKeys: K*): F[Long] =
     JF.toAsync(underlying.zdiffstore(destKey, srcKeys: _*)).map(Long2long)
   
-  def zdiffWithScores(keys: K*): F[Seq[ScoredValue[V]]] =
-    JF.toAsync(underlying.zdiffWithScores(keys: _*)).map(_.asScala.toSeq)
+  def zdiffWithScores(keys: K*): F[Seq[(Double, V)]] =
+    JF.toAsync(underlying.zdiffWithScores(keys: _*)).map(_.asScala.toSeq.map(LettuceValueConverter.fromScoredValueUnsafe))
   
   def zincrby(key: K, amount: Double, member: V): F[Double] =
     JF.toAsync(underlying.zincrby(key, amount, member)).map(Double2double)
@@ -76,11 +74,11 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def zinter(aggregateArgs: ZAggregateArgs, keys: K*): F[Seq[V]] =
     JF.toAsync(underlying.zinter(aggregateArgs, keys: _*)).map(_.asScala.toSeq)
   
-  def zinterWithScores(aggregateArgs: ZAggregateArgs, keys: K*): F[Seq[ScoredValue[V]]] =
-    JF.toAsync(underlying.zinterWithScores(aggregateArgs, keys: _*)).map(_.asScala.toSeq)
+  def zinterWithScores(aggregateArgs: ZAggregateArgs, keys: K*): F[Seq[(Double, V)]] =
+    JF.toAsync(underlying.zinterWithScores(aggregateArgs, keys: _*)).map(_.asScala.toSeq.map(LettuceValueConverter.fromScoredValueUnsafe))
   
-  def zinterWithScores(keys: K*): F[Seq[ScoredValue[V]]] =
-    JF.toAsync(underlying.zinterWithScores(keys: _*)).map(_.asScala.toSeq)
+  def zinterWithScores(keys: K*): F[Seq[(Double, V)]] =
+    JF.toAsync(underlying.zinterWithScores(keys: _*)).map(_.asScala.toSeq.map(LettuceValueConverter.fromScoredValueUnsafe))
   
   def zinterstore(destination: K, keys: K*): F[Long] =
     JF.toAsync(underlying.zinterstore(destination, keys: _*)).map(Long2long)
@@ -94,17 +92,17 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def zmscore(key: K, members: V*): F[Seq[Double]] =
     JF.toAsync(underlying.zmscore(key, members: _*)).map(_.asScala.toSeq.map(Double2double))
   
-  def zpopmin(key: K): F[ScoredValue[V]] =
-    JF.toAsync(underlying.zpopmin(key))
+  def zpopmin(key: K): F[Option[(Double, V)]] =
+    JF.toAsync(underlying.zpopmin(key)).map(LettuceValueConverter.fromScoredValue)
   
-  def zpopmin(key: K, count: Long): F[Seq[ScoredValue[V]]] =
-    JF.toAsync(underlying.zpopmin(key, count)).map(_.asScala.toSeq)
+  def zpopmin(key: K, count: Long): F[Seq[(Double, V)]] =
+    JF.toAsync(underlying.zpopmin(key, count)).map(_.asScala.toSeq.map(LettuceValueConverter.fromScoredValueUnsafe))
   
-  def zpopmax(key: K): F[ScoredValue[V]] =
-    JF.toAsync(underlying.zpopmax(key))
+  def zpopmax(key: K): F[Option[(Double, V)]] =
+    JF.toAsync(underlying.zpopmax(key)).map(LettuceValueConverter.fromScoredValue)
   
-  def zpopmax(key: K, count: Long): F[Seq[ScoredValue[V]]] =
-    JF.toAsync(underlying.zpopmax(key, count)).map(_.asScala.toSeq)
+  def zpopmax(key: K, count: Long): F[Seq[(Double, V)]] =
+    JF.toAsync(underlying.zpopmax(key, count)).map(_.asScala.toSeq.map(LettuceValueConverter.fromScoredValueUnsafe))
   
   def zrandmember(key: K): F[V] =
     JF.toAsync(underlying.zrandmember(key))
@@ -112,17 +110,17 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def zrandmember(key: K, count: Long): F[Seq[V]] =
     JF.toAsync(underlying.zrandmember(key, count)).map(_.asScala.toSeq)
   
-  def zrandmemberWithScores(key: K): F[ScoredValue[V]] =
-    JF.toAsync(underlying.zrandmemberWithScores(key))
+  def zrandmemberWithScores(key: K): F[Option[(Double, V)]] =
+    JF.toAsync(underlying.zrandmemberWithScores(key)).map(LettuceValueConverter.fromScoredValue)
   
-  def zrandmemberWithScores(key: K, count: Long): F[Seq[ScoredValue[V]]] =
-    JF.toAsync(underlying.zrandmemberWithScores(key, count)).map(_.asScala.toSeq)
+  def zrandmemberWithScores(key: K, count: Long): F[Seq[(Double, V)]] =
+    JF.toAsync(underlying.zrandmemberWithScores(key, count)).map(_.asScala.toSeq.map(LettuceValueConverter.fromScoredValueUnsafe))
   
   def zrange(key: K, start: Long, stop: Long): F[Seq[V]] =
     JF.toAsync(underlying.zrange(key, start, stop)).map(_.asScala.toSeq)
   
-  def zrangeWithScores(key: K, start: Long, stop: Long): F[Seq[ScoredValue[V]]] =
-    JF.toAsync(underlying.zrangeWithScores(key, start, stop)).map(_.asScala.toSeq)
+  def zrangeWithScores(key: K, start: Long, stop: Long): F[Seq[(Double, V)]] =
+    JF.toAsync(underlying.zrangeWithScores(key, start, stop)).map(_.asScala.toSeq.map(LettuceValueConverter.fromScoredValueUnsafe))
   
   def zrangebylex(key: K, range: Range[_ <: V]): F[Seq[V]] =
     JF.toAsync(underlying.zrangebylex(key, range)).map(_.asScala.toSeq)
@@ -136,11 +134,11 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def zrangebyscore(key: K, range: Range[_ <: Number], limit: Limit): F[Seq[V]] =
     JF.toAsync(underlying.zrangebyscore(key, range, limit)).map(_.asScala.toSeq)
   
-  def zrangebyscoreWithScores(key: K, range: Range[_ <: Number]): F[Seq[ScoredValue[V]]] =
-    JF.toAsync(underlying.zrangebyscoreWithScores(key, range)).map(_.asScala.toSeq)
+  def zrangebyscoreWithScores(key: K, range: Range[_ <: Number]): F[Seq[(Double, V)]] =
+    JF.toAsync(underlying.zrangebyscoreWithScores(key, range)).map(_.asScala.toSeq.map(LettuceValueConverter.fromScoredValueUnsafe))
   
-  def zrangebyscoreWithScores(key: K, range: Range[_ <: Number], limit: Limit): F[Seq[ScoredValue[V]]] =
-    JF.toAsync(underlying.zrangebyscoreWithScores(key, range, limit)).map(_.asScala.toSeq)
+  def zrangebyscoreWithScores(key: K, range: Range[_ <: Number], limit: Limit): F[Seq[(Double, V)]] =
+    JF.toAsync(underlying.zrangebyscoreWithScores(key, range, limit)).map(_.asScala.toSeq.map(LettuceValueConverter.fromScoredValueUnsafe))
   
   def zrangestorebylex(dstKey: K, srcKey: K, range: Range[_ <: V], limit: Limit): F[Long] =
     JF.toAsync(underlying.zrangestorebylex(dstKey, srcKey, range, limit)).map(Long2long)
@@ -166,8 +164,8 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def zrevrange(key: K, start: Long, stop: Long): F[Seq[V]] =
     JF.toAsync(underlying.zrevrange(key, start, stop)).map(_.asScala.toSeq)
   
-  def zrevrangeWithScores(key: K, start: Long, stop: Long): F[Seq[ScoredValue[V]]] =
-    JF.toAsync(underlying.zrevrangeWithScores(key, start, stop)).map(_.asScala.toSeq)
+  def zrevrangeWithScores(key: K, start: Long, stop: Long): F[Seq[(Double, V)]] =
+    JF.toAsync(underlying.zrevrangeWithScores(key, start, stop)).map(_.asScala.toSeq.map(LettuceValueConverter.fromScoredValueUnsafe))
   
   def zrevrangebylex(key: K, range: Range[_ <: V]): F[Seq[V]] =
     JF.toAsync(underlying.zrevrangebylex(key, range)).map(_.asScala.toSeq)
@@ -181,11 +179,11 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def zrevrangebyscore(key: K, range: Range[_ <: Number], limit: Limit): F[Seq[V]] =
     JF.toAsync(underlying.zrevrangebyscore(key, range, limit)).map(_.asScala.toSeq)
   
-  def zrevrangebyscoreWithScores(key: K, range: Range[_ <: Number]): F[Seq[ScoredValue[V]]] =
-    JF.toAsync(underlying.zrevrangebyscoreWithScores(key, range)).map(_.asScala.toSeq)
+  def zrevrangebyscoreWithScores(key: K, range: Range[_ <: Number]): F[Seq[(Double, V)]] =
+    JF.toAsync(underlying.zrevrangebyscoreWithScores(key, range)).map(_.asScala.toSeq.map(LettuceValueConverter.fromScoredValueUnsafe))
   
-  def zrevrangebyscoreWithScores(key: K, range: Range[_ <: Number], limit: Limit): F[Seq[ScoredValue[V]]] =
-    JF.toAsync(underlying.zrevrangebyscoreWithScores(key, range, limit)).map(_.asScala.toSeq)
+  def zrevrangebyscoreWithScores(key: K, range: Range[_ <: Number], limit: Limit): F[Seq[(Double, V)]] =
+    JF.toAsync(underlying.zrevrangebyscoreWithScores(key, range, limit)).map(_.asScala.toSeq.map(LettuceValueConverter.fromScoredValueUnsafe))
   
   def zrevrangestorebylex(dstKey: K, srcKey: K, range: Range[_ <: V], limit: Limit): F[Long] =
     JF.toAsync(underlying.zrevrangestorebylex(dstKey, srcKey, range, limit)).map(Long2long)
@@ -217,11 +215,11 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def zunion(aggregateArgs: ZAggregateArgs, keys: K*): F[Seq[V]] =
     JF.toAsync(underlying.zunion(aggregateArgs, keys: _*)).map(_.asScala.toSeq)
   
-  def zunionWithScores(aggregateArgs: ZAggregateArgs, keys: K*): F[Seq[ScoredValue[V]]] =
-    JF.toAsync(underlying.zunionWithScores(aggregateArgs, keys: _*)).map(_.asScala.toSeq)
+  def zunionWithScores(aggregateArgs: ZAggregateArgs, keys: K*): F[Seq[(Double, V)]] =
+    JF.toAsync(underlying.zunionWithScores(aggregateArgs, keys: _*)).map(_.asScala.toSeq.map(LettuceValueConverter.fromScoredValueUnsafe))
   
-  def zunionWithScores(keys: K*): F[Seq[ScoredValue[V]]] =
-    JF.toAsync(underlying.zunionWithScores(keys: _*)).map(_.asScala.toSeq)
+  def zunionWithScores(keys: K*): F[Seq[(Double, V)]] =
+    JF.toAsync(underlying.zunionWithScores(keys: _*)).map(_.asScala.toSeq.map(LettuceValueConverter.fromScoredValueUnsafe))
   
   def zunionstore(destination: K, keys: K*): F[Long] =
     JF.toAsync(underlying.zunionstore(destination, keys: _*)).map(Long2long)

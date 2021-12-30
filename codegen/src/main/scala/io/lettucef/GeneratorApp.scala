@@ -47,7 +47,7 @@ object GeneratorApp extends IOApp {
               p
             case (p, m) =>
               outputMeth += 1
-              val scalaDef = m.mapOutput(_.toScala).mapArgs(_.toScala)
+              val scalaDef = m.mapOutput(_.toScala()).mapArgs(_.toScala)
               p.add(scalaDef.toAsync.scalaDef + " =")
                 .indented(
                   _.add(m.asyncCall(scalaDef.args, scalaDef.output)))
@@ -92,6 +92,7 @@ object Async {
   val constantImports = List(
     "cats.syntax.functor._",
     "io.lettuce.core.api.async._",
+    "io.lettucef.core.util.LettuceValueConverter",
     "io.lettucef.core.util.{JavaFutureUtil => JF}",
     "scala.jdk.CollectionConverters._",
   )

@@ -2,11 +2,11 @@
 package io.lettucef.core.commands
 
 import cats.syntax.functor._
-import io.lettuce.core.KeyValue
 import io.lettuce.core.MapScanCursor
 import io.lettuce.core.ScanArgs
 import io.lettuce.core.ScanCursor
 import io.lettuce.core.api.async._
+import io.lettucef.core.util.LettuceValueConverter
 import io.lettucef.core.util.{JavaFutureUtil => JF}
 import scala.jdk.CollectionConverters._
 
@@ -39,8 +39,8 @@ trait HashCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def hlen(key: K): F[Long] =
     JF.toAsync(underlying.hlen(key)).map(Long2long)
   
-  def hmget(key: K, fields: K*): F[Seq[KeyValue[K, V]]] =
-    JF.toAsync(underlying.hmget(key, fields: _*)).map(_.asScala.toSeq)
+  def hmget(key: K, fields: K*): F[Seq[(K, Option[V])]] =
+    JF.toAsync(underlying.hmget(key, fields: _*)).map(_.asScala.toSeq.map(kv => LettuceValueConverter.fromKeyValue(kv)))
   
   def hmset(key: K, map: Map[K, V]): F[String] =
     JF.toAsync(underlying.hmset(key, map.asJava))
@@ -51,11 +51,11 @@ trait HashCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def hrandfield(key: K, count: Long): F[Seq[K]] =
     JF.toAsync(underlying.hrandfield(key, count)).map(_.asScala.toSeq)
   
-  def hrandfieldWithvalues(key: K): F[KeyValue[K, V]] =
-    JF.toAsync(underlying.hrandfieldWithvalues(key))
+  def hrandfieldWithvalues(key: K): F[(K, Option[V])] =
+    JF.toAsync(underlying.hrandfieldWithvalues(key)).map(kv => LettuceValueConverter.fromKeyValue(kv))
   
-  def hrandfieldWithvalues(key: K, count: Long): F[Seq[KeyValue[K, V]]] =
-    JF.toAsync(underlying.hrandfieldWithvalues(key, count)).map(_.asScala.toSeq)
+  def hrandfieldWithvalues(key: K, count: Long): F[Seq[(K, Option[V])]] =
+    JF.toAsync(underlying.hrandfieldWithvalues(key, count)).map(_.asScala.toSeq.map(kv => LettuceValueConverter.fromKeyValue(kv)))
   
   def hscan(key: K): F[MapScanCursor[K, V]] =
     JF.toAsync(underlying.hscan(key))

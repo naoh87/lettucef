@@ -9,8 +9,8 @@ import io.lettuce.core.GeoRadiusStoreArgs
 import io.lettuce.core.GeoSearch
 import io.lettuce.core.GeoValue
 import io.lettuce.core.GeoWithin
-import io.lettuce.core.Value
 import io.lettuce.core.api.async._
+import io.lettucef.core.util.LettuceValueConverter
 import io.lettucef.core.util.{JavaFutureUtil => JF}
 import scala.jdk.CollectionConverters._
 
@@ -34,8 +34,8 @@ trait GeoCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def geodist(key: K, from: V, to: V, unit: GeoArgs.Unit): F[Double] =
     JF.toAsync(underlying.geodist(key, from, to, unit)).map(Double2double)
   
-  def geohash(key: K, members: V*): F[Seq[Value[String]]] =
-    JF.toAsync(underlying.geohash(key, members: _*)).map(_.asScala.toSeq)
+  def geohash(key: K, members: V*): F[Seq[Option[String]]] =
+    JF.toAsync(underlying.geohash(key, members: _*)).map(_.asScala.toSeq.map(v => LettuceValueConverter.fromValue(v)))
   
   def geopos(key: K, members: V*): F[Seq[GeoCoordinates]] =
     JF.toAsync(underlying.geopos(key, members: _*)).map(_.asScala.toSeq)

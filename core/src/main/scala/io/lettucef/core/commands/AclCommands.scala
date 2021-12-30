@@ -7,6 +7,7 @@ import io.lettuce.core.AclSetuserArgs
 import io.lettuce.core.api.async._
 import io.lettuce.core.protocol.CommandType
 import io.lettucef.core.models._
+import io.lettucef.core.util.LettuceValueConverter
 import io.lettucef.core.util.{JavaFutureUtil => JF}
 import scala.jdk.CollectionConverters._
 

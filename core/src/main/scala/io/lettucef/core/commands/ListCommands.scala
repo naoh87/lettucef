@@ -2,10 +2,10 @@
 package io.lettucef.core.commands
 
 import cats.syntax.functor._
-import io.lettuce.core.KeyValue
 import io.lettuce.core.LMoveArgs
 import io.lettuce.core.LPosArgs
 import io.lettuce.core.api.async._
+import io.lettucef.core.util.LettuceValueConverter
 import io.lettucef.core.util.{JavaFutureUtil => JF}
 import scala.jdk.CollectionConverters._
 
@@ -20,17 +20,17 @@ trait ListCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def blmove(source: K, destination: K, args: LMoveArgs, timeout: Double): F[V] =
     JF.toAsync(underlying.blmove(source, destination, args, timeout))
   
-  def blpop(timeout: Long, keys: K*): F[KeyValue[K, V]] =
-    JF.toAsync(underlying.blpop(timeout, keys: _*))
+  def blpop(timeout: Long, keys: K*): F[(K, Option[V])] =
+    JF.toAsync(underlying.blpop(timeout, keys: _*)).map(kv => LettuceValueConverter.fromKeyValue(kv))
   
-  def blpop(timeout: Double, keys: K*): F[KeyValue[K, V]] =
-    JF.toAsync(underlying.blpop(timeout, keys: _*))
+  def blpop(timeout: Double, keys: K*): F[(K, Option[V])] =
+    JF.toAsync(underlying.blpop(timeout, keys: _*)).map(kv => LettuceValueConverter.fromKeyValue(kv))
   
-  def brpop(timeout: Long, keys: K*): F[KeyValue[K, V]] =
-    JF.toAsync(underlying.brpop(timeout, keys: _*))
+  def brpop(timeout: Long, keys: K*): F[(K, Option[V])] =
+    JF.toAsync(underlying.brpop(timeout, keys: _*)).map(kv => LettuceValueConverter.fromKeyValue(kv))
   
-  def brpop(timeout: Double, keys: K*): F[KeyValue[K, V]] =
-    JF.toAsync(underlying.brpop(timeout, keys: _*))
+  def brpop(timeout: Double, keys: K*): F[(K, Option[V])] =
+    JF.toAsync(underlying.brpop(timeout, keys: _*)).map(kv => LettuceValueConverter.fromKeyValue(kv))
   
   def brpoplpush(timeout: Long, source: K, destination: K): F[V] =
     JF.toAsync(underlying.brpoplpush(timeout, source, destination))

@@ -63,4 +63,10 @@ trait ScriptingCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
 
   def scriptLoad(script: Array[Byte]): F[String] =
     JF.toAsync(underlying.scriptLoad(script))
+
+  def digest(script: String): String =
+    underlying.digest(script)
+
+  def digest(script: Array[Byte]): String =
+    underlying.digest(script)
 }

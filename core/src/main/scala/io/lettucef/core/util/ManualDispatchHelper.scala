@@ -67,7 +67,9 @@ final class RedisDataOutput[K, V](codec: RedisCodec[K, V]) extends CommandOutput
   override def complete(depth: Int): Unit =
     if (depth > 0) {
       val ary = RedisArray(current.result())
-      if(stack.isEmpty) {
+      if (stack.isEmpty) {
+        //current = null
+        //stack = null
         output = ary
       } else {
         current = stack.pop()

@@ -1,4 +1,4 @@
-
+# comment out deprecated or ambiguous method
 - underlying: RedisKeyAsyncCommands[K, V]
   output: KeyCommands
   nullable:
@@ -164,7 +164,6 @@
   imports:
   - io.lettuce.core.BitFieldArgs
   - io.lettuce.core.GetExArgs
-  - io.lettuce.core.KeyValue
   - io.lettuce.core.SetArgs
   - io.lettuce.core.StrAlgoArgs
   - io.lettuce.core.StringMatchResult
@@ -258,7 +257,6 @@
   - RedisFuture<List<V>> hvals(K key);
   - RedisFuture<Long> hvals(ValueStreamingChannel<V> channel, K key);
   imports:
-  - io.lettuce.core.KeyValue
   - io.lettuce.core.MapScanCursor
   - io.lettuce.core.ScanArgs
   - io.lettuce.core.ScanCursor
@@ -310,7 +308,6 @@
   - RedisFuture<Long> rpush(K key, V... values);
   - RedisFuture<Long> rpushx(K key, V... values);
   imports:
-  - io.lettuce.core.KeyValue
   - io.lettuce.core.LMoveArgs
   - io.lettuce.core.LPosArgs
 
@@ -546,15 +543,12 @@
   imports:
   - io.lettuce.core.Range
   - io.lettuce.core.Limit
-  - io.lettuce.core.KeyValue
   - io.lettuce.core.ZStoreArgs
-  - io.lettuce.core.ScoredValue
   - io.lettuce.core.ZAddArgs
   - io.lettuce.core.ZAggregateArgs
   - io.lettuce.core.ScanCursor
   - io.lettuce.core.ScanArgs
   - io.lettuce.core.ScoredValueScanCursor
-  - io.lettuce.core.output.ScoredValueStreamingChannel
 
 - underlying: RedisGeoAsyncCommands[K, V]
   output: GeoCommands
@@ -585,7 +579,6 @@
   - io.lettuce.core.GeoSearch
   - io.lettuce.core.GeoValue
   - io.lettuce.core.GeoWithin
-  - io.lettuce.core.Value
 
 - underlying: RedisAclAsyncCommands[K, V]
   output: AclCommands
