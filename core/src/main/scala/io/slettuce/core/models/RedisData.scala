@@ -10,7 +10,7 @@ object RedisData {
 
   case class RedisInteger(value: Long) extends RedisData[Nothing]
 
-  case class RedisArray[V](arr: Seq[RedisData[V]]) extends RedisData[V]
+  case class RedisArray[V](arr: List[RedisData[V]]) extends RedisData[V]
 
   case class RedisBulk[V](value: V) extends RedisData[V]
 
@@ -23,6 +23,8 @@ object RedisData {
       case v: Long => RedisInteger(v)
       case v: String => RedisString(v)
       case a: java.util.List[_] =>
-        RedisArray(a.asScala.toSeq.map(from[V]))
+        val b = List.newBuilder[RedisData[V]]
+        a.asScala.foreach(e => b.addOne(from[V](e)))
+        RedisArray(b.result())
     }
 }

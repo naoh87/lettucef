@@ -30,12 +30,12 @@ object RedisClientF {
 }
 
 class RedisClientF[F[_]](underlying: RedisClusterClient)(implicit F: Async[F]) {
-  def connect[K, V: ClassTag](codec: RedisCodec[K, V]): Resource[F, RedisClusterConnectionF[F, K, V]] =
+  def connect[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V]): Resource[F, RedisClusterConnectionF[F, K, V]] =
     Resource.make(connectRaw(codec))(_.closeAsync())
 
-  def connectRaw[K, V: ClassTag](codec: RedisCodec[K, V]): F[RedisClusterConnectionF[F, K, V]] =
+  def connectRaw[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V]): F[RedisClusterConnectionF[F, K, V]] =
     JavaFutureUtil.toAsync(underlying.connectAsync(codec))
-      .map(c => new RedisClusterConnectionF(c))
+      .map(c => new RedisClusterConnectionF(c, codec))
 
   def getPartition: F[Partitions] =
     F.blocking(underlying.getPartitions)
@@ -47,9 +47,12 @@ class RedisClientF[F[_]](underlying: RedisClusterClient)(implicit F: Async[F]) {
     JavaFutureUtil.toAsync(underlying.shutdownAsync(quietPeriod, timeout, timeUnit)).void
 }
 
-class RedisClusterConnectionF[F[_] : Async, K, V: ClassTag](underlying: StatefulRedisClusterConnection[K, V]) {
+class RedisClusterConnectionF[F[_] : Async, K: ClassTag, V: ClassTag](
+  underlying: StatefulRedisClusterConnection[K, V],
+  codec: RedisCodec[K, V]
+) {
   def async(): RedisClusterCommandsF[F, K, V] =
-    new RedisClusterCommandsF[F, K, V](underlying.async())
+    new RedisClusterCommandsF[F, K, V](underlying.async(), codec)
 
   def closeAsync(): F[Unit] =
     JavaFutureUtil.toAsync(underlying.closeAsync()).void
