@@ -1,6 +1,7 @@
 // Code generated. DO NOT EDIT
 package io.lettucef.core.commands
 
+import cats.syntax.functor._
 import io.lettuce.core.GeoAddArgs
 import io.lettuce.core.GeoArgs
 import io.lettuce.core.GeoCoordinates
@@ -8,9 +9,7 @@ import io.lettuce.core.GeoRadiusStoreArgs
 import io.lettuce.core.GeoSearch
 import io.lettuce.core.GeoValue
 import io.lettuce.core.GeoWithin
-import io.lettuce.core.RedisFuture
 import io.lettuce.core.Value
-import cats.syntax.functor._
 import io.lettuce.core.api.async._
 import io.lettucef.core.util.{JavaFutureUtil => JF}
 import scala.jdk.CollectionConverters._

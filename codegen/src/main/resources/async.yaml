@@ -62,8 +62,6 @@
   - io.lettuce.core.ScanArgs
   - io.lettuce.core.ScanCursor
   - io.lettuce.core.SortArgs
-  - io.lettuce.core.StreamScanCursor
-  - io.lettuce.core.output.KeyStreamingChannel
 
 - underlying: RedisStreamAsyncCommands[K, V]
   output: StreamCommands
@@ -167,11 +165,9 @@
   - io.lettuce.core.BitFieldArgs
   - io.lettuce.core.GetExArgs
   - io.lettuce.core.KeyValue
-  - io.lettuce.core.RedisFuture
   - io.lettuce.core.SetArgs
   - io.lettuce.core.StrAlgoArgs
   - io.lettuce.core.StringMatchResult
-  - io.lettuce.core.output.KeyValueStreamingChannel
 
 - underlying: BaseRedisAsyncCommands[K, V]
   output: BaseCommands
@@ -264,12 +260,8 @@
   imports:
   - io.lettuce.core.KeyValue
   - io.lettuce.core.MapScanCursor
-  - io.lettuce.core.RedisFuture
   - io.lettuce.core.ScanArgs
   - io.lettuce.core.ScanCursor
-  - io.lettuce.core.StreamScanCursor
-  - io.lettuce.core.output.KeyStreamingChannel
-  - io.lettuce.core.output.KeyValueStreamingChannel
 
 - underlying: RedisHLLAsyncCommands[K, V]
   output: HLLCommands
@@ -321,7 +313,6 @@
   - io.lettuce.core.KeyValue
   - io.lettuce.core.LMoveArgs
   - io.lettuce.core.LPosArgs
-  - io.lettuce.core.RedisFuture
 
 - underlying: RedisServerAsyncCommands[K, V]
   output: ServerCommands
@@ -376,7 +367,6 @@
   - java.util.Date
   - io.lettuce.core.FlushMode
   - io.lettuce.core.KillArgs
-  - io.lettuce.core.RedisFuture
   - io.lettuce.core.TrackingArgs
   - io.lettuce.core.UnblockType
   - io.lettuce.core.protocol.CommandType
@@ -421,7 +411,6 @@
   imports:
   - io.lettuce.core.ScanArgs
   - io.lettuce.core.ScanCursor
-  - io.lettuce.core.StreamScanCursor
   - io.lettuce.core.ValueScanCursor
 
 - underlying: RedisSortedSetAsyncCommands[K, V]
@@ -564,7 +553,6 @@
   - io.lettuce.core.ZAggregateArgs
   - io.lettuce.core.ScanCursor
   - io.lettuce.core.ScanArgs
-  - io.lettuce.core.StreamScanCursor
   - io.lettuce.core.ScoredValueScanCursor
   - io.lettuce.core.output.ScoredValueStreamingChannel
 
@@ -597,7 +585,6 @@
   - io.lettuce.core.GeoSearch
   - io.lettuce.core.GeoValue
   - io.lettuce.core.GeoWithin
-  - io.lettuce.core.RedisFuture
   - io.lettuce.core.Value
 
 - underlying: RedisAclAsyncCommands[K, V]

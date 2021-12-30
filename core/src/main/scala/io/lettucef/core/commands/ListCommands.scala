@@ -1,11 +1,10 @@
 // Code generated. DO NOT EDIT
 package io.lettucef.core.commands
 
+import cats.syntax.functor._
 import io.lettuce.core.KeyValue
 import io.lettuce.core.LMoveArgs
 import io.lettuce.core.LPosArgs
-import io.lettuce.core.RedisFuture
-import cats.syntax.functor._
 import io.lettuce.core.api.async._
 import io.lettucef.core.util.{JavaFutureUtil => JF}
 import scala.jdk.CollectionConverters._

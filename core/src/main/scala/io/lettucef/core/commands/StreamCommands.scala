@@ -1,6 +1,7 @@
 // Code generated. DO NOT EDIT
 package io.lettucef.core.commands
 
+import cats.syntax.functor._
 import io.lettuce.core.Consumer
 import io.lettuce.core.Limit
 import io.lettuce.core.Range
@@ -12,10 +13,9 @@ import io.lettuce.core.XPendingArgs
 import io.lettuce.core.XReadArgs
 import io.lettuce.core.XReadArgs.StreamOffset
 import io.lettuce.core.XTrimArgs
+import io.lettuce.core.api.async._
 import io.lettucef.core.models._
 import io.lettucef.core.models.stream._
-import cats.syntax.functor._
-import io.lettuce.core.api.async._
 import io.lettucef.core.util.{JavaFutureUtil => JF}
 import scala.jdk.CollectionConverters._
 

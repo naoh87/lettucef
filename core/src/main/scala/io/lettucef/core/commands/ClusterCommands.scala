@@ -1,10 +1,10 @@
 // Code generated. DO NOT EDIT
 package io.lettucef.core.commands
 
-import io.lettuce.core.cluster.api.async.RedisClusterAsyncCommands
-import io.lettucef.core.models._
 import cats.syntax.functor._
 import io.lettuce.core.api.async._
+import io.lettuce.core.cluster.api.async.RedisClusterAsyncCommands
+import io.lettucef.core.models._
 import io.lettucef.core.util.{JavaFutureUtil => JF}
 import scala.jdk.CollectionConverters._
 

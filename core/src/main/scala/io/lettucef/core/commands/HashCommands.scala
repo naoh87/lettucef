@@ -1,15 +1,11 @@
 // Code generated. DO NOT EDIT
 package io.lettucef.core.commands
 
+import cats.syntax.functor._
 import io.lettuce.core.KeyValue
 import io.lettuce.core.MapScanCursor
-import io.lettuce.core.RedisFuture
 import io.lettuce.core.ScanArgs
 import io.lettuce.core.ScanCursor
-import io.lettuce.core.StreamScanCursor
-import io.lettuce.core.output.KeyStreamingChannel
-import io.lettuce.core.output.KeyValueStreamingChannel
-import cats.syntax.functor._
 import io.lettuce.core.api.async._
 import io.lettucef.core.util.{JavaFutureUtil => JF}
 import scala.jdk.CollectionConverters._
@@ -37,23 +33,14 @@ trait HashCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def hgetall(key: K): F[Map[K, V]] =
     JF.toAsync(underlying.hgetall(key)).map(_.asScala.toMap)
   
-  def hgetall(channel: KeyValueStreamingChannel[K, V], key: K): F[Long] =
-    JF.toAsync(underlying.hgetall(channel, key)).map(Long2long)
-  
   def hkeys(key: K): F[Seq[K]] =
     JF.toAsync(underlying.hkeys(key)).map(_.asScala.toSeq)
-  
-  def hkeys(channel: KeyStreamingChannel[K], key: K): F[Long] =
-    JF.toAsync(underlying.hkeys(channel, key)).map(Long2long)
   
   def hlen(key: K): F[Long] =
     JF.toAsync(underlying.hlen(key)).map(Long2long)
   
   def hmget(key: K, fields: K*): F[Seq[KeyValue[K, V]]] =
     JF.toAsync(underlying.hmget(key, fields: _*)).map(_.asScala.toSeq)
-  
-  def hmget(channel: KeyValueStreamingChannel[K, V], key: K, fields: K*): F[Long] =
-    JF.toAsync(underlying.hmget(channel, key, fields: _*)).map(Long2long)
   
   def hmset(key: K, map: Map[K, V]): F[String] =
     JF.toAsync(underlying.hmset(key, map.asJava))
@@ -81,18 +68,6 @@ trait HashCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   
   def hscan(key: K, scanCursor: ScanCursor): F[MapScanCursor[K, V]] =
     JF.toAsync(underlying.hscan(key, scanCursor))
-  
-  def hscan(channel: KeyValueStreamingChannel[K, V], key: K): F[StreamScanCursor] =
-    JF.toAsync(underlying.hscan(channel, key))
-  
-  def hscan(channel: KeyValueStreamingChannel[K, V], key: K, scanArgs: ScanArgs): F[StreamScanCursor] =
-    JF.toAsync(underlying.hscan(channel, key, scanArgs))
-  
-  def hscan(channel: KeyValueStreamingChannel[K, V], key: K, scanCursor: ScanCursor, scanArgs: ScanArgs): F[StreamScanCursor] =
-    JF.toAsync(underlying.hscan(channel, key, scanCursor, scanArgs))
-  
-  def hscan(channel: KeyValueStreamingChannel[K, V], key: K, scanCursor: ScanCursor): F[StreamScanCursor] =
-    JF.toAsync(underlying.hscan(channel, key, scanCursor))
   
   def hset(key: K, field: K, value: V): F[Boolean] =
     JF.toAsync(underlying.hset(key, field, value)).map(Boolean2boolean)

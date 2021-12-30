@@ -1,15 +1,13 @@
 // Code generated. DO NOT EDIT
 package io.lettucef.core.commands
 
+import cats.syntax.functor._
 import io.lettuce.core.BitFieldArgs
 import io.lettuce.core.GetExArgs
 import io.lettuce.core.KeyValue
-import io.lettuce.core.RedisFuture
 import io.lettuce.core.SetArgs
 import io.lettuce.core.StrAlgoArgs
 import io.lettuce.core.StringMatchResult
-import io.lettuce.core.output.KeyValueStreamingChannel
-import cats.syntax.functor._
 import io.lettuce.core.api.async._
 import io.lettucef.core.util.{JavaFutureUtil => JF}
 import scala.jdk.CollectionConverters._
@@ -87,9 +85,6 @@ trait StringCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   
   def mget(keys: K*): F[Seq[KeyValue[K, V]]] =
     JF.toAsync(underlying.mget(keys: _*)).map(_.asScala.toSeq)
-  
-  def mget(channel: KeyValueStreamingChannel[K, V], keys: K*): F[Long] =
-    JF.toAsync(underlying.mget(channel, keys: _*)).map(Long2long)
   
   def mset(map: Map[K, V]): F[String] =
     JF.toAsync(underlying.mset(map.asJava))

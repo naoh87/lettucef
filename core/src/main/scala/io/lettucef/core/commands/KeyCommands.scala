@@ -3,6 +3,7 @@ package io.lettucef.core.commands
 
 import java.time.Duration
 import java.time.Instant
+import cats.syntax.functor._
 import io.lettuce.core.CopyArgs
 import io.lettuce.core.KeyScanCursor
 import io.lettuce.core.MigrateArgs
@@ -10,9 +11,6 @@ import io.lettuce.core.RestoreArgs
 import io.lettuce.core.ScanArgs
 import io.lettuce.core.ScanCursor
 import io.lettuce.core.SortArgs
-import io.lettuce.core.StreamScanCursor
-import io.lettuce.core.output.KeyStreamingChannel
-import cats.syntax.functor._
 import io.lettuce.core.api.async._
 import io.lettucef.core.util.{JavaFutureUtil => JF}
 import scala.jdk.CollectionConverters._
@@ -54,9 +52,6 @@ trait KeyCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   
   def keys(pattern: K): F[Seq[K]] =
     JF.toAsync(underlying.keys(pattern)).map(_.asScala.toSeq)
-  
-  def keys(channel: KeyStreamingChannel[K], pattern: K): F[Long] =
-    JF.toAsync(underlying.keys(channel, pattern)).map(Long2long)
   
   def migrate(host: String, port: Int, key: K, db: Int, timeout: Long): F[String] =
     JF.toAsync(underlying.migrate(host, port, key, db, timeout))
@@ -141,18 +136,6 @@ trait KeyCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   
   def scan(scanCursor: ScanCursor): F[KeyScanCursor[K]] =
     JF.toAsync(underlying.scan(scanCursor))
-  
-  def scan(channel: KeyStreamingChannel[K]): F[StreamScanCursor] =
-    JF.toAsync(underlying.scan(channel))
-  
-  def scan(channel: KeyStreamingChannel[K], scanArgs: ScanArgs): F[StreamScanCursor] =
-    JF.toAsync(underlying.scan(channel, scanArgs))
-  
-  def scan(channel: KeyStreamingChannel[K], scanCursor: ScanCursor, scanArgs: ScanArgs): F[StreamScanCursor] =
-    JF.toAsync(underlying.scan(channel, scanCursor, scanArgs))
-  
-  def scan(channel: KeyStreamingChannel[K], scanCursor: ScanCursor): F[StreamScanCursor] =
-    JF.toAsync(underlying.scan(channel, scanCursor))
   
 }
 

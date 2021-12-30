@@ -2,15 +2,14 @@
 package io.lettucef.core.commands
 
 import java.util.Date
+import cats.syntax.functor._
 import io.lettuce.core.FlushMode
 import io.lettuce.core.KillArgs
-import io.lettuce.core.RedisFuture
 import io.lettuce.core.TrackingArgs
 import io.lettuce.core.UnblockType
+import io.lettuce.core.api.async._
 import io.lettuce.core.protocol.CommandType
 import io.lettucef.core.models._
-import cats.syntax.functor._
-import io.lettuce.core.api.async._
 import io.lettucef.core.util.{JavaFutureUtil => JF}
 import scala.jdk.CollectionConverters._
 
