@@ -1,4 +1,4 @@
-package io.slettuce.core.util
+package io.lettucef.core.util
 
 import io.lettuce.core.ScriptOutputType
 import io.lettuce.core.codec.RedisCodec

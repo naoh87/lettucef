@@ -1,4 +1,4 @@
-package io.slettuce.core
+package io.lettucef.core
 
 /**
  * This class is compatible for io.lettuce.core.KeyValue but not null

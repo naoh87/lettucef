@@ -1,4 +1,4 @@
-package io.slettuce.core.models
+package io.lettucef.core.models
 
 import scala.jdk.CollectionConverters._
 import scala.reflect.ClassTag

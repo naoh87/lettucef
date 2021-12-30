@@ -1,4 +1,4 @@
-package io.slettuce.core.commands
+package io.lettucef.core.commands
 
 import cats.syntax.functor._
 import io.lettuce.core.FlushMode
@@ -6,8 +6,8 @@ import io.lettuce.core.ScriptOutputType
 import io.lettuce.core.api.async.BaseRedisAsyncCommands
 import io.lettuce.core.api.async.RedisScriptingAsyncCommands
 import io.lettuce.core.protocol.CommandType
-import io.slettuce.core.models.RedisData
-import io.slettuce.core.util.{JavaFutureUtil => JF}
+import io.lettucef.core.models.RedisData
+import io.lettucef.core.util.{JavaFutureUtil => JF}
 import scala.jdk.CollectionConverters._
 
 trait ScriptingCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {

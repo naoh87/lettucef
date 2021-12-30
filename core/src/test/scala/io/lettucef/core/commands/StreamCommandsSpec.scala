@@ -1,16 +1,13 @@
-package io.slettuce.core.commands
+package io.lettucef.core.commands
 
 import java.nio.ByteBuffer
 import cats.effect.IO
-import cats.effect.Resource
 import cats.effect.unsafe.IORuntime
 import io.lettuce.core.cluster.RedisClusterClient
 import io.lettuce.core.codec.RedisCodec
 import io.lettuce.core.codec.StringCodec
-import io.slettuce.core.RedisClientF
-import io.slettuce.core.RedisClusterCommandsF
-import io.slettuce.core.models.RedisData.RedisString
-import org.scalatest
+import io.lettucef.core.RedisClientF
+import io.lettucef.core.RedisClusterCommandsF
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 import scala.concurrent.duration.DurationInt

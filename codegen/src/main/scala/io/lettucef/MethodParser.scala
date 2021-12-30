@@ -1,9 +1,9 @@
-package io.slettuce
+package io.lettucef
 
 import cats.data.NonEmptyList
-import io.slettuce.Method.Argument
-import io.slettuce.Method.TypeExpr
-import io.slettuce.Method.TypeName
+import io.lettucef.Method.Argument
+import io.lettucef.Method.TypeExpr
+import io.lettucef.Method.TypeName
 
 object MethodParser {
 

@@ -1,9 +1,9 @@
-//copy from scalaPB
+//this code from ScalaPB
 //https://github.com/scalapb/ScalaPB
 
-package io.slettuce
+package io.lettucef
 
-import io.slettuce.FunctionalPrinter.PrinterEndo
+import io.lettucef.FunctionalPrinter.PrinterEndo
 
 object PrinterEndo {
   def apply(endo: PrinterEndo): PrinterEndo = endo

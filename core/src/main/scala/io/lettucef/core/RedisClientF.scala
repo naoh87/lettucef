@@ -1,4 +1,4 @@
-package io.slettuce.core
+package io.lettucef.core
 
 import java.util.concurrent.TimeUnit
 import cats.effect.Sync
@@ -7,11 +7,11 @@ import cats.effect.kernel.Resource
 import io.lettuce.core.cluster.RedisClusterClient
 import io.lettuce.core.cluster.api.StatefulRedisClusterConnection
 import io.lettuce.core.codec.RedisCodec
-import io.slettuce.core.util.JavaFutureUtil
+import io.lettucef.core.util.JavaFutureUtil
 import cats.syntax.functor._
 import cats.syntax.flatMap._
 import io.lettuce.core.cluster.models.partitions.Partitions
-import io.slettuce.core.RedisClientF.ShutdownConfig
+import io.lettucef.core.RedisClientF.ShutdownConfig
 import scala.reflect.ClassTag
 
 object RedisClientF {

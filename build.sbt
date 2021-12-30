@@ -3,7 +3,7 @@ val project_name = ""
 lazy val root = (project in file(".")).aggregate(core)
 
 lazy val core = (project in file("core")).settings(
-  name := "slettuce-core",
+  name := "lettucef-core",
   scalaVersion := "2.13.5",
   Test / fork := true,
   libraryDependencies ++= Seq(
@@ -15,7 +15,7 @@ lazy val core = (project in file("core")).settings(
 
 val circeVersion = "0.14.1"
 lazy val codegen = (project in file("codegen")).settings(
-  name := "slettuce-codegen",
+  name := "lettucef-codegen",
   scalaVersion := "2.13.5",
   Runtime / fork := true,
   libraryDependencies ++= Seq(

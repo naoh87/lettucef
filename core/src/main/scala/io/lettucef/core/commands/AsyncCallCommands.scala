@@ -1,9 +1,9 @@
-package io.slettuce.core.commands
+package io.lettucef.core.commands
 
 import cats.effect.kernel.Async
 import io.lettuce.core.RedisFuture
-import io.slettuce.core.util.ManualDispatchHelper
-import io.slettuce.core.util.{JavaFutureUtil => JF}
+import io.lettucef.core.util.ManualDispatchHelper
+import io.lettucef.core.util.{JavaFutureUtil => JF}
 import scala.reflect.ClassTag
 
 trait AsyncCallCommands[F[_], K, V] {

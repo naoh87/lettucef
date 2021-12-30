@@ -1,10 +1,10 @@
-package io.slettuce.core
+package io.lettucef.core
 
 import cats.effect.kernel.Async
 import io.lettuce.core.cluster.api.async.RedisAdvancedClusterAsyncCommands
 import io.lettuce.core.codec.RedisCodec
-import io.slettuce.core.commands._
-import io.slettuce.core.util.ManualDispatchHelper
+import io.lettucef.core.commands._
+import io.lettucef.core.util.ManualDispatchHelper
 import scala.reflect.ClassTag
 
 final class RedisClusterCommandsF[F[_], K, V](

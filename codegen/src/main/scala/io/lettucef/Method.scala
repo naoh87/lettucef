@@ -1,9 +1,9 @@
-package io.slettuce
+package io.lettucef
 
 import io.circe.Decoder
-import io.slettuce.Method.Argument
-import io.slettuce.Method.Identifier
-import io.slettuce.Method.TypeExpr
+import io.lettucef.Method.Argument
+import io.lettucef.Method.Identifier
+import io.lettucef.Method.TypeExpr
 
 case class Method(name: String, args: List[Argument], output: TypeExpr) extends ToScalaCode {
   def scalaDef: String =

@@ -1,4 +1,4 @@
-package io.slettuce
+package io.lettucef
 
 import java.nio.file.Paths
 import cats.effect.ExitCode
@@ -23,7 +23,7 @@ object GeneratorApp extends IOApp {
         .flatMap(_.as[List[Async]])
     asyncList.map { async =>
       println("-" * 32 + "\n" + async.underlying)
-      val outputDir = Paths.get(s"core/src/main/scala/io/slettuce/core/commands/${async.output}.scala").toAbsolutePath
+      val outputDir = Paths.get(s"core/src/main/scala/io/lettucef/core/commands/${async.output}.scala").toAbsolutePath
 
       FunctionalPrinter()
         .add("// Code generated. DO NOT EDIT")

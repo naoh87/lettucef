@@ -1,4 +1,4 @@
-package io.slettuce.core.models.stream
+package io.lettucef.core.models.stream
 
 import scala.jdk.CollectionConverters._
 

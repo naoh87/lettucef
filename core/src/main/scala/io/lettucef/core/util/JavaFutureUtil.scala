@@ -1,4 +1,4 @@
-package io.slettuce.core.util
+package io.lettucef.core.util
 
 import java.util.concurrent.CompletionStage
 import cats.effect.Async
