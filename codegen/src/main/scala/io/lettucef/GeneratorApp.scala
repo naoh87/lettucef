@@ -21,6 +21,7 @@ object GeneratorApp extends IOApp {
         .parse(
           scala.io.Source.fromResource("async.yaml").mkString)
         .flatMap(_.as[List[Async]])
+        .map(_.map(_.refine()))
 
     println("total method generation count: " + asyncList.map(_.methods.size).sum)
 
@@ -46,7 +47,7 @@ object GeneratorApp extends IOApp {
         .indented(_
           .add(s"protected val underlying: ${async.underlying}").newline
           .print(async.methods) {
-            case (p, m) if m.existArgs(_.existName(Set("Object", "Date"))) =>
+            case (p, m) if m.existArgs(_.existName(Set("Object", "Date", "ValueStreamingChannel"))) =>
               println(s"- skipped ${m.scalaDef}")
               p
             case (p, m) =>
@@ -73,8 +74,20 @@ case class Async(
   underlying: String,
   output: String,
   methods: List[Method],
-  imports: List[String]
-)
+  imports: List[String],
+  nullable: Option[List[String]],
+) {
+  val nullMethodName: Set[String] = nullable.toList.flatten.toSet
+
+  def refine(): Async =
+    copy(
+      imports = imports.distinct.sortBy {
+        case name if name.startsWith("java.") => (0, name)
+        case name if name.startsWith("scala.") => (2, name)
+        case name => (1, name)
+      },
+      methods = methods.map(m => m.copy(checkNull = nullMethodName(m.name))))
+}
 
 
 

@@ -58,23 +58,23 @@ trait StringCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def decrby(key: K, amount: Long): F[Long] =
     JF.toAsync(underlying.decrby(key, amount)).map(Long2long)
   
-  def get(key: K): F[V] =
-    JF.toAsync(underlying.get(key))
+  def get(key: K): F[Option[V]] =
+    JF.toAsync(underlying.get(key)).map(Option(_))
   
   def getbit(key: K, offset: Long): F[Long] =
     JF.toAsync(underlying.getbit(key, offset)).map(Long2long)
   
-  def getdel(key: K): F[V] =
-    JF.toAsync(underlying.getdel(key))
+  def getdel(key: K): F[Option[V]] =
+    JF.toAsync(underlying.getdel(key)).map(Option(_))
   
-  def getex(key: K, args: GetExArgs): F[V] =
-    JF.toAsync(underlying.getex(key, args))
+  def getex(key: K, args: GetExArgs): F[Option[V]] =
+    JF.toAsync(underlying.getex(key, args)).map(Option(_))
   
   def getrange(key: K, start: Long, end: Long): F[V] =
     JF.toAsync(underlying.getrange(key, start, end))
   
-  def getset(key: K, value: V): F[V] =
-    JF.toAsync(underlying.getset(key, value))
+  def getset(key: K, value: V): F[Option[V]] =
+    JF.toAsync(underlying.getset(key, value)).map(Option(_))
   
   def incr(key: K): F[Long] =
     JF.toAsync(underlying.incr(key)).map(Long2long)
@@ -103,11 +103,11 @@ trait StringCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def set(key: K, value: V, setArgs: SetArgs): F[String] =
     JF.toAsync(underlying.set(key, value, setArgs))
   
-  def setGet(key: K, value: V): F[V] =
-    JF.toAsync(underlying.setGet(key, value))
+  def setGet(key: K, value: V): F[Option[V]] =
+    JF.toAsync(underlying.setGet(key, value)).map(Option(_))
   
-  def setGet(key: K, value: V, setArgs: SetArgs): F[V] =
-    JF.toAsync(underlying.setGet(key, value, setArgs))
+  def setGet(key: K, value: V, setArgs: SetArgs): F[Option[V]] =
+    JF.toAsync(underlying.setGet(key, value, setArgs)).map(Option(_))
   
   def setbit(key: K, offset: Long, value: Int): F[Long] =
     JF.toAsync(underlying.setbit(key, offset, value)).map(Long2long)

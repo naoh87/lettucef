@@ -1,19 +1,18 @@
 // Code generated. DO NOT EDIT
 package io.lettucef.core.commands
 
-import io.lettuce.core.Range
-import io.lettuce.core.Limit
 import io.lettuce.core.KeyValue
-import io.lettuce.core.ZStoreArgs
+import io.lettuce.core.Limit
+import io.lettuce.core.Range
+import io.lettuce.core.ScanArgs
+import io.lettuce.core.ScanCursor
 import io.lettuce.core.ScoredValue
+import io.lettuce.core.ScoredValueScanCursor
+import io.lettuce.core.StreamScanCursor
 import io.lettuce.core.ZAddArgs
 import io.lettuce.core.ZAggregateArgs
-import io.lettuce.core.ScanCursor
-import io.lettuce.core.ScanArgs
-import io.lettuce.core.StreamScanCursor
-import io.lettuce.core.ScoredValueScanCursor
+import io.lettuce.core.ZStoreArgs
 import io.lettuce.core.output.ScoredValueStreamingChannel
-import io.lettuce.core.output.ValueStreamingChannel
 import cats.syntax.functor._
 import io.lettuce.core.api.async._
 import io.lettucef.core.util.{JavaFutureUtil => JF}
@@ -123,9 +122,6 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def zrange(key: K, start: Long, stop: Long): F[Seq[V]] =
     JF.toAsync(underlying.zrange(key, start, stop)).map(_.asScala.toSeq)
   
-  def zrange(channel: ValueStreamingChannel[V], key: K, start: Long, stop: Long): F[Long] =
-    JF.toAsync(underlying.zrange(channel, key, start, stop)).map(Long2long)
-  
   def zrangeWithScores(key: K, start: Long, stop: Long): F[Seq[ScoredValue[V]]] =
     JF.toAsync(underlying.zrangeWithScores(key, start, stop)).map(_.asScala.toSeq)
   
@@ -143,12 +139,6 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   
   def zrangebyscore(key: K, range: Range[_ <: Number], limit: Limit): F[Seq[V]] =
     JF.toAsync(underlying.zrangebyscore(key, range, limit)).map(_.asScala.toSeq)
-  
-  def zrangebyscore(channel: ValueStreamingChannel[V], key: K, range: Range[_ <: Number]): F[Long] =
-    JF.toAsync(underlying.zrangebyscore(channel, key, range)).map(Long2long)
-  
-  def zrangebyscore(channel: ValueStreamingChannel[V], key: K, range: Range[_ <: Number], limit: Limit): F[Long] =
-    JF.toAsync(underlying.zrangebyscore(channel, key, range, limit)).map(Long2long)
   
   def zrangebyscoreWithScores(key: K, range: Range[_ <: Number]): F[Seq[ScoredValue[V]]] =
     JF.toAsync(underlying.zrangebyscoreWithScores(key, range)).map(_.asScala.toSeq)
@@ -186,9 +176,6 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def zrevrange(key: K, start: Long, stop: Long): F[Seq[V]] =
     JF.toAsync(underlying.zrevrange(key, start, stop)).map(_.asScala.toSeq)
   
-  def zrevrange(channel: ValueStreamingChannel[V], key: K, start: Long, stop: Long): F[Long] =
-    JF.toAsync(underlying.zrevrange(channel, key, start, stop)).map(Long2long)
-  
   def zrevrangeWithScores(key: K, start: Long, stop: Long): F[Seq[ScoredValue[V]]] =
     JF.toAsync(underlying.zrevrangeWithScores(key, start, stop)).map(_.asScala.toSeq)
   
@@ -206,12 +193,6 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   
   def zrevrangebyscore(key: K, range: Range[_ <: Number], limit: Limit): F[Seq[V]] =
     JF.toAsync(underlying.zrevrangebyscore(key, range, limit)).map(_.asScala.toSeq)
-  
-  def zrevrangebyscore(channel: ValueStreamingChannel[V], key: K, range: Range[_ <: Number]): F[Long] =
-    JF.toAsync(underlying.zrevrangebyscore(channel, key, range)).map(Long2long)
-  
-  def zrevrangebyscore(channel: ValueStreamingChannel[V], key: K, range: Range[_ <: Number], limit: Limit): F[Long] =
-    JF.toAsync(underlying.zrevrangebyscore(channel, key, range, limit)).map(Long2long)
   
   def zrevrangebyscoreWithScores(key: K, range: Range[_ <: Number]): F[Seq[ScoredValue[V]]] =
     JF.toAsync(underlying.zrevrangebyscoreWithScores(key, range)).map(_.asScala.toSeq)

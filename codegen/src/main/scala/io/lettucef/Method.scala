@@ -5,11 +5,11 @@ import io.lettucef.Method.Argument
 import io.lettucef.Method.Identifier
 import io.lettucef.Method.TypeExpr
 
-case class Method(name: String, args: List[Argument], output: TypeExpr) extends ToScalaCode {
+case class Method(name: String, args: List[Argument], output: TypeExpr, checkNull: Boolean = false) extends ToScalaCode {
   def scalaDef: String =
     s"def ${Identifier.expr(name)}(${args.map(_.scalaDef).mkString(", ")}): ${output.scalaDef}"
 
-  def asyncCall(expr: Seq[Argument], to: TypeExpr, checkNull: Boolean = false): String = {
+  def asyncCall(expr: Seq[Argument], to: TypeExpr): String = {
     assert(expr.size == args.size)
     val call = args.zip(expr).map(ae => ae._1.call(ae._2)).mkString(", ")
     val postFix = {
@@ -76,7 +76,15 @@ case class Method(name: String, args: List[Argument], output: TypeExpr) extends 
     copy(output = f(output))
 
   def toAsync: Method = {
-    copy(output = output.toAsync)
+    if (checkNull) {
+      copy(output =
+        output
+          .copy(generics =
+            output.generics.map(t => TypeExpr.one("Option").copy(generics = t :: Nil)))
+          .toAsync)
+    } else {
+      copy(output = output.toAsync)
+    }
   }
 }
 

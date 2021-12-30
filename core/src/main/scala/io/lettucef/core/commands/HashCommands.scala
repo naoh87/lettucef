@@ -9,7 +9,6 @@ import io.lettuce.core.ScanCursor
 import io.lettuce.core.StreamScanCursor
 import io.lettuce.core.output.KeyStreamingChannel
 import io.lettuce.core.output.KeyValueStreamingChannel
-import io.lettuce.core.output.ValueStreamingChannel
 import cats.syntax.functor._
 import io.lettuce.core.api.async._
 import io.lettucef.core.util.{JavaFutureUtil => JF}
@@ -26,8 +25,8 @@ trait HashCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def hexists(key: K, field: K): F[Boolean] =
     JF.toAsync(underlying.hexists(key, field)).map(Boolean2boolean)
   
-  def hget(key: K, field: K): F[V] =
-    JF.toAsync(underlying.hget(key, field))
+  def hget(key: K, field: K): F[Option[V]] =
+    JF.toAsync(underlying.hget(key, field)).map(Option(_))
   
   def hincrby(key: K, field: K, amount: Long): F[Long] =
     JF.toAsync(underlying.hincrby(key, field, amount)).map(Long2long)
@@ -109,9 +108,6 @@ trait HashCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   
   def hvals(key: K): F[Seq[V]] =
     JF.toAsync(underlying.hvals(key)).map(_.asScala.toSeq)
-  
-  def hvals(channel: ValueStreamingChannel[V], key: K): F[Long] =
-    JF.toAsync(underlying.hvals(channel, key)).map(Long2long)
   
 }
 

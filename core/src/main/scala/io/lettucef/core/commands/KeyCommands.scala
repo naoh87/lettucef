@@ -12,7 +12,6 @@ import io.lettuce.core.ScanCursor
 import io.lettuce.core.SortArgs
 import io.lettuce.core.StreamScanCursor
 import io.lettuce.core.output.KeyStreamingChannel
-import io.lettuce.core.output.ValueStreamingChannel
 import cats.syntax.functor._
 import io.lettuce.core.api.async._
 import io.lettucef.core.util.{JavaFutureUtil => JF}
@@ -98,8 +97,8 @@ trait KeyCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def pttl(key: K): F[Long] =
     JF.toAsync(underlying.pttl(key)).map(Long2long)
   
-  def randomkey(): F[K] =
-    JF.toAsync(underlying.randomkey())
+  def randomkey(): F[Option[K]] =
+    JF.toAsync(underlying.randomkey()).map(Option(_))
   
   def rename(key: K, newKey: K): F[String] =
     JF.toAsync(underlying.rename(key, newKey))
@@ -116,14 +115,8 @@ trait KeyCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def sort(key: K): F[Seq[V]] =
     JF.toAsync(underlying.sort(key)).map(_.asScala.toSeq)
   
-  def sort(channel: ValueStreamingChannel[V], key: K): F[Long] =
-    JF.toAsync(underlying.sort(channel, key)).map(Long2long)
-  
   def sort(key: K, sortArgs: SortArgs): F[Seq[V]] =
     JF.toAsync(underlying.sort(key, sortArgs)).map(_.asScala.toSeq)
-  
-  def sort(channel: ValueStreamingChannel[V], key: K, sortArgs: SortArgs): F[Long] =
-    JF.toAsync(underlying.sort(channel, key, sortArgs)).map(Long2long)
   
   def sortStore(key: K, sortArgs: SortArgs, destination: K): F[Long] =
     JF.toAsync(underlying.sortStore(key, sortArgs, destination)).map(Long2long)

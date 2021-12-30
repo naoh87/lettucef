@@ -5,7 +5,6 @@ import io.lettuce.core.KeyValue
 import io.lettuce.core.LMoveArgs
 import io.lettuce.core.LPosArgs
 import io.lettuce.core.RedisFuture
-import io.lettuce.core.output.ValueStreamingChannel
 import cats.syntax.functor._
 import io.lettuce.core.api.async._
 import io.lettucef.core.util.{JavaFutureUtil => JF}
@@ -40,8 +39,8 @@ trait ListCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def brpoplpush(timeout: Double, source: K, destination: K): F[V] =
     JF.toAsync(underlying.brpoplpush(timeout, source, destination))
   
-  def lindex(key: K, index: Long): F[V] =
-    JF.toAsync(underlying.lindex(key, index))
+  def lindex(key: K, index: Long): F[Option[V]] =
+    JF.toAsync(underlying.lindex(key, index)).map(Option(_))
   
   def linsert(key: K, before: Boolean, pivot: V, value: V): F[Long] =
     JF.toAsync(underlying.linsert(key, before, pivot, value)).map(Long2long)
@@ -52,23 +51,23 @@ trait ListCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def lmove(source: K, destination: K, args: LMoveArgs): F[V] =
     JF.toAsync(underlying.lmove(source, destination, args))
   
-  def lpop(key: K): F[V] =
-    JF.toAsync(underlying.lpop(key))
+  def lpop(key: K): F[Option[V]] =
+    JF.toAsync(underlying.lpop(key)).map(Option(_))
   
-  def lpop(key: K, count: Long): F[Seq[V]] =
-    JF.toAsync(underlying.lpop(key, count)).map(_.asScala.toSeq)
+  def lpop(key: K, count: Long): F[Option[Seq[V]]] =
+    JF.toAsync(underlying.lpop(key, count)).map(Option(_).map(_.asScala.toSeq))
   
-  def lpos(key: K, value: V): F[Long] =
-    JF.toAsync(underlying.lpos(key, value)).map(Long2long)
+  def lpos(key: K, value: V): F[Option[Long]] =
+    JF.toAsync(underlying.lpos(key, value)).map(Option(_).map(Long2long))
   
-  def lpos(key: K, value: V, args: LPosArgs): F[Long] =
-    JF.toAsync(underlying.lpos(key, value, args)).map(Long2long)
+  def lpos(key: K, value: V, args: LPosArgs): F[Option[Long]] =
+    JF.toAsync(underlying.lpos(key, value, args)).map(Option(_).map(Long2long))
   
-  def lpos(key: K, value: V, count: Int): F[Seq[Long]] =
-    JF.toAsync(underlying.lpos(key, value, count)).map(_.asScala.toSeq.map(Long2long))
+  def lpos(key: K, value: V, count: Int): F[Option[Seq[Long]]] =
+    JF.toAsync(underlying.lpos(key, value, count)).map(Option(_).map(_.asScala.toSeq.map(Long2long)))
   
-  def lpos(key: K, value: V, count: Int, args: LPosArgs): F[Seq[Long]] =
-    JF.toAsync(underlying.lpos(key, value, count, args)).map(_.asScala.toSeq.map(Long2long))
+  def lpos(key: K, value: V, count: Int, args: LPosArgs): F[Option[Seq[Long]]] =
+    JF.toAsync(underlying.lpos(key, value, count, args)).map(Option(_).map(_.asScala.toSeq.map(Long2long)))
   
   def lpush(key: K, values: V*): F[Long] =
     JF.toAsync(underlying.lpush(key, values: _*)).map(Long2long)
@@ -79,9 +78,6 @@ trait ListCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def lrange(key: K, start: Long, stop: Long): F[Seq[V]] =
     JF.toAsync(underlying.lrange(key, start, stop)).map(_.asScala.toSeq)
   
-  def lrange(channel: ValueStreamingChannel[V], key: K, start: Long, stop: Long): F[Long] =
-    JF.toAsync(underlying.lrange(channel, key, start, stop)).map(Long2long)
-  
   def lrem(key: K, count: Long, value: V): F[Long] =
     JF.toAsync(underlying.lrem(key, count, value)).map(Long2long)
   
@@ -91,11 +87,11 @@ trait ListCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def ltrim(key: K, start: Long, stop: Long): F[String] =
     JF.toAsync(underlying.ltrim(key, start, stop))
   
-  def rpop(key: K): F[V] =
-    JF.toAsync(underlying.rpop(key))
+  def rpop(key: K): F[Option[V]] =
+    JF.toAsync(underlying.rpop(key)).map(Option(_))
   
-  def rpop(key: K, count: Long): F[Seq[V]] =
-    JF.toAsync(underlying.rpop(key, count)).map(_.asScala.toSeq)
+  def rpop(key: K, count: Long): F[Option[Seq[V]]] =
+    JF.toAsync(underlying.rpop(key, count)).map(Option(_).map(_.asScala.toSeq))
   
   def rpoplpush(source: K, destination: K): F[V] =
     JF.toAsync(underlying.rpoplpush(source, destination))

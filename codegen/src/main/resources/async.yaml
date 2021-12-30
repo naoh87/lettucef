@@ -1,6 +1,8 @@
 
 - underlying: RedisKeyAsyncCommands[K, V]
   output: KeyCommands
+  nullable:
+  - randomkey
   methods:
   - RedisFuture<Boolean> copy(K source, K destination);
   - RedisFuture<Boolean> copy(K source, K destination, CopyArgs copyArgs);
@@ -62,7 +64,6 @@
   - io.lettuce.core.SortArgs
   - io.lettuce.core.StreamScanCursor
   - io.lettuce.core.output.KeyStreamingChannel
-  - io.lettuce.core.output.ValueStreamingChannel
 
 - underlying: RedisStreamAsyncCommands[K, V]
   output: StreamCommands
@@ -118,6 +119,12 @@
 
 - underlying: RedisStringAsyncCommands[K, V]
   output: StringCommands
+  nullable:
+  - get
+  - getset
+  - getdel
+  - getex
+  - setGet
   methods:
   - RedisFuture<Long> append(K key, V value);
   - RedisFuture<Long> bitcount(K key);
@@ -220,6 +227,8 @@
 
 - underlying: RedisHashAsyncCommands[K, V]
   output: HashCommands
+  nullable:
+  - hget
   methods:
   - RedisFuture<Long> hdel(K key, K... fields);
   - RedisFuture<Boolean> hexists(K key, K field);
@@ -261,7 +270,6 @@
   - io.lettuce.core.StreamScanCursor
   - io.lettuce.core.output.KeyStreamingChannel
   - io.lettuce.core.output.KeyValueStreamingChannel
-  - io.lettuce.core.output.ValueStreamingChannel
 
 - underlying: RedisHLLAsyncCommands[K, V]
   output: HLLCommands
@@ -273,6 +281,11 @@
 
 - underlying: RedisListAsyncCommands[K, V]
   output: ListCommands
+  nullable:
+  - lindex
+  - lpop
+  - lpos
+  - rpop
   methods:
   - RedisFuture<V> blmove(K source, K destination, LMoveArgs args, long timeout);
   - RedisFuture<V> blmove(K source, K destination, LMoveArgs args, double timeout);
@@ -309,7 +322,6 @@
   - io.lettuce.core.LMoveArgs
   - io.lettuce.core.LPosArgs
   - io.lettuce.core.RedisFuture
-  - io.lettuce.core.output.ValueStreamingChannel
 
 - underlying: RedisServerAsyncCommands[K, V]
   output: ServerCommands
@@ -372,6 +384,9 @@
 
 - underlying: RedisSetAsyncCommands[K, V]
   output: SetCommands
+  nullable:
+  - spop
+  - srandmember
   methods:
   - RedisFuture<Long> sadd(K key, V... members);
   - RedisFuture<Long> scard(K key);
@@ -408,7 +423,6 @@
   - io.lettuce.core.ScanCursor
   - io.lettuce.core.StreamScanCursor
   - io.lettuce.core.ValueScanCursor
-  - io.lettuce.core.output.ValueStreamingChannel
 
 - underlying: RedisSortedSetAsyncCommands[K, V]
   output: SortedSetCommands
@@ -553,7 +567,6 @@
   - io.lettuce.core.StreamScanCursor
   - io.lettuce.core.ScoredValueScanCursor
   - io.lettuce.core.output.ScoredValueStreamingChannel
-  - io.lettuce.core.output.ValueStreamingChannel
 
 - underlying: RedisGeoAsyncCommands[K, V]
   output: GeoCommands
