@@ -9,12 +9,19 @@ case class Method(name: String, args: List[Argument], output: TypeExpr) extends 
   def scalaDef: String =
     s"def ${Identifier.expr(name)}(${args.map(_.scalaDef).mkString(", ")}): ${output.scalaDef}"
 
-  def asyncCall(expr: Seq[Argument], to: TypeExpr): String = {
+  def asyncCall(expr: Seq[Argument], to: TypeExpr, checkNull: Boolean = false): String = {
     assert(expr.size == args.size)
     val call = args.zip(expr).map(ae => ae._1.call(ae._2)).mkString(", ")
-    val postFix = javaToScalaF(to.generics.head) match {
-      case Some(fun) => s".map($fun)"
-      case None => ""
+    val postFix = {
+      val mapF = javaToScalaF(to.generics.head) match {
+        case Some(fun) => s".map($fun)"
+        case None => ""
+      }
+      if (checkNull) {
+        s".map(Option(_)$mapF)"
+      } else {
+        mapF
+      }
     }
     s"JF.toAsync(underlying.${Identifier.expr(name)}($call))$postFix"
   }

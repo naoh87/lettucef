@@ -5,6 +5,7 @@ lazy val root = (project in file(".")).aggregate(core)
 lazy val core = (project in file("core")).settings(
   name := "lettucef-core",
   scalaVersion := "2.13.5",
+  crossScalaVersions := Seq("2.13.5", "3.1.0"),
   Test / fork := true,
   libraryDependencies ++= Seq(
     "io.lettuce" % "lettuce-core" % "6.1.5.RELEASE",

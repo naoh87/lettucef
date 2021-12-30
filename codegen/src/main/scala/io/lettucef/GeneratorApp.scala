@@ -21,6 +21,9 @@ object GeneratorApp extends IOApp {
         .parse(
           scala.io.Source.fromResource("async.yaml").mkString)
         .flatMap(_.as[List[Async]])
+
+    println("total method generation count: " + asyncList.map(_.methods.size).sum)
+
     asyncList.map { async =>
       println("-" * 32 + "\n" + async.underlying)
       val outputDir = Paths.get(s"core/src/main/scala/io/lettucef/core/commands/${async.output}.scala").toAbsolutePath

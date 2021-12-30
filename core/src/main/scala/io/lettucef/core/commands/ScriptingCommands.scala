@@ -2,7 +2,6 @@ package io.lettucef.core.commands
 
 import cats.syntax.functor._
 import io.lettuce.core.FlushMode
-import io.lettuce.core.ScriptOutputType
 import io.lettuce.core.api.async.BaseRedisAsyncCommands
 import io.lettuce.core.api.async.RedisScriptingAsyncCommands
 import io.lettuce.core.protocol.CommandType
@@ -14,26 +13,38 @@ trait ScriptingCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
 
   protected val underlying: BaseRedisAsyncCommands[K, V] with RedisScriptingAsyncCommands[K, V]
 
-  def eval(script: String, tpe: ScriptOutputType, keys: Seq[K], values: Seq[V]): F[RedisData[V]] =
+  /**
+   * Eval Lua Script
+   *
+   * Data type conversion is slightly odd. see[https://redis.io/commands/eval]
+   * Lettuce/Redis cant recognize "Redis status reply" or "Redis bulk reply" now (lettuce-core:6.1.5, redis: 6.2.1).
+   */
+  def eval(script: String, keys: Seq[K], values: Seq[V]): F[RedisData[V]] =
     JF.toAsync(underlying.dispatch(
       CommandType.EVAL,
-      dispatchHelper.createScriptOutput[Any](tpe),
+      dispatchHelper.createRedisDataOutput(),
       dispatchHelper.createArgs().add(script).add(keys.length).addKeys(keys.asJava).addValues(values.asJava),
-    )).map(RedisData.from[V])
+    ))
 
-  def eval(script: Array[Byte], tpe: ScriptOutputType, keys: Seq[K], values: Seq[V]): F[RedisData[V]] =
+  /**
+   * Eval Lua Script
+   *
+   * Data type conversion is slightly odd. see[https://redis.io/commands/eval]
+   * Lettuce/Redis cant recognize "Redis status reply" or "Redis bulk reply" now (lettuce-core:6.1.5, redis: 6.2.1).
+   */
+  def eval(script: Array[Byte], keys: Seq[K], values: Seq[V]): F[RedisData[V]] =
     JF.toAsync(underlying.dispatch(
       CommandType.EVAL,
-      dispatchHelper.createScriptOutput[Any](tpe),
+      dispatchHelper.createRedisDataOutput(),
       dispatchHelper.createArgs().add(script).add(keys.length).addKeys(keys.asJava).addValues(values.asJava),
-    )).map(RedisData.from[V])
+    ))
 
-  def evalsha(digest: String, tpe: ScriptOutputType, keys: Seq[K], values: Seq[V]): F[RedisData[V]] =
+  def evalsha(digest: String, keys: Seq[K], values: Seq[V]): F[RedisData[V]] =
     JF.toAsync(underlying.dispatch(
       CommandType.EVALSHA,
-      dispatchHelper.createScriptOutput[Any](tpe),
+      dispatchHelper.createRedisDataOutput(),
       dispatchHelper.createArgs().add(digest).add(keys.length).addKeys(keys.asJava).addValues(values.asJava),
-    )).map(RedisData.from[V])
+    ))
 
   def scriptExists(digests: String*): F[Seq[Boolean]] =
     JF.toAsync(underlying.scriptExists(digests: _*)).map(_.asScala.toSeq.map(Boolean2boolean))
