@@ -111,8 +111,8 @@
   - io.lettuce.core.Range
   - io.lettuce.core.XReadArgs
   - io.lettuce.core.XTrimArgs
-  - io.slettuce.core.models.stream._
-  - io.slettuce.core.models._
+  - io.lettucef.core.models.stream._
+  - io.lettucef.core.models._
 - underlying: RedisStringAsyncCommands[K, V]
   output: StringCommands
   methods:
@@ -178,7 +178,7 @@
   - RedisFuture<String> quit();
   - RedisFuture<Long> waitForReplication(int replicas, long timeout);
   imports:
-  - io.slettuce.core.models._
+  - io.lettucef.core.models._
 - underlying: RedisClusterAsyncCommands[K, V]
   output: ClusterCommands
   methods:
@@ -211,7 +211,7 @@
   - RedisFuture<String> clusterFlushslots();
   imports:
   - io.lettuce.core.cluster.api.async.RedisClusterAsyncCommands
-  - io.slettuce.core.models._
+  - io.lettucef.core.models._
 - underlying: RedisHashAsyncCommands[K, V]
   output: HashCommands
   methods:
@@ -359,7 +359,7 @@
   - io.lettuce.core.TrackingArgs
   - io.lettuce.core.UnblockType
   - io.lettuce.core.protocol.CommandType
-  - io.slettuce.core.models._
+  - io.lettucef.core.models._
 - underlying: RedisSetAsyncCommands[K, V]
   output: SetCommands
   methods:

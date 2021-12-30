@@ -1,5 +1,5 @@
 // Code generated. DO NOT EDIT
-package io.slettuce.core.commands
+package io.lettucef.core.commands
 
 import io.lettuce.core.Range
 import io.lettuce.core.Limit
@@ -16,7 +16,7 @@ import io.lettuce.core.output.ScoredValueStreamingChannel
 import io.lettuce.core.output.ValueStreamingChannel
 import cats.syntax.functor._
 import io.lettuce.core.api.async._
-import io.slettuce.core.util.{JavaFutureUtil => JF}
+import io.lettucef.core.util.{JavaFutureUtil => JF}
 import scala.jdk.CollectionConverters._
 
 

@@ -27,13 +27,13 @@ object GeneratorApp extends IOApp {
 
       FunctionalPrinter()
         .add("// Code generated. DO NOT EDIT")
-        .add("package io.slettuce.core.commands")
+        .add("package io.lettucef.core.commands")
         .newline
         .add(async.imports.map(expr => s"import $expr"): _*)
         .add(
           """import cats.syntax.functor._
             |import io.lettuce.core.api.async._
-            |import io.slettuce.core.util.{JavaFutureUtil => JF}
+            |import io.lettucef.core.util.{JavaFutureUtil => JF}
             |import scala.jdk.CollectionConverters._
             |
             |""".stripMargin
