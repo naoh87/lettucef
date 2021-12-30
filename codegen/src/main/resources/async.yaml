@@ -1,3 +1,4 @@
+
 - underlying: RedisKeyAsyncCommands[K, V]
   output: KeyCommands
   methods:
@@ -62,6 +63,7 @@
   - io.lettuce.core.StreamScanCursor
   - io.lettuce.core.output.KeyStreamingChannel
   - io.lettuce.core.output.ValueStreamingChannel
+
 - underlying: RedisStreamAsyncCommands[K, V]
   output: StreamCommands
   methods:
@@ -113,6 +115,7 @@
   - io.lettuce.core.XTrimArgs
   - io.lettucef.core.models.stream._
   - io.lettucef.core.models._
+
 - underlying: RedisStringAsyncCommands[K, V]
   output: StringCommands
   methods:
@@ -162,6 +165,7 @@
   - io.lettuce.core.StrAlgoArgs
   - io.lettuce.core.StringMatchResult
   - io.lettuce.core.output.KeyValueStreamingChannel
+
 - underlying: BaseRedisAsyncCommands[K, V]
   output: BaseCommands
   methods:
@@ -179,6 +183,7 @@
   - RedisFuture<Long> waitForReplication(int replicas, long timeout);
   imports:
   - io.lettucef.core.models._
+
 - underlying: RedisClusterAsyncCommands[K, V]
   output: ClusterCommands
   methods:
@@ -212,6 +217,7 @@
   imports:
   - io.lettuce.core.cluster.api.async.RedisClusterAsyncCommands
   - io.lettucef.core.models._
+
 - underlying: RedisHashAsyncCommands[K, V]
   output: HashCommands
   methods:
@@ -256,6 +262,7 @@
   - io.lettuce.core.output.KeyStreamingChannel
   - io.lettuce.core.output.KeyValueStreamingChannel
   - io.lettuce.core.output.ValueStreamingChannel
+
 - underlying: RedisHLLAsyncCommands[K, V]
   output: HLLCommands
   methods:
@@ -263,6 +270,7 @@
   - RedisFuture<String> pfmerge(K destkey, K... sourcekeys);
   - RedisFuture<Long> pfcount(K... keys);
   imports: []
+
 - underlying: RedisListAsyncCommands[K, V]
   output: ListCommands
   methods:
@@ -302,6 +310,7 @@
   - io.lettuce.core.LPosArgs
   - io.lettuce.core.RedisFuture
   - io.lettuce.core.output.ValueStreamingChannel
+
 - underlying: RedisServerAsyncCommands[K, V]
   output: ServerCommands
   methods:
@@ -335,10 +344,10 @@
   - RedisFuture<String> debugSdslen(K key);
   - RedisFuture<String> flushall();
   - RedisFuture<String> flushall(FlushMode flushMode);
-  - RedisFuture<String> flushallAsync();
+  # - RedisFuture<String> flushallAsync();
   - RedisFuture<String> flushdb();
   - RedisFuture<String> flushdb(FlushMode flushMode);
-  - RedisFuture<String> flushdbAsync();
+  # - RedisFuture<String> flushdbAsync();
   - RedisFuture<String> info();
   - RedisFuture<String> info(String section);
   - RedisFuture<Date> lastsave();
@@ -360,6 +369,7 @@
   - io.lettuce.core.UnblockType
   - io.lettuce.core.protocol.CommandType
   - io.lettucef.core.models._
+
 - underlying: RedisSetAsyncCommands[K, V]
   output: SetCommands
   methods:
@@ -399,6 +409,7 @@
   - io.lettuce.core.StreamScanCursor
   - io.lettuce.core.ValueScanCursor
   - io.lettuce.core.output.ValueStreamingChannel
+
 - underlying: RedisSortedSetAsyncCommands[K, V]
   output: SortedSetCommands
   methods:
@@ -543,6 +554,7 @@
   - io.lettuce.core.ScoredValueScanCursor
   - io.lettuce.core.output.ScoredValueStreamingChannel
   - io.lettuce.core.output.ValueStreamingChannel
+
 - underlying: RedisGeoAsyncCommands[K, V]
   output: GeoCommands
   methods:
@@ -574,3 +586,27 @@
   - io.lettuce.core.GeoWithin
   - io.lettuce.core.RedisFuture
   - io.lettuce.core.Value
+
+- underlying: RedisAclAsyncCommands[K, V]
+  output: AclCommands
+  methods:
+  - RedisFuture<Set<AclCategory>> aclCat();
+  - RedisFuture<Set<CommandType>> aclCat(AclCategory category);
+  - RedisFuture<Long> aclDeluser(String... usernames);
+  - RedisFuture<String> aclGenpass();
+  - RedisFuture<String> aclGenpass(int bits);
+  - RedisFuture<List<Object>> aclGetuser(String username);
+  - RedisFuture<List<String>> aclList();
+  - RedisFuture<String> aclLoad();
+  - RedisFuture<List<Map<String, Object>>> aclLog();
+  - RedisFuture<List<Map<String, Object>>> aclLog(int count);
+  - RedisFuture<String> aclLogReset();
+  - RedisFuture<String> aclSave();
+  - RedisFuture<String> aclSetuser(String username, AclSetuserArgs setuserArgs);
+  - RedisFuture<List<String>> aclUsers();
+  - RedisFuture<String> aclWhoami();
+  imports:
+  - io.lettuce.core.AclCategory
+  - io.lettuce.core.AclSetuserArgs
+  - io.lettuce.core.protocol.CommandType
+  - io.lettucef.core.models._

@@ -106,17 +106,11 @@ trait ServerCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def flushall(flushMode: FlushMode): F[String] =
     JF.toAsync(underlying.flushall(flushMode))
   
-  def flushallAsync(): F[String] =
-    JF.toAsync(underlying.flushallAsync())
-  
   def flushdb(): F[String] =
     JF.toAsync(underlying.flushdb())
   
   def flushdb(flushMode: FlushMode): F[String] =
     JF.toAsync(underlying.flushdb(flushMode))
-  
-  def flushdbAsync(): F[String] =
-    JF.toAsync(underlying.flushdbAsync())
   
   def info(): F[String] =
     JF.toAsync(underlying.info())

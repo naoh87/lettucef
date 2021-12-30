@@ -12,6 +12,7 @@ final class RedisClusterCommandsF[F[_], K, V](
   codec: RedisCodec[K, V]
 )(implicit F: Async[F], V: ClassTag[V], K: ClassTag[K])
   extends AsyncCallCommands[F, K, V]
+    with AclCommands[F, K, V]
     with ClusterCommands[F, K, V]
     with GeoCommands[F, K, V]
     with HashCommands[F, K, V]
