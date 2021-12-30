@@ -7,8 +7,8 @@ import io.lettuce.core.protocol.BaseRedisCommandBuilder
 import io.lettuce.core.protocol.CommandArgs
 
 
-final class ManualDispatchHelper[K, V](codec: RedisCodec[K, V]) extends BaseRedisCommandBuilder[K, V](codec) {
-  def createScriptOutput[A](tpe: ScriptOutputType): CommandOutput[K, V, A] = newScriptOutput(codec, tpe)
+final class ManualDispatchHelper[K, V](val redisCodec: RedisCodec[K, V]) extends BaseRedisCommandBuilder[K, V](redisCodec) {
+  def createScriptOutput[A](tpe: ScriptOutputType): CommandOutput[K, V, A] = newScriptOutput(redisCodec, tpe)
 
-  def createArgs(): CommandArgs[K, V] = new CommandArgs[K, V](codec)
+  def createArgs(): CommandArgs[K, V] = new CommandArgs[K, V](redisCodec)
 }

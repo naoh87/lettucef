@@ -57,13 +57,7 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def zcard(key: K): F[Long] =
     JF.toAsync(underlying.zcard(key)).map(Long2long)
   
-  def zcount(key: K, min: Double, max: Double): F[Long] =
-    JF.toAsync(underlying.zcount(key, min, max)).map(Long2long)
-  
-  def zcount(key: K, min: String, max: String): F[Long] =
-    JF.toAsync(underlying.zcount(key, min, max)).map(Long2long)
-  
-  def zcount(key: K, range: Range[Number]): F[Long] =
+  def zcount(key: K, range: Range[_ <: Number]): F[Long] =
     JF.toAsync(underlying.zcount(key, range)).map(Long2long)
   
   def zdiff(keys: K*): F[Seq[V]] =
@@ -96,10 +90,7 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def zinterstore(destination: K, storeArgs: ZStoreArgs, keys: K*): F[Long] =
     JF.toAsync(underlying.zinterstore(destination, storeArgs, keys: _*)).map(Long2long)
   
-  def zlexcount(key: K, min: String, max: String): F[Long] =
-    JF.toAsync(underlying.zlexcount(key, min, max)).map(Long2long)
-  
-  def zlexcount(key: K, range: Range[V]): F[Long] =
+  def zlexcount(key: K, range: Range[_ <: V]): F[Long] =
     JF.toAsync(underlying.zlexcount(key, range)).map(Long2long)
   
   def zmscore(key: K, members: V*): F[Seq[Double]] =
@@ -141,94 +132,40 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def zrangeWithScores(channel: ScoredValueStreamingChannel[V], key: K, start: Long, stop: Long): F[Long] =
     JF.toAsync(underlying.zrangeWithScores(channel, key, start, stop)).map(Long2long)
   
-  def zrangebylex(key: K, min: String, max: String): F[Seq[V]] =
-    JF.toAsync(underlying.zrangebylex(key, min, max)).map(_.asScala.toSeq)
-  
-  def zrangebylex(key: K, range: Range[V]): F[Seq[V]] =
+  def zrangebylex(key: K, range: Range[_ <: V]): F[Seq[V]] =
     JF.toAsync(underlying.zrangebylex(key, range)).map(_.asScala.toSeq)
   
-  def zrangebylex(key: K, min: String, max: String, offset: Long, count: Long): F[Seq[V]] =
-    JF.toAsync(underlying.zrangebylex(key, min, max, offset, count)).map(_.asScala.toSeq)
-  
-  def zrangebylex(key: K, range: Range[V], limit: Limit): F[Seq[V]] =
+  def zrangebylex(key: K, range: Range[_ <: V], limit: Limit): F[Seq[V]] =
     JF.toAsync(underlying.zrangebylex(key, range, limit)).map(_.asScala.toSeq)
   
-  def zrangebyscore(key: K, min: Double, max: Double): F[Seq[V]] =
-    JF.toAsync(underlying.zrangebyscore(key, min, max)).map(_.asScala.toSeq)
-  
-  def zrangebyscore(key: K, min: String, max: String): F[Seq[V]] =
-    JF.toAsync(underlying.zrangebyscore(key, min, max)).map(_.asScala.toSeq)
-  
-  def zrangebyscore(key: K, range: Range[Number]): F[Seq[V]] =
+  def zrangebyscore(key: K, range: Range[_ <: Number]): F[Seq[V]] =
     JF.toAsync(underlying.zrangebyscore(key, range)).map(_.asScala.toSeq)
   
-  def zrangebyscore(key: K, min: Double, max: Double, offset: Long, count: Long): F[Seq[V]] =
-    JF.toAsync(underlying.zrangebyscore(key, min, max, offset, count)).map(_.asScala.toSeq)
-  
-  def zrangebyscore(key: K, min: String, max: String, offset: Long, count: Long): F[Seq[V]] =
-    JF.toAsync(underlying.zrangebyscore(key, min, max, offset, count)).map(_.asScala.toSeq)
-  
-  def zrangebyscore(key: K, range: Range[Number], limit: Limit): F[Seq[V]] =
+  def zrangebyscore(key: K, range: Range[_ <: Number], limit: Limit): F[Seq[V]] =
     JF.toAsync(underlying.zrangebyscore(key, range, limit)).map(_.asScala.toSeq)
   
-  def zrangebyscore(channel: ValueStreamingChannel[V], key: K, min: Double, max: Double): F[Long] =
-    JF.toAsync(underlying.zrangebyscore(channel, key, min, max)).map(Long2long)
-  
-  def zrangebyscore(channel: ValueStreamingChannel[V], key: K, min: String, max: String): F[Long] =
-    JF.toAsync(underlying.zrangebyscore(channel, key, min, max)).map(Long2long)
-  
-  def zrangebyscore(channel: ValueStreamingChannel[V], key: K, range: Range[Number]): F[Long] =
+  def zrangebyscore(channel: ValueStreamingChannel[V], key: K, range: Range[_ <: Number]): F[Long] =
     JF.toAsync(underlying.zrangebyscore(channel, key, range)).map(Long2long)
   
-  def zrangebyscore(channel: ValueStreamingChannel[V], key: K, min: Double, max: Double, offset: Long, count: Long): F[Long] =
-    JF.toAsync(underlying.zrangebyscore(channel, key, min, max, offset, count)).map(Long2long)
-  
-  def zrangebyscore(channel: ValueStreamingChannel[V], key: K, min: String, max: String, offset: Long, count: Long): F[Long] =
-    JF.toAsync(underlying.zrangebyscore(channel, key, min, max, offset, count)).map(Long2long)
-  
-  def zrangebyscore(channel: ValueStreamingChannel[V], key: K, range: Range[Number], limit: Limit): F[Long] =
+  def zrangebyscore(channel: ValueStreamingChannel[V], key: K, range: Range[_ <: Number], limit: Limit): F[Long] =
     JF.toAsync(underlying.zrangebyscore(channel, key, range, limit)).map(Long2long)
   
-  def zrangebyscoreWithScores(key: K, min: Double, max: Double): F[Seq[ScoredValue[V]]] =
-    JF.toAsync(underlying.zrangebyscoreWithScores(key, min, max)).map(_.asScala.toSeq)
-  
-  def zrangebyscoreWithScores(key: K, min: String, max: String): F[Seq[ScoredValue[V]]] =
-    JF.toAsync(underlying.zrangebyscoreWithScores(key, min, max)).map(_.asScala.toSeq)
-  
-  def zrangebyscoreWithScores(key: K, range: Range[Number]): F[Seq[ScoredValue[V]]] =
+  def zrangebyscoreWithScores(key: K, range: Range[_ <: Number]): F[Seq[ScoredValue[V]]] =
     JF.toAsync(underlying.zrangebyscoreWithScores(key, range)).map(_.asScala.toSeq)
   
-  def zrangebyscoreWithScores(key: K, min: Double, max: Double, offset: Long, count: Long): F[Seq[ScoredValue[V]]] =
-    JF.toAsync(underlying.zrangebyscoreWithScores(key, min, max, offset, count)).map(_.asScala.toSeq)
-  
-  def zrangebyscoreWithScores(key: K, min: String, max: String, offset: Long, count: Long): F[Seq[ScoredValue[V]]] =
-    JF.toAsync(underlying.zrangebyscoreWithScores(key, min, max, offset, count)).map(_.asScala.toSeq)
-  
-  def zrangebyscoreWithScores(key: K, range: Range[Number], limit: Limit): F[Seq[ScoredValue[V]]] =
+  def zrangebyscoreWithScores(key: K, range: Range[_ <: Number], limit: Limit): F[Seq[ScoredValue[V]]] =
     JF.toAsync(underlying.zrangebyscoreWithScores(key, range, limit)).map(_.asScala.toSeq)
   
-  def zrangebyscoreWithScores(channel: ScoredValueStreamingChannel[V], key: K, min: Double, max: Double): F[Long] =
-    JF.toAsync(underlying.zrangebyscoreWithScores(channel, key, min, max)).map(Long2long)
-  
-  def zrangebyscoreWithScores(channel: ScoredValueStreamingChannel[V], key: K, min: String, max: String): F[Long] =
-    JF.toAsync(underlying.zrangebyscoreWithScores(channel, key, min, max)).map(Long2long)
-  
-  def zrangebyscoreWithScores(channel: ScoredValueStreamingChannel[V], key: K, range: Range[Number]): F[Long] =
+  def zrangebyscoreWithScores(channel: ScoredValueStreamingChannel[V], key: K, range: Range[_ <: Number]): F[Long] =
     JF.toAsync(underlying.zrangebyscoreWithScores(channel, key, range)).map(Long2long)
   
-  def zrangebyscoreWithScores(channel: ScoredValueStreamingChannel[V], key: K, min: Double, max: Double, offset: Long, count: Long): F[Long] =
-    JF.toAsync(underlying.zrangebyscoreWithScores(channel, key, min, max, offset, count)).map(Long2long)
-  
-  def zrangebyscoreWithScores(channel: ScoredValueStreamingChannel[V], key: K, min: String, max: String, offset: Long, count: Long): F[Long] =
-    JF.toAsync(underlying.zrangebyscoreWithScores(channel, key, min, max, offset, count)).map(Long2long)
-  
-  def zrangebyscoreWithScores(channel: ScoredValueStreamingChannel[V], key: K, range: Range[Number], limit: Limit): F[Long] =
+  def zrangebyscoreWithScores(channel: ScoredValueStreamingChannel[V], key: K, range: Range[_ <: Number], limit: Limit): F[Long] =
     JF.toAsync(underlying.zrangebyscoreWithScores(channel, key, range, limit)).map(Long2long)
   
-  def zrangestorebylex(dstKey: K, srcKey: K, range: Range[V], limit: Limit): F[Long] =
+  def zrangestorebylex(dstKey: K, srcKey: K, range: Range[_ <: V], limit: Limit): F[Long] =
     JF.toAsync(underlying.zrangestorebylex(dstKey, srcKey, range, limit)).map(Long2long)
   
-  def zrangestorebyscore(dstKey: K, srcKey: K, range: Range[Number], limit: Limit): F[Long] =
+  def zrangestorebyscore(dstKey: K, srcKey: K, range: Range[_ <: Number], limit: Limit): F[Long] =
     JF.toAsync(underlying.zrangestorebyscore(dstKey, srcKey, range, limit)).map(Long2long)
   
   def zrank(key: K, member: V): F[Long] =
@@ -237,22 +174,13 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def zrem(key: K, members: V*): F[Long] =
     JF.toAsync(underlying.zrem(key, members: _*)).map(Long2long)
   
-  def zremrangebylex(key: K, min: String, max: String): F[Long] =
-    JF.toAsync(underlying.zremrangebylex(key, min, max)).map(Long2long)
-  
-  def zremrangebylex(key: K, range: Range[V]): F[Long] =
+  def zremrangebylex(key: K, range: Range[_ <: V]): F[Long] =
     JF.toAsync(underlying.zremrangebylex(key, range)).map(Long2long)
   
   def zremrangebyrank(key: K, start: Long, stop: Long): F[Long] =
     JF.toAsync(underlying.zremrangebyrank(key, start, stop)).map(Long2long)
   
-  def zremrangebyscore(key: K, min: Double, max: Double): F[Long] =
-    JF.toAsync(underlying.zremrangebyscore(key, min, max)).map(Long2long)
-  
-  def zremrangebyscore(key: K, min: String, max: String): F[Long] =
-    JF.toAsync(underlying.zremrangebyscore(key, min, max)).map(Long2long)
-  
-  def zremrangebyscore(key: K, range: Range[Number]): F[Long] =
+  def zremrangebyscore(key: K, range: Range[_ <: Number]): F[Long] =
     JF.toAsync(underlying.zremrangebyscore(key, range)).map(Long2long)
   
   def zrevrange(key: K, start: Long, stop: Long): F[Seq[V]] =
@@ -267,88 +195,40 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def zrevrangeWithScores(channel: ScoredValueStreamingChannel[V], key: K, start: Long, stop: Long): F[Long] =
     JF.toAsync(underlying.zrevrangeWithScores(channel, key, start, stop)).map(Long2long)
   
-  def zrevrangebylex(key: K, range: Range[V]): F[Seq[V]] =
+  def zrevrangebylex(key: K, range: Range[_ <: V]): F[Seq[V]] =
     JF.toAsync(underlying.zrevrangebylex(key, range)).map(_.asScala.toSeq)
   
-  def zrevrangebylex(key: K, range: Range[V], limit: Limit): F[Seq[V]] =
+  def zrevrangebylex(key: K, range: Range[_ <: V], limit: Limit): F[Seq[V]] =
     JF.toAsync(underlying.zrevrangebylex(key, range, limit)).map(_.asScala.toSeq)
   
-  def zrevrangebyscore(key: K, max: Double, min: Double): F[Seq[V]] =
-    JF.toAsync(underlying.zrevrangebyscore(key, max, min)).map(_.asScala.toSeq)
-  
-  def zrevrangebyscore(key: K, max: String, min: String): F[Seq[V]] =
-    JF.toAsync(underlying.zrevrangebyscore(key, max, min)).map(_.asScala.toSeq)
-  
-  def zrevrangebyscore(key: K, range: Range[Number]): F[Seq[V]] =
+  def zrevrangebyscore(key: K, range: Range[_ <: Number]): F[Seq[V]] =
     JF.toAsync(underlying.zrevrangebyscore(key, range)).map(_.asScala.toSeq)
   
-  def zrevrangebyscore(key: K, max: Double, min: Double, offset: Long, count: Long): F[Seq[V]] =
-    JF.toAsync(underlying.zrevrangebyscore(key, max, min, offset, count)).map(_.asScala.toSeq)
-  
-  def zrevrangebyscore(key: K, max: String, min: String, offset: Long, count: Long): F[Seq[V]] =
-    JF.toAsync(underlying.zrevrangebyscore(key, max, min, offset, count)).map(_.asScala.toSeq)
-  
-  def zrevrangebyscore(key: K, range: Range[Number], limit: Limit): F[Seq[V]] =
+  def zrevrangebyscore(key: K, range: Range[_ <: Number], limit: Limit): F[Seq[V]] =
     JF.toAsync(underlying.zrevrangebyscore(key, range, limit)).map(_.asScala.toSeq)
   
-  def zrevrangebyscore(channel: ValueStreamingChannel[V], key: K, max: Double, min: Double): F[Long] =
-    JF.toAsync(underlying.zrevrangebyscore(channel, key, max, min)).map(Long2long)
-  
-  def zrevrangebyscore(channel: ValueStreamingChannel[V], key: K, max: String, min: String): F[Long] =
-    JF.toAsync(underlying.zrevrangebyscore(channel, key, max, min)).map(Long2long)
-  
-  def zrevrangebyscore(channel: ValueStreamingChannel[V], key: K, range: Range[Number]): F[Long] =
+  def zrevrangebyscore(channel: ValueStreamingChannel[V], key: K, range: Range[_ <: Number]): F[Long] =
     JF.toAsync(underlying.zrevrangebyscore(channel, key, range)).map(Long2long)
   
-  def zrevrangebyscore(channel: ValueStreamingChannel[V], key: K, max: Double, min: Double, offset: Long, count: Long): F[Long] =
-    JF.toAsync(underlying.zrevrangebyscore(channel, key, max, min, offset, count)).map(Long2long)
-  
-  def zrevrangebyscore(channel: ValueStreamingChannel[V], key: K, max: String, min: String, offset: Long, count: Long): F[Long] =
-    JF.toAsync(underlying.zrevrangebyscore(channel, key, max, min, offset, count)).map(Long2long)
-  
-  def zrevrangebyscore(channel: ValueStreamingChannel[V], key: K, range: Range[Number], limit: Limit): F[Long] =
+  def zrevrangebyscore(channel: ValueStreamingChannel[V], key: K, range: Range[_ <: Number], limit: Limit): F[Long] =
     JF.toAsync(underlying.zrevrangebyscore(channel, key, range, limit)).map(Long2long)
   
-  def zrevrangebyscoreWithScores(key: K, max: Double, min: Double): F[Seq[ScoredValue[V]]] =
-    JF.toAsync(underlying.zrevrangebyscoreWithScores(key, max, min)).map(_.asScala.toSeq)
-  
-  def zrevrangebyscoreWithScores(key: K, max: String, min: String): F[Seq[ScoredValue[V]]] =
-    JF.toAsync(underlying.zrevrangebyscoreWithScores(key, max, min)).map(_.asScala.toSeq)
-  
-  def zrevrangebyscoreWithScores(key: K, range: Range[Number]): F[Seq[ScoredValue[V]]] =
+  def zrevrangebyscoreWithScores(key: K, range: Range[_ <: Number]): F[Seq[ScoredValue[V]]] =
     JF.toAsync(underlying.zrevrangebyscoreWithScores(key, range)).map(_.asScala.toSeq)
   
-  def zrevrangebyscoreWithScores(key: K, max: Double, min: Double, offset: Long, count: Long): F[Seq[ScoredValue[V]]] =
-    JF.toAsync(underlying.zrevrangebyscoreWithScores(key, max, min, offset, count)).map(_.asScala.toSeq)
-  
-  def zrevrangebyscoreWithScores(key: K, max: String, min: String, offset: Long, count: Long): F[Seq[ScoredValue[V]]] =
-    JF.toAsync(underlying.zrevrangebyscoreWithScores(key, max, min, offset, count)).map(_.asScala.toSeq)
-  
-  def zrevrangebyscoreWithScores(key: K, range: Range[Number], limit: Limit): F[Seq[ScoredValue[V]]] =
+  def zrevrangebyscoreWithScores(key: K, range: Range[_ <: Number], limit: Limit): F[Seq[ScoredValue[V]]] =
     JF.toAsync(underlying.zrevrangebyscoreWithScores(key, range, limit)).map(_.asScala.toSeq)
   
-  def zrevrangebyscoreWithScores(channel: ScoredValueStreamingChannel[V], key: K, max: Double, min: Double): F[Long] =
-    JF.toAsync(underlying.zrevrangebyscoreWithScores(channel, key, max, min)).map(Long2long)
-  
-  def zrevrangebyscoreWithScores(channel: ScoredValueStreamingChannel[V], key: K, max: String, min: String): F[Long] =
-    JF.toAsync(underlying.zrevrangebyscoreWithScores(channel, key, max, min)).map(Long2long)
-  
-  def zrevrangebyscoreWithScores(channel: ScoredValueStreamingChannel[V], key: K, range: Range[Number]): F[Long] =
+  def zrevrangebyscoreWithScores(channel: ScoredValueStreamingChannel[V], key: K, range: Range[_ <: Number]): F[Long] =
     JF.toAsync(underlying.zrevrangebyscoreWithScores(channel, key, range)).map(Long2long)
   
-  def zrevrangebyscoreWithScores(channel: ScoredValueStreamingChannel[V], key: K, max: Double, min: Double, offset: Long, count: Long): F[Long] =
-    JF.toAsync(underlying.zrevrangebyscoreWithScores(channel, key, max, min, offset, count)).map(Long2long)
-  
-  def zrevrangebyscoreWithScores(channel: ScoredValueStreamingChannel[V], key: K, max: String, min: String, offset: Long, count: Long): F[Long] =
-    JF.toAsync(underlying.zrevrangebyscoreWithScores(channel, key, max, min, offset, count)).map(Long2long)
-  
-  def zrevrangebyscoreWithScores(channel: ScoredValueStreamingChannel[V], key: K, range: Range[Number], limit: Limit): F[Long] =
+  def zrevrangebyscoreWithScores(channel: ScoredValueStreamingChannel[V], key: K, range: Range[_ <: Number], limit: Limit): F[Long] =
     JF.toAsync(underlying.zrevrangebyscoreWithScores(channel, key, range, limit)).map(Long2long)
   
-  def zrevrangestorebylex(dstKey: K, srcKey: K, range: Range[V], limit: Limit): F[Long] =
+  def zrevrangestorebylex(dstKey: K, srcKey: K, range: Range[_ <: V], limit: Limit): F[Long] =
     JF.toAsync(underlying.zrevrangestorebylex(dstKey, srcKey, range, limit)).map(Long2long)
   
-  def zrevrangestorebyscore(dstKey: K, srcKey: K, range: Range[Number], limit: Limit): F[Long] =
+  def zrevrangestorebyscore(dstKey: K, srcKey: K, range: Range[_ <: Number], limit: Limit): F[Long] =
     JF.toAsync(underlying.zrevrangestorebyscore(dstKey, srcKey, range, limit)).map(Long2long)
   
   def zrevrank(key: K, member: V): F[Long] =

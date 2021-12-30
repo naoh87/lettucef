@@ -22,7 +22,7 @@ object GeneratorApp extends IOApp {
           scala.io.Source.fromResource("async.yaml").mkString)
         .flatMap(_.as[List[Async]])
     asyncList.map { async =>
-      println(async.underlying)
+      println("-" * 32 + "\n" + async.underlying)
       val outputDir = Paths.get(s"core/src/main/scala/io/slettuce/core/commands/${async.output}.scala").toAbsolutePath
 
       FunctionalPrinter()
@@ -44,7 +44,7 @@ object GeneratorApp extends IOApp {
           .add(s"protected val underlying: ${async.underlying}").newline
           .print(async.methods) {
             case (p, m) if m.existArgs(_.existName(Set("Object", "Date"))) =>
-              println(s"skipped ${m.scalaDef}")
+              println(s"- skipped ${m.scalaDef}")
               p
             case (p, m) =>
               val scalaDef = m.mapOutput(_.toScala).mapArgs(_.toScala)

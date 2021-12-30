@@ -78,7 +78,7 @@ trait ToScalaCode {
 }
 
 object JavaAnyVal {
-//  val anyvals = Seq("bype", "boolean", "double", "long", "int")
+  //  val anyvals = Seq("bype", "boolean", "double", "long", "int")
 }
 
 object Method {
@@ -88,9 +88,9 @@ object Method {
     def p2: TypeExpr = generics(1)
 
     def scalaDef: String = {
-      if (generics.isEmpty) name.scalaDef else {
-        s"${name.scalaDef}${generics.map(_.scalaDef).mkString("[", ", ", "]")}"
-      }
+      val postFix = if (generics.isEmpty) "" else generics.map(_.scalaDef).mkString("[", ", ", "]")
+      val preFix = covar.fold("")(n => s"$n <: ")
+      s"$preFix${name.scalaDef}$postFix"
     }
 
     def toScala: TypeExpr = {
@@ -167,5 +167,5 @@ object Method {
   }
 
   implicit val decoder: Decoder[Method] =
-    Decoder[String].emap(e => MethodParser.meth.parseAll(e).left.map(_ => s"fail to parse as Method ${e}"))
+    Decoder[String].emap(e => MethodParser.meth.parseAll(e).left.map(_ => s"fail to parse as Method $e"))
 }
