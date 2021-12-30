@@ -26,16 +26,15 @@ object RedisClientF {
 }
 
 class RedisClientF[F[_]](underlying: RedisClusterClient)(implicit F: Async[F]) {
-  def connect[K, V: ClassTag](codec: RedisCodec[K, V]): Resource[F, RedisClusterConnectionF[F, K, V]] = {
+  def connect[K, V: ClassTag](codec: RedisCodec[K, V]): Resource[F, RedisClusterConnectionF[F, K, V]] =
     Resource.suspend(
-      F.delay(underlying.getPartitions)
+      F.blocking(underlying.getPartitions)
         .map(_ =>
           Resource
             .make(
               JavaFutureUtil.toAsync(underlying.connectAsync(codec)))(c =>
               JavaFutureUtil.toAsync(c.closeAsync()).void)
             .map(c => new RedisClusterConnectionF[F, K, V](c))))
-  }
 }
 
 class RedisClusterConnectionF[F[_] : Async, K, V: ClassTag](underlying: StatefulRedisClusterConnection[K, V]) {
