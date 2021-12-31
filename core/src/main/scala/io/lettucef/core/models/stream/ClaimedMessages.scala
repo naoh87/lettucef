@@ -23,7 +23,7 @@ object StreamMessage {
 
 case class PendingMessage(
   id: String,
-  consumer: String, //This should be K. but lettuce api is unsoundness
+  consumer: String, //This should be K. But lettuce api returns String
   msSinceLastDelivery: Long,
   redeliveryCount: Long
 )

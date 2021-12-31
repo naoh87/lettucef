@@ -148,6 +148,12 @@ object Method {
           case "int" => TypeExpr.one("Int")
           case "List" => TypeExpr(TypeName("Seq"), generics.map(_.toScala(name :: parent)), covar)
           case "Object" if generics.isEmpty => TypeExpr(TypeName("RedisData"), List(TypeExpr.one("V")), covar)
+          case "Range" =>
+            val converted = p1.name.expr match {
+              case "Number" => TypeName("Double")
+              case other => p1.name
+            }
+            TypeExpr.create("RedisRange", p1.copy(name = converted, covar = None) :: Nil)
           case "Value" =>
             TypeExpr.create("Option", p1.toScala(name :: parent) :: Nil)
           case "KeyValue" =>
@@ -202,8 +208,16 @@ object Method {
       } else if (Set("List", "Map")(tpe.name.expr)) {
         s"${arg.name}.asJava"
       } else {
-        assert(this.tpe.scalaDef == arg.tpe.scalaDef, this.scalaDef)
-        arg.name
+        arg.tpe.name.expr match {
+          case "RedisRange" =>
+            this.tpe.p1.name.expr match {
+              case "Number" => s"${arg.name}.toJavaNumber"
+              case _ => s"${arg.name}.toJava"
+            }
+          case _ =>
+            assert(this.tpe.scalaDef == arg.tpe.scalaDef, s"call failure (${this.scalaDef})(${arg.scalaDef})")
+            arg.name
+        }
       }
 
     def toScala: Argument = {

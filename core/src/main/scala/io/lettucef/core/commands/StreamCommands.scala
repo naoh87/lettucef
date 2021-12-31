@@ -4,7 +4,6 @@ package io.lettucef.core.commands
 import cats.syntax.functor._
 import io.lettuce.core.Consumer
 import io.lettuce.core.Limit
-import io.lettuce.core.Range
 import io.lettuce.core.XAddArgs
 import io.lettuce.core.XAutoClaimArgs
 import io.lettuce.core.XClaimArgs
@@ -79,20 +78,20 @@ trait StreamCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def xpending(key: K, group: K): F[PendingMessages] =
     JF.toAsync(underlying.xpending(key, group)).map(PendingMessages.from)
   
-  def xpending(key: K, group: K, range: Range[String], limit: Limit): F[Seq[PendingMessage]] =
-    JF.toAsync(underlying.xpending(key, group, range, limit)).map(_.asScala.toSeq.map(PendingMessage.from))
+  def xpending(key: K, group: K, range: RedisRange[String], limit: Limit): F[Seq[PendingMessage]] =
+    JF.toAsync(underlying.xpending(key, group, range.toJava, limit)).map(_.asScala.toSeq.map(PendingMessage.from))
   
-  def xpending(key: K, consumer: Consumer[K], range: Range[String], limit: Limit): F[Seq[PendingMessage]] =
-    JF.toAsync(underlying.xpending(key, consumer, range, limit)).map(_.asScala.toSeq.map(PendingMessage.from))
+  def xpending(key: K, consumer: Consumer[K], range: RedisRange[String], limit: Limit): F[Seq[PendingMessage]] =
+    JF.toAsync(underlying.xpending(key, consumer, range.toJava, limit)).map(_.asScala.toSeq.map(PendingMessage.from))
   
   def xpending(key: K, args: XPendingArgs[K]): F[Seq[PendingMessage]] =
     JF.toAsync(underlying.xpending(key, args)).map(_.asScala.toSeq.map(PendingMessage.from))
   
-  def xrange(key: K, range: Range[String]): F[Seq[StreamMessage[K, V]]] =
-    JF.toAsync(underlying.xrange(key, range)).map(_.asScala.toSeq.map(StreamMessage.from))
+  def xrange(key: K, range: RedisRange[String]): F[Seq[StreamMessage[K, V]]] =
+    JF.toAsync(underlying.xrange(key, range.toJava)).map(_.asScala.toSeq.map(StreamMessage.from))
   
-  def xrange(key: K, range: Range[String], limit: Limit): F[Seq[StreamMessage[K, V]]] =
-    JF.toAsync(underlying.xrange(key, range, limit)).map(_.asScala.toSeq.map(StreamMessage.from))
+  def xrange(key: K, range: RedisRange[String], limit: Limit): F[Seq[StreamMessage[K, V]]] =
+    JF.toAsync(underlying.xrange(key, range.toJava, limit)).map(_.asScala.toSeq.map(StreamMessage.from))
   
   def xread(streams: StreamOffset[K]*): F[Seq[StreamMessage[K, V]]] =
     JF.toAsync(underlying.xread(streams: _*)).map(_.asScala.toSeq.map(StreamMessage.from))
@@ -106,11 +105,11 @@ trait StreamCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def xreadgroup(consumer: Consumer[K], args: XReadArgs, streams: StreamOffset[K]*): F[Seq[StreamMessage[K, V]]] =
     JF.toAsync(underlying.xreadgroup(consumer, args, streams: _*)).map(_.asScala.toSeq.map(StreamMessage.from))
   
-  def xrevrange(key: K, range: Range[String]): F[Seq[StreamMessage[K, V]]] =
-    JF.toAsync(underlying.xrevrange(key, range)).map(_.asScala.toSeq.map(StreamMessage.from))
+  def xrevrange(key: K, range: RedisRange[String]): F[Seq[StreamMessage[K, V]]] =
+    JF.toAsync(underlying.xrevrange(key, range.toJava)).map(_.asScala.toSeq.map(StreamMessage.from))
   
-  def xrevrange(key: K, range: Range[String], limit: Limit): F[Seq[StreamMessage[K, V]]] =
-    JF.toAsync(underlying.xrevrange(key, range, limit)).map(_.asScala.toSeq.map(StreamMessage.from))
+  def xrevrange(key: K, range: RedisRange[String], limit: Limit): F[Seq[StreamMessage[K, V]]] =
+    JF.toAsync(underlying.xrevrange(key, range.toJava, limit)).map(_.asScala.toSeq.map(StreamMessage.from))
   
   def xtrim(key: K, count: Long): F[Long] =
     JF.toAsync(underlying.xtrim(key, count)).map(Long2long)

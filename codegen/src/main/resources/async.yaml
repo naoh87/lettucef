@@ -109,7 +109,6 @@
   - io.lettuce.core.XGroupCreateArgs
   - io.lettuce.core.XPendingArgs
   - io.lettuce.core.XReadArgs.StreamOffset
-  - io.lettuce.core.Range
   - io.lettuce.core.XReadArgs
   - io.lettuce.core.XTrimArgs
   - io.lettucef.core.models.stream._
@@ -541,7 +540,6 @@
   - RedisFuture<Long> zunionstore(K destination, K... keys);
   - RedisFuture<Long> zunionstore(K destination, ZStoreArgs storeArgs, K... keys);
   imports:
-  - io.lettuce.core.Range
   - io.lettuce.core.Limit
   - io.lettuce.core.ZStoreArgs
   - io.lettuce.core.ZAddArgs
@@ -549,6 +547,7 @@
   - io.lettuce.core.ScanCursor
   - io.lettuce.core.ScanArgs
   - io.lettuce.core.ScoredValueScanCursor
+  - io.lettucef.core.models._
 
 - underlying: RedisGeoAsyncCommands[K, V]
   output: GeoCommands

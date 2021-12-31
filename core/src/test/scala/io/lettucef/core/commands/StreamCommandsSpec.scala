@@ -12,6 +12,7 @@ import io.lettuce.core.protocol.ProtocolVersion
 import io.lettucef.core.RedisClientF
 import io.lettucef.core.RedisClusterCommandsF
 import io.lettucef.core.models.RedisData.RedisArray
+import io.lettucef.core.models.RedisRange
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 import scala.concurrent.duration.DurationInt
@@ -35,8 +36,11 @@ class StreamCommandsSpec extends AnyFreeSpec with Matchers {
     val script = """return {false, {true}, {{"F", "fuga"}, 123}}"""
     for {
       r <- c.eval(script, Nil, Nil)
+      _ <- c.zadd("fuga".asKey, (1 to 5).map(i => i.toDouble -> i.toString.asValue): _*)
+      fuga <- c.zrangebyscore("fuga".asKey, RedisRange.inclusive(3d).openEnd)
       g <- c.evalsha(c.digest(script), Nil, Nil)
     } yield {
+      println(fuga)
       r shouldBe g
       println("result: " + r)
     }
