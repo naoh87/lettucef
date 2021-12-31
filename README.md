@@ -15,13 +15,7 @@ This library hide the troublesome matters when you use Lettuce.
 - [x] Convert Java collection types to scala collection
 - [x] New type-safe Lua scripting I/F
 - [x] Eliminate java.lang.Object I/F
-- [ ] Eliminate null
-  - [x] Wrap simple nullable response
-  - [ ] Structured
-    - [x] StreamMessages
-    - [x] KeyValues
-    - [ ] Cursors
-- [ ] Scala mind type
-  - [ ] `Range[V]`
-    - Type inference will go wrong when you create `Range[_ <: java.lang.Number]`
+- [x] Eliminate null
+- [x] Add useful datatype for Scala
 - [ ] Convert Flux I/F with fs2.Stream
+  - [ ] Sub

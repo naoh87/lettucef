@@ -5,13 +5,13 @@ import java.time.Duration
 import java.time.Instant
 import cats.syntax.functor._
 import io.lettuce.core.CopyArgs
-import io.lettuce.core.KeyScanCursor
 import io.lettuce.core.MigrateArgs
 import io.lettuce.core.RestoreArgs
 import io.lettuce.core.ScanArgs
 import io.lettuce.core.ScanCursor
 import io.lettuce.core.SortArgs
 import io.lettuce.core.api.async._
+import io.lettucef.core.models._
 import io.lettucef.core.util.LettuceValueConverter
 import io.lettucef.core.util.{JavaFutureUtil => JF}
 import scala.jdk.CollectionConverters._
@@ -126,17 +126,17 @@ trait KeyCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def `type`(key: K): F[String] =
     JF.toAsync(underlying.`type`(key))
   
-  def scan(): F[KeyScanCursor[K]] =
-    JF.toAsync(underlying.scan())
+  def scan(): F[DataScanCursor[K]] =
+    JF.toAsync(underlying.scan()).map(cur => DataScanCursor.from(cur))
   
-  def scan(scanArgs: ScanArgs): F[KeyScanCursor[K]] =
-    JF.toAsync(underlying.scan(scanArgs))
+  def scan(scanArgs: ScanArgs): F[DataScanCursor[K]] =
+    JF.toAsync(underlying.scan(scanArgs)).map(cur => DataScanCursor.from(cur))
   
-  def scan(scanCursor: ScanCursor, scanArgs: ScanArgs): F[KeyScanCursor[K]] =
-    JF.toAsync(underlying.scan(scanCursor, scanArgs))
+  def scan(scanCursor: ScanCursor, scanArgs: ScanArgs): F[DataScanCursor[K]] =
+    JF.toAsync(underlying.scan(scanCursor, scanArgs)).map(cur => DataScanCursor.from(cur))
   
-  def scan(scanCursor: ScanCursor): F[KeyScanCursor[K]] =
-    JF.toAsync(underlying.scan(scanCursor))
+  def scan(scanCursor: ScanCursor): F[DataScanCursor[K]] =
+    JF.toAsync(underlying.scan(scanCursor)).map(cur => DataScanCursor.from(cur))
   
 }
 

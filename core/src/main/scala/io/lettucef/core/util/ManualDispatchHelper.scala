@@ -56,8 +56,7 @@ final class RedisDataOutput[K, V](codec: RedisCodec[K, V]) extends CommandOutput
   override def setError(error: ByteBuffer): Unit =
     setError(decodeAscii(error))
 
-  @inline()
-  private[this] def put(data: RedisData[V]): Unit =
+  @inline private[this] def put(data: RedisData[V]): Unit =
     if (current eq null) {
       output = data
     } else {

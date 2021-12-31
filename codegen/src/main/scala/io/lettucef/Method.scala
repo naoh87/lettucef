@@ -83,6 +83,8 @@ case class Method(name: String, args: List[Argument], output: TypeExpr, checkNul
                   "LettuceValueConverter.fromScoredValue"
                 }
             }
+          case "ValueScanCursor" | "MapScanCursor" | "KeyScanCursor" | "ScoredValueScanCursor" =>
+            Some("cur => DataScanCursor.from(cur)")
           case _ =>
             println(s"unregistered j2s ${from.scalaDef} => ${to.scalaDef}")
             None
@@ -166,6 +168,12 @@ object Method {
               case _ =>
                 tpl
             }
+          case "ValueScanCursor" | "KeyScanCursor" =>
+            TypeExpr.create("DataScanCursor", p1 :: Nil)
+          case "MapScanCursor" =>
+            TypeExpr.create("DataScanCursor", TypeExpr.tuple(generics) :: Nil)
+          case "ScoredValueScanCursor" =>
+            TypeExpr.create("DataScanCursor", TypeExpr.tuple(TypeExpr.one("Double") :: p1 :: Nil) :: Nil)
           case _ => copy(generics = generics.map(_.toScala(name :: parent)))
         }
       }
@@ -189,6 +197,9 @@ object Method {
 
     def create(name: String, gen: List[TypeExpr] = Nil): TypeExpr =
       TypeExpr(TypeName(name), gen, None)
+
+    def tuple(ts: List[TypeExpr]): TypeExpr =
+      create(s"Tuple${ts.size}", ts)
   }
 
   case class Argument(name: String, tpe: TypeExpr, isVariable: Boolean) extends ToScalaCode {

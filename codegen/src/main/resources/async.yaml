@@ -56,7 +56,7 @@
   - java.time.Duration
   - java.time.Instant
   - io.lettuce.core.CopyArgs
-  - io.lettuce.core.KeyScanCursor
+  - io.lettucef.core.models._
   - io.lettuce.core.MigrateArgs
   - io.lettuce.core.RestoreArgs
   - io.lettuce.core.ScanArgs
@@ -256,7 +256,7 @@
   - RedisFuture<List<V>> hvals(K key);
   - RedisFuture<Long> hvals(ValueStreamingChannel<V> channel, K key);
   imports:
-  - io.lettuce.core.MapScanCursor
+  - io.lettucef.core.models._
   - io.lettuce.core.ScanArgs
   - io.lettuce.core.ScanCursor
 
@@ -407,7 +407,7 @@
   imports:
   - io.lettuce.core.ScanArgs
   - io.lettuce.core.ScanCursor
-  - io.lettuce.core.ValueScanCursor
+  - io.lettucef.core.models._
 
 - underlying: RedisSortedSetAsyncCommands[K, V]
   output: SortedSetCommands
@@ -546,7 +546,6 @@
   - io.lettuce.core.ZAggregateArgs
   - io.lettuce.core.ScanCursor
   - io.lettuce.core.ScanArgs
-  - io.lettuce.core.ScoredValueScanCursor
   - io.lettucef.core.models._
 
 - underlying: RedisGeoAsyncCommands[K, V]

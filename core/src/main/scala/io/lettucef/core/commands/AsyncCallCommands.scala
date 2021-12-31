@@ -16,5 +16,5 @@ trait AsyncCallCommands[F[_], K, V] {
   protected val dispatchHelper: ManualDispatchHelper[K, V]
 
   protected def call[R](f: underlying.type => RedisFuture[R]): F[R] =
-    JF.toAsync(f(underlying))
+    JF.blocking(f(underlying))
 }

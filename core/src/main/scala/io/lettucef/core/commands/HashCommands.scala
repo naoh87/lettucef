@@ -2,10 +2,10 @@
 package io.lettucef.core.commands
 
 import cats.syntax.functor._
-import io.lettuce.core.MapScanCursor
 import io.lettuce.core.ScanArgs
 import io.lettuce.core.ScanCursor
 import io.lettuce.core.api.async._
+import io.lettucef.core.models._
 import io.lettucef.core.util.LettuceValueConverter
 import io.lettucef.core.util.{JavaFutureUtil => JF}
 import scala.jdk.CollectionConverters._
@@ -57,17 +57,17 @@ trait HashCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def hrandfieldWithvalues(key: K, count: Long): F[Seq[(K, Option[V])]] =
     JF.toAsync(underlying.hrandfieldWithvalues(key, count)).map(_.asScala.toSeq.map(kv => LettuceValueConverter.fromKeyValue(kv)))
   
-  def hscan(key: K): F[MapScanCursor[K, V]] =
-    JF.toAsync(underlying.hscan(key))
+  def hscan(key: K): F[DataScanCursor[(K, V)]] =
+    JF.toAsync(underlying.hscan(key)).map(cur => DataScanCursor.from(cur))
   
-  def hscan(key: K, scanArgs: ScanArgs): F[MapScanCursor[K, V]] =
-    JF.toAsync(underlying.hscan(key, scanArgs))
+  def hscan(key: K, scanArgs: ScanArgs): F[DataScanCursor[(K, V)]] =
+    JF.toAsync(underlying.hscan(key, scanArgs)).map(cur => DataScanCursor.from(cur))
   
-  def hscan(key: K, scanCursor: ScanCursor, scanArgs: ScanArgs): F[MapScanCursor[K, V]] =
-    JF.toAsync(underlying.hscan(key, scanCursor, scanArgs))
+  def hscan(key: K, scanCursor: ScanCursor, scanArgs: ScanArgs): F[DataScanCursor[(K, V)]] =
+    JF.toAsync(underlying.hscan(key, scanCursor, scanArgs)).map(cur => DataScanCursor.from(cur))
   
-  def hscan(key: K, scanCursor: ScanCursor): F[MapScanCursor[K, V]] =
-    JF.toAsync(underlying.hscan(key, scanCursor))
+  def hscan(key: K, scanCursor: ScanCursor): F[DataScanCursor[(K, V)]] =
+    JF.toAsync(underlying.hscan(key, scanCursor)).map(cur => DataScanCursor.from(cur))
   
   def hset(key: K, field: K, value: V): F[Boolean] =
     JF.toAsync(underlying.hset(key, field, value)).map(Boolean2boolean)

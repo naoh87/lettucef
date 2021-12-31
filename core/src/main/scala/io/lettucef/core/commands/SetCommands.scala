@@ -4,8 +4,8 @@ package io.lettucef.core.commands
 import cats.syntax.functor._
 import io.lettuce.core.ScanArgs
 import io.lettuce.core.ScanCursor
-import io.lettuce.core.ValueScanCursor
 import io.lettuce.core.api.async._
+import io.lettucef.core.models._
 import io.lettucef.core.util.LettuceValueConverter
 import io.lettucef.core.util.{JavaFutureUtil => JF}
 import scala.jdk.CollectionConverters._
@@ -66,17 +66,17 @@ trait SetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def sunionstore(destination: K, keys: K*): F[Long] =
     JF.toAsync(underlying.sunionstore(destination, keys: _*)).map(Long2long)
   
-  def sscan(key: K): F[ValueScanCursor[V]] =
-    JF.toAsync(underlying.sscan(key))
+  def sscan(key: K): F[DataScanCursor[V]] =
+    JF.toAsync(underlying.sscan(key)).map(cur => DataScanCursor.from(cur))
   
-  def sscan(key: K, scanArgs: ScanArgs): F[ValueScanCursor[V]] =
-    JF.toAsync(underlying.sscan(key, scanArgs))
+  def sscan(key: K, scanArgs: ScanArgs): F[DataScanCursor[V]] =
+    JF.toAsync(underlying.sscan(key, scanArgs)).map(cur => DataScanCursor.from(cur))
   
-  def sscan(key: K, scanCursor: ScanCursor, scanArgs: ScanArgs): F[ValueScanCursor[V]] =
-    JF.toAsync(underlying.sscan(key, scanCursor, scanArgs))
+  def sscan(key: K, scanCursor: ScanCursor, scanArgs: ScanArgs): F[DataScanCursor[V]] =
+    JF.toAsync(underlying.sscan(key, scanCursor, scanArgs)).map(cur => DataScanCursor.from(cur))
   
-  def sscan(key: K, scanCursor: ScanCursor): F[ValueScanCursor[V]] =
-    JF.toAsync(underlying.sscan(key, scanCursor))
+  def sscan(key: K, scanCursor: ScanCursor): F[DataScanCursor[V]] =
+    JF.toAsync(underlying.sscan(key, scanCursor)).map(cur => DataScanCursor.from(cur))
   
 }
 

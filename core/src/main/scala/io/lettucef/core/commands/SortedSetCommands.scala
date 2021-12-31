@@ -5,7 +5,6 @@ import cats.syntax.functor._
 import io.lettuce.core.Limit
 import io.lettuce.core.ScanArgs
 import io.lettuce.core.ScanCursor
-import io.lettuce.core.ScoredValueScanCursor
 import io.lettuce.core.ZAddArgs
 import io.lettuce.core.ZAggregateArgs
 import io.lettuce.core.ZStoreArgs
@@ -194,17 +193,17 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def zrevrank(key: K, member: V): F[Long] =
     JF.toAsync(underlying.zrevrank(key, member)).map(Long2long)
   
-  def zscan(key: K): F[ScoredValueScanCursor[V]] =
-    JF.toAsync(underlying.zscan(key))
+  def zscan(key: K): F[DataScanCursor[(Double, V)]] =
+    JF.toAsync(underlying.zscan(key)).map(cur => DataScanCursor.from(cur))
   
-  def zscan(key: K, scanArgs: ScanArgs): F[ScoredValueScanCursor[V]] =
-    JF.toAsync(underlying.zscan(key, scanArgs))
+  def zscan(key: K, scanArgs: ScanArgs): F[DataScanCursor[(Double, V)]] =
+    JF.toAsync(underlying.zscan(key, scanArgs)).map(cur => DataScanCursor.from(cur))
   
-  def zscan(key: K, scanCursor: ScanCursor, scanArgs: ScanArgs): F[ScoredValueScanCursor[V]] =
-    JF.toAsync(underlying.zscan(key, scanCursor, scanArgs))
+  def zscan(key: K, scanCursor: ScanCursor, scanArgs: ScanArgs): F[DataScanCursor[(Double, V)]] =
+    JF.toAsync(underlying.zscan(key, scanCursor, scanArgs)).map(cur => DataScanCursor.from(cur))
   
-  def zscan(key: K, scanCursor: ScanCursor): F[ScoredValueScanCursor[V]] =
-    JF.toAsync(underlying.zscan(key, scanCursor))
+  def zscan(key: K, scanCursor: ScanCursor): F[DataScanCursor[(Double, V)]] =
+    JF.toAsync(underlying.zscan(key, scanCursor)).map(cur => DataScanCursor.from(cur))
   
   def zscore(key: K, member: V): F[Double] =
     JF.toAsync(underlying.zscore(key, member)).map(Double2double)
