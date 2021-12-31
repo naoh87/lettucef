@@ -95,8 +95,8 @@ trait StringCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def set(key: K, value: V): F[String] =
     JF.toAsync(underlying.set(key, value))
   
-  def set(key: K, value: V, setArgs: SetArgs): F[String] =
-    JF.toAsync(underlying.set(key, value, setArgs))
+  def set(key: K, value: V, setArgs: SetArgs): F[Option[String]] =
+    JF.toAsync(underlying.set(key, value, setArgs)).map(Option(_))
   
   def setGet(key: K, value: V): F[Option[V]] =
     JF.toAsync(underlying.setGet(key, value)).map(Option(_))

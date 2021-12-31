@@ -48,14 +48,14 @@ trait SetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def spop(key: K): F[Option[V]] =
     JF.toAsync(underlying.spop(key)).map(Option(_))
   
-  def spop(key: K, count: Long): F[Option[Set[V]]] =
-    JF.toAsync(underlying.spop(key, count)).map(Option(_).map(_.asScala.toSet))
+  def spop(key: K, count: Long): F[Set[V]] =
+    JF.toAsync(underlying.spop(key, count)).map(_.asScala.toSet)
   
   def srandmember(key: K): F[Option[V]] =
     JF.toAsync(underlying.srandmember(key)).map(Option(_))
   
-  def srandmember(key: K, count: Long): F[Option[Seq[V]]] =
-    JF.toAsync(underlying.srandmember(key, count)).map(Option(_).map(_.asScala.toSeq))
+  def srandmember(key: K, count: Long): F[Seq[V]] =
+    JF.toAsync(underlying.srandmember(key, count)).map(_.asScala.toSeq)
   
   def srem(key: K, members: V*): F[Long] =
     JF.toAsync(underlying.srem(key, members: _*)).map(Long2long)

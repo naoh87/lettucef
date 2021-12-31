@@ -1,57 +1,56 @@
 # comment out deprecated or ambiguous method
 - underlying: RedisKeyAsyncCommands[K, V]
   output: KeyCommands
-  nullable:
-  - randomkey
   methods:
-  - RedisFuture<Boolean> copy(K source, K destination);
-  - RedisFuture<Boolean> copy(K source, K destination, CopyArgs copyArgs);
-  - RedisFuture<Long> del(K... keys);
-  - RedisFuture<Long> unlink(K... keys);
-  - RedisFuture<byte[]> dump(K key);
-  - RedisFuture<Long> exists(K... keys);
-  - RedisFuture<Boolean> expire(K key, long seconds);
-  - RedisFuture<Boolean> expire(K key, Duration seconds);
-  - RedisFuture<Boolean> expireat(K key, long timestamp);
-  - RedisFuture<Boolean> expireat(K key, Date timestamp);
-  - RedisFuture<Boolean> expireat(K key, Instant timestamp);
-  - RedisFuture<List<K>> keys(K pattern);
-  - RedisFuture<Long> keys(KeyStreamingChannel<K> channel, K pattern);
-  - RedisFuture<String> migrate(String host, int port, K key, int db, long timeout);
-  - RedisFuture<String> migrate(String host, int port, int db, long timeout, MigrateArgs<K> migrateArgs);
-  - RedisFuture<Boolean> move(K key, int db);
-  - RedisFuture<String> objectEncoding(K key);
-  - RedisFuture<Long> objectFreq(K key);
-  - RedisFuture<Long> objectIdletime(K key);
-  - RedisFuture<Long> objectRefcount(K key);
-  - RedisFuture<Boolean> persist(K key);
-  - RedisFuture<Boolean> pexpire(K key, long milliseconds);
-  - RedisFuture<Boolean> pexpire(K key, Duration milliseconds);
-  - RedisFuture<Boolean> pexpireat(K key, long timestamp);
-  - RedisFuture<Boolean> pexpireat(K key, Date timestamp);
-  - RedisFuture<Boolean> pexpireat(K key, Instant timestamp);
-  - RedisFuture<Long> pttl(K key);
-  - RedisFuture<K> randomkey();
-  - RedisFuture<String> rename(K key, K newKey);
-  - RedisFuture<Boolean> renamenx(K key, K newKey);
-  - RedisFuture<String> restore(K key, long ttl, byte[] value);
-  - RedisFuture<String> restore(K key, byte[] value, RestoreArgs args);
-  - RedisFuture<List<V>> sort(K key);
-  - RedisFuture<Long> sort(ValueStreamingChannel<V> channel, K key);
-  - RedisFuture<List<V>> sort(K key, SortArgs sortArgs);
-  - RedisFuture<Long> sort(ValueStreamingChannel<V> channel, K key, SortArgs sortArgs);
-  - RedisFuture<Long> sortStore(K key, SortArgs sortArgs, K destination);
-  - RedisFuture<Long> touch(K... keys);
-  - RedisFuture<Long> ttl(K key);
-  - RedisFuture<String> type(K key);
-  - RedisFuture<KeyScanCursor<K>> scan();
-  - RedisFuture<KeyScanCursor<K>> scan(ScanArgs scanArgs);
-  - RedisFuture<KeyScanCursor<K>> scan(ScanCursor scanCursor, ScanArgs scanArgs);
-  - RedisFuture<KeyScanCursor<K>> scan(ScanCursor scanCursor);
-  - RedisFuture<StreamScanCursor> scan(KeyStreamingChannel<K> channel);
-  - RedisFuture<StreamScanCursor> scan(KeyStreamingChannel<K> channel, ScanArgs scanArgs);
-  - RedisFuture<StreamScanCursor> scan(KeyStreamingChannel<K> channel, ScanCursor scanCursor, ScanArgs scanArgs);
-  - RedisFuture<StreamScanCursor> scan(KeyStreamingChannel<K> channel, ScanCursor scanCursor);
+  - fun: RedisFuture<Boolean> copy(K source, K destination);
+  - fun: RedisFuture<Boolean> copy(K source, K destination, CopyArgs copyArgs);
+  - fun: RedisFuture<Long> del(K... keys);
+  - fun: RedisFuture<Long> unlink(K... keys);
+  - fun: RedisFuture<byte[]> dump(K key);
+  - fun: RedisFuture<Long> exists(K... keys);
+  - fun: RedisFuture<Boolean> expire(K key, long seconds);
+  - fun: RedisFuture<Boolean> expire(K key, Duration seconds);
+  - fun: RedisFuture<Boolean> expireat(K key, long timestamp);
+  - fun: RedisFuture<Boolean> expireat(K key, Date timestamp);
+  - fun: RedisFuture<Boolean> expireat(K key, Instant timestamp);
+  - fun: RedisFuture<List<K>> keys(K pattern);
+  - fun: RedisFuture<Long> keys(KeyStreamingChannel<K> channel, K pattern);
+  - fun: RedisFuture<String> migrate(String host, int port, K key, int db, long timeout);
+  - fun: RedisFuture<String> migrate(String host, int port, int db, long timeout, MigrateArgs<K> migrateArgs);
+  - fun: RedisFuture<Boolean> move(K key, int db);
+  - fun: RedisFuture<String> objectEncoding(K key);
+  - fun: RedisFuture<Long> objectFreq(K key);
+  - fun: RedisFuture<Long> objectIdletime(K key);
+  - fun: RedisFuture<Long> objectRefcount(K key);
+  - fun: RedisFuture<Boolean> persist(K key);
+  - fun: RedisFuture<Boolean> pexpire(K key, long milliseconds);
+  - fun: RedisFuture<Boolean> pexpire(K key, Duration milliseconds);
+  - fun: RedisFuture<Boolean> pexpireat(K key, long timestamp);
+  - fun: RedisFuture<Boolean> pexpireat(K key, Date timestamp);
+  - fun: RedisFuture<Boolean> pexpireat(K key, Instant timestamp);
+  - fun: RedisFuture<Long> pttl(K key);
+  - fun: RedisFuture<K> randomkey();
+    opt: [ nullable ]
+  - fun: RedisFuture<String> rename(K key, K newKey);
+  - fun: RedisFuture<Boolean> renamenx(K key, K newKey);
+  - fun: RedisFuture<String> restore(K key, long ttl, byte[] value);
+  - fun: RedisFuture<String> restore(K key, byte[] value, RestoreArgs args);
+  - fun: RedisFuture<List<V>> sort(K key);
+  - fun: RedisFuture<Long> sort(ValueStreamingChannel<V> channel, K key);
+  - fun: RedisFuture<List<V>> sort(K key, SortArgs sortArgs);
+  - fun: RedisFuture<Long> sort(ValueStreamingChannel<V> channel, K key, SortArgs sortArgs);
+  - fun: RedisFuture<Long> sortStore(K key, SortArgs sortArgs, K destination);
+  - fun: RedisFuture<Long> touch(K... keys);
+  - fun: RedisFuture<Long> ttl(K key);
+  - fun: RedisFuture<String> type(K key);
+  - fun: RedisFuture<KeyScanCursor<K>> scan();
+  - fun: RedisFuture<KeyScanCursor<K>> scan(ScanArgs scanArgs);
+  - fun: RedisFuture<KeyScanCursor<K>> scan(ScanCursor scanCursor, ScanArgs scanArgs);
+  - fun: RedisFuture<KeyScanCursor<K>> scan(ScanCursor scanCursor);
+  - fun: RedisFuture<StreamScanCursor> scan(KeyStreamingChannel<K> channel);
+  - fun: RedisFuture<StreamScanCursor> scan(KeyStreamingChannel<K> channel, ScanArgs scanArgs);
+  - fun: RedisFuture<StreamScanCursor> scan(KeyStreamingChannel<K> channel, ScanCursor scanCursor, ScanArgs scanArgs);
+  - fun: RedisFuture<StreamScanCursor> scan(KeyStreamingChannel<K> channel, ScanCursor scanCursor);
   imports:
   - java.time.Duration
   - java.time.Instant
@@ -66,40 +65,40 @@
 - underlying: RedisStreamAsyncCommands[K, V]
   output: StreamCommands
   methods:
-  - RedisFuture<Long> xack(K key, K group, String... messageIds);
-  - RedisFuture<String> xadd(K key, Map<K, V> body);
-  - RedisFuture<String> xadd(K key, XAddArgs args, Map<K, V> body);
-  - RedisFuture<String> xadd(K key, Object... keysAndValues);
-  - RedisFuture<String> xadd(K key, XAddArgs args, Object... keysAndValues);
-  - RedisFuture<ClaimedMessages<K, V>> xautoclaim(K key, XAutoClaimArgs<K> args);
-  - RedisFuture<List<StreamMessage<K, V>>> xclaim(K key, Consumer<K> consumer, long minIdleTime, String... messageIds);
-  - RedisFuture<List<StreamMessage<K, V>>> xclaim(K key, Consumer<K> consumer, XClaimArgs args, String... messageIds);
-  - RedisFuture<Long> xdel(K key, String... messageIds);
-  - RedisFuture<String> xgroupCreate(StreamOffset<K> streamOffset, K group);
-  - RedisFuture<String> xgroupCreate(StreamOffset<K> streamOffset, K group, XGroupCreateArgs args);
-  - RedisFuture<Boolean> xgroupCreateconsumer(K key, Consumer<K> consumer);
-  - RedisFuture<Long> xgroupDelconsumer(K key, Consumer<K> consumer);
-  - RedisFuture<Boolean> xgroupDestroy(K key, K group);
-  - RedisFuture<String> xgroupSetid(StreamOffset<K> streamOffset, K group);
-  - RedisFuture<List<Object>> xinfoStream(K key);
-  - RedisFuture<List<Object>> xinfoGroups(K key);
-  - RedisFuture<List<Object>> xinfoConsumers(K key, K group);
-  - RedisFuture<Long> xlen(K key);
-  - RedisFuture<PendingMessages> xpending(K key, K group);
-  - RedisFuture<List<PendingMessage>> xpending(K key, K group, Range<String> range, Limit limit);
-  - RedisFuture<List<PendingMessage>> xpending(K key, Consumer<K> consumer, Range<String> range, Limit limit);
-  - RedisFuture<List<PendingMessage>> xpending(K key, XPendingArgs<K> args);
-  - RedisFuture<List<StreamMessage<K, V>>> xrange(K key, Range<String> range);
-  - RedisFuture<List<StreamMessage<K, V>>> xrange(K key, Range<String> range, Limit limit);
-  - RedisFuture<List<StreamMessage<K, V>>> xread(StreamOffset<K>... streams);
-  - RedisFuture<List<StreamMessage<K, V>>> xread(XReadArgs args, StreamOffset<K>... streams);
-  - RedisFuture<List<StreamMessage<K, V>>> xreadgroup(Consumer<K> consumer, StreamOffset<K>... streams);
-  - RedisFuture<List<StreamMessage<K, V>>> xreadgroup(Consumer<K> consumer, XReadArgs args, StreamOffset<K>... streams);
-  - RedisFuture<List<StreamMessage<K, V>>> xrevrange(K key, Range<String> range);
-  - RedisFuture<List<StreamMessage<K, V>>> xrevrange(K key, Range<String> range, Limit limit);
-  - RedisFuture<Long> xtrim(K key, long count);
-  - RedisFuture<Long> xtrim(K key, boolean approximateTrimming, long count);
-  - RedisFuture<Long> xtrim(K key, XTrimArgs args);
+  - fun: RedisFuture<Long> xack(K key, K group, String... messageIds);
+  - fun: RedisFuture<String> xadd(K key, Map<K, V> body);
+  - fun: RedisFuture<String> xadd(K key, XAddArgs args, Map<K, V> body);
+  - fun: RedisFuture<String> xadd(K key, Object... keysAndValues);
+  - fun: RedisFuture<String> xadd(K key, XAddArgs args, Object... keysAndValues);
+  - fun: RedisFuture<ClaimedMessages<K, V>> xautoclaim(K key, XAutoClaimArgs<K> args);
+  - fun: RedisFuture<List<StreamMessage<K, V>>> xclaim(K key, Consumer<K> consumer, long minIdleTime, String... messageIds);
+  - fun: RedisFuture<List<StreamMessage<K, V>>> xclaim(K key, Consumer<K> consumer, XClaimArgs args, String... messageIds);
+  - fun: RedisFuture<Long> xdel(K key, String... messageIds);
+  - fun: RedisFuture<String> xgroupCreate(StreamOffset<K> streamOffset, K group);
+  - fun: RedisFuture<String> xgroupCreate(StreamOffset<K> streamOffset, K group, XGroupCreateArgs args);
+  - fun: RedisFuture<Boolean> xgroupCreateconsumer(K key, Consumer<K> consumer);
+  - fun: RedisFuture<Long> xgroupDelconsumer(K key, Consumer<K> consumer);
+  - fun: RedisFuture<Boolean> xgroupDestroy(K key, K group);
+  - fun: RedisFuture<String> xgroupSetid(StreamOffset<K> streamOffset, K group);
+  - fun: RedisFuture<List<Object>> xinfoStream(K key);
+  - fun: RedisFuture<List<Object>> xinfoGroups(K key);
+  - fun: RedisFuture<List<Object>> xinfoConsumers(K key, K group);
+  - fun: RedisFuture<Long> xlen(K key);
+  - fun: RedisFuture<PendingMessages> xpending(K key, K group);
+  - fun: RedisFuture<List<PendingMessage>> xpending(K key, K group, Range<String> range, Limit limit);
+  - fun: RedisFuture<List<PendingMessage>> xpending(K key, Consumer<K> consumer, Range<String> range, Limit limit);
+  - fun: RedisFuture<List<PendingMessage>> xpending(K key, XPendingArgs<K> args);
+  - fun: RedisFuture<List<StreamMessage<K, V>>> xrange(K key, Range<String> range);
+  - fun: RedisFuture<List<StreamMessage<K, V>>> xrange(K key, Range<String> range, Limit limit);
+  - fun: RedisFuture<List<StreamMessage<K, V>>> xread(StreamOffset<K>... streams);
+  - fun: RedisFuture<List<StreamMessage<K, V>>> xread(XReadArgs args, StreamOffset<K>... streams);
+  - fun: RedisFuture<List<StreamMessage<K, V>>> xreadgroup(Consumer<K> consumer, StreamOffset<K>... streams);
+  - fun: RedisFuture<List<StreamMessage<K, V>>> xreadgroup(Consumer<K> consumer, XReadArgs args, StreamOffset<K>... streams);
+  - fun: RedisFuture<List<StreamMessage<K, V>>> xrevrange(K key, Range<String> range);
+  - fun: RedisFuture<List<StreamMessage<K, V>>> xrevrange(K key, Range<String> range, Limit limit);
+  - fun: RedisFuture<Long> xtrim(K key, long count);
+  - fun: RedisFuture<Long> xtrim(K key, boolean approximateTrimming, long count);
+  - fun: RedisFuture<Long> xtrim(K key, XTrimArgs args);
   imports:
   - io.lettuce.core.Consumer
   - io.lettuce.core.Limit
@@ -116,50 +115,51 @@
 
 - underlying: RedisStringAsyncCommands[K, V]
   output: StringCommands
-  nullable:
-  - get
-  - getset
-  - getdel
-  - getex
-  - setGet
   methods:
-  - RedisFuture<Long> append(K key, V value);
-  - RedisFuture<Long> bitcount(K key);
-  - RedisFuture<Long> bitcount(K key, long start, long end);
-  - RedisFuture<List<Long>> bitfield(K key, BitFieldArgs bitFieldArgs);
-  - RedisFuture<Long> bitpos(K key, boolean state);
-  - RedisFuture<Long> bitpos(K key, boolean state, long start);
-  - RedisFuture<Long> bitpos(K key, boolean state, long start, long end);
-  - RedisFuture<Long> bitopAnd(K destination, K... keys);
-  - RedisFuture<Long> bitopNot(K destination, K source);
-  - RedisFuture<Long> bitopOr(K destination, K... keys);
-  - RedisFuture<Long> bitopXor(K destination, K... keys);
-  - RedisFuture<Long> decr(K key);
-  - RedisFuture<Long> decrby(K key, long amount);
-  - RedisFuture<V> get(K key);
-  - RedisFuture<Long> getbit(K key, long offset);
-  - RedisFuture<V> getdel(K key);
-  - RedisFuture<V> getex(K key, GetExArgs args);
-  - RedisFuture<V> getrange(K key, long start, long end);
-  - RedisFuture<V> getset(K key, V value);
-  - RedisFuture<Long> incr(K key);
-  - RedisFuture<Long> incrby(K key, long amount);
-  - RedisFuture<Double> incrbyfloat(K key, double amount);
-  - RedisFuture<List<KeyValue<K, V>>> mget(K... keys);
-  - RedisFuture<Long> mget(KeyValueStreamingChannel<K, V> channel, K... keys);
-  - RedisFuture<String> mset(Map<K, V> map);
-  - RedisFuture<Boolean> msetnx(Map<K, V> map);
-  - RedisFuture<String> set(K key, V value);
-  - RedisFuture<String> set(K key, V value, SetArgs setArgs);
-  - RedisFuture<V> setGet(K key, V value);
-  - RedisFuture<V> setGet(K key, V value, SetArgs setArgs);
-  - RedisFuture<Long> setbit(K key, long offset, int value);
-  - RedisFuture<String> setex(K key, long seconds, V value);
-  - RedisFuture<String> psetex(K key, long milliseconds, V value);
-  - RedisFuture<Boolean> setnx(K key, V value);
-  - RedisFuture<Long> setrange(K key, long offset, V value);
-  - RedisFuture<StringMatchResult> stralgoLcs(StrAlgoArgs strAlgoArgs);
-  - RedisFuture<Long> strlen(K key);
+  - fun: RedisFuture<Long> append(K key, V value);
+  - fun: RedisFuture<Long> bitcount(K key);
+  - fun: RedisFuture<Long> bitcount(K key, long start, long end);
+  - fun: RedisFuture<List<Long>> bitfield(K key, BitFieldArgs bitFieldArgs);
+  - fun: RedisFuture<Long> bitpos(K key, boolean state);
+  - fun: RedisFuture<Long> bitpos(K key, boolean state, long start);
+  - fun: RedisFuture<Long> bitpos(K key, boolean state, long start, long end);
+  - fun: RedisFuture<Long> bitopAnd(K destination, K... keys);
+  - fun: RedisFuture<Long> bitopNot(K destination, K source);
+  - fun: RedisFuture<Long> bitopOr(K destination, K... keys);
+  - fun: RedisFuture<Long> bitopXor(K destination, K... keys);
+  - fun: RedisFuture<Long> decr(K key);
+  - fun: RedisFuture<Long> decrby(K key, long amount);
+  - fun: RedisFuture<V> get(K key);
+    opt: [ nullable ]
+  - fun: RedisFuture<Long> getbit(K key, long offset);
+  - fun: RedisFuture<V> getdel(K key);
+    opt: [ nullable ]
+  - fun: RedisFuture<V> getex(K key, GetExArgs args);
+    opt: [ nullable ]
+  - fun: RedisFuture<V> getrange(K key, long start, long end);
+  - fun: RedisFuture<V> getset(K key, V value);
+    opt: [ nullable ]
+  - fun: RedisFuture<Long> incr(K key);
+  - fun: RedisFuture<Long> incrby(K key, long amount);
+  - fun: RedisFuture<Double> incrbyfloat(K key, double amount);
+  - fun: RedisFuture<List<KeyValue<K, V>>> mget(K... keys);
+  - fun: RedisFuture<Long> mget(KeyValueStreamingChannel<K, V> channel, K... keys);
+  - fun: RedisFuture<String> mset(Map<K, V> map);
+  - fun: RedisFuture<Boolean> msetnx(Map<K, V> map);
+  - fun: RedisFuture<String> set(K key, V value);
+  - fun: RedisFuture<String> set(K key, V value, SetArgs setArgs);
+    opt: [ nullable ]
+  - fun: RedisFuture<V> setGet(K key, V value);
+    opt: [ nullable ]
+  - fun: RedisFuture<V> setGet(K key, V value, SetArgs setArgs);
+    opt: [ nullable ]
+  - fun: RedisFuture<Long> setbit(K key, long offset, int value);
+  - fun: RedisFuture<String> setex(K key, long seconds, V value);
+  - fun: RedisFuture<String> psetex(K key, long milliseconds, V value);
+  - fun: RedisFuture<Boolean> setnx(K key, V value);
+  - fun: RedisFuture<Long> setrange(K key, long offset, V value);
+  - fun: RedisFuture<StringMatchResult> stralgoLcs(StrAlgoArgs strAlgoArgs);
+  - fun: RedisFuture<Long> strlen(K key);
   imports:
   - io.lettuce.core.BitFieldArgs
   - io.lettuce.core.GetExArgs
@@ -170,91 +170,90 @@
 - underlying: BaseRedisAsyncCommands[K, V]
   output: BaseCommands
   methods:
-  - RedisFuture<Long> publish(K channel, V message);
-  - RedisFuture<List<K>> pubsubChannels();
-  - RedisFuture<List<K>> pubsubChannels(K channel);
-  - RedisFuture<Map<K, Long>> pubsubNumsub(K... channels);
-  - RedisFuture<Long> pubsubNumpat();
-  - RedisFuture<V> echo(V msg);
-  - RedisFuture<List<Object>> role();
-  - RedisFuture<String> ping();
-  - RedisFuture<String> readOnly();
-  - RedisFuture<String> readWrite();
-  - RedisFuture<String> quit();
-  - RedisFuture<Long> waitForReplication(int replicas, long timeout);
+  - fun: RedisFuture<Long> publish(K channel, V message);
+  - fun: RedisFuture<List<K>> pubsubChannels();
+  - fun: RedisFuture<List<K>> pubsubChannels(K channel);
+  - fun: RedisFuture<Map<K, Long>> pubsubNumsub(K... channels);
+  - fun: RedisFuture<Long> pubsubNumpat();
+  - fun: RedisFuture<V> echo(V msg);
+  - fun: RedisFuture<List<Object>> role();
+  - fun: RedisFuture<String> ping();
+  - fun: RedisFuture<String> readOnly();
+  - fun: RedisFuture<String> readWrite();
+  - fun: RedisFuture<String> quit();
+  - fun: RedisFuture<Long> waitForReplication(int replicas, long timeout);
   imports:
   - io.lettucef.core.models._
 
 - underlying: RedisClusterAsyncCommands[K, V]
   output: ClusterCommands
   methods:
-  - RedisFuture<String> auth(CharSequence password);
-  - RedisFuture<String> auth(String username, CharSequence password);
-  - RedisFuture<String> clusterBumpepoch();
-  - RedisFuture<String> clusterMeet(String ip, int port);
-  - RedisFuture<String> clusterForget(String nodeId);
-  - RedisFuture<String> clusterAddSlots(int... slots);
-  - RedisFuture<String> clusterDelSlots(int... slots);
-  - RedisFuture<String> clusterSetSlotNode(int slot, String nodeId);
-  - RedisFuture<String> clusterSetSlotStable(int slot);
-  - RedisFuture<String> clusterSetSlotMigrating(int slot, String nodeId);
-  - RedisFuture<String> clusterSetSlotImporting(int slot, String nodeId);
-  - RedisFuture<String> clusterInfo();
-  - RedisFuture<String> clusterMyId();
-  - RedisFuture<String> clusterNodes();
-  - RedisFuture<List<String>> clusterSlaves(String nodeId);
-  - RedisFuture<List<K>> clusterGetKeysInSlot(int slot, int count);
-  - RedisFuture<Long> clusterCountKeysInSlot(int slot);
-  - RedisFuture<Long> clusterCountFailureReports(String nodeId);
-  - RedisFuture<Long> clusterKeyslot(K key);
-  - RedisFuture<String> clusterSaveconfig();
-  - RedisFuture<String> clusterSetConfigEpoch(long configEpoch);
-  - RedisFuture<List<Object>> clusterSlots();
-  - RedisFuture<String> asking();
-  - RedisFuture<String> clusterReplicate(String nodeId);
-  - RedisFuture<String> clusterFailover(boolean force);
-  - RedisFuture<String> clusterReset(boolean hard);
-  - RedisFuture<String> clusterFlushslots();
+  - fun: RedisFuture<String> auth(CharSequence password);
+  - fun: RedisFuture<String> auth(String username, CharSequence password);
+  - fun: RedisFuture<String> clusterBumpepoch();
+  - fun: RedisFuture<String> clusterMeet(String ip, int port);
+  - fun: RedisFuture<String> clusterForget(String nodeId);
+  - fun: RedisFuture<String> clusterAddSlots(int... slots);
+  - fun: RedisFuture<String> clusterDelSlots(int... slots);
+  - fun: RedisFuture<String> clusterSetSlotNode(int slot, String nodeId);
+  - fun: RedisFuture<String> clusterSetSlotStable(int slot);
+  - fun: RedisFuture<String> clusterSetSlotMigrating(int slot, String nodeId);
+  - fun: RedisFuture<String> clusterSetSlotImporting(int slot, String nodeId);
+  - fun: RedisFuture<String> clusterInfo();
+  - fun: RedisFuture<String> clusterMyId();
+  - fun: RedisFuture<String> clusterNodes();
+  - fun: RedisFuture<List<String>> clusterSlaves(String nodeId);
+  - fun: RedisFuture<List<K>> clusterGetKeysInSlot(int slot, int count);
+  - fun: RedisFuture<Long> clusterCountKeysInSlot(int slot);
+  - fun: RedisFuture<Long> clusterCountFailureReports(String nodeId);
+  - fun: RedisFuture<Long> clusterKeyslot(K key);
+  - fun: RedisFuture<String> clusterSaveconfig();
+  - fun: RedisFuture<String> clusterSetConfigEpoch(long configEpoch);
+  - fun: RedisFuture<List<Object>> clusterSlots();
+  - fun: RedisFuture<String> asking();
+  - fun: RedisFuture<String> clusterReplicate(String nodeId);
+  - fun: RedisFuture<String> clusterFailover(boolean force);
+  - fun: RedisFuture<String> clusterReset(boolean hard);
+  - fun: RedisFuture<String> clusterFlushslots();
   imports:
   - io.lettuce.core.cluster.api.async.RedisClusterAsyncCommands
   - io.lettucef.core.models._
 
 - underlying: RedisHashAsyncCommands[K, V]
   output: HashCommands
-  nullable:
-  - hget
   methods:
-  - RedisFuture<Long> hdel(K key, K... fields);
-  - RedisFuture<Boolean> hexists(K key, K field);
-  - RedisFuture<V> hget(K key, K field);
-  - RedisFuture<Long> hincrby(K key, K field, long amount);
-  - RedisFuture<Double> hincrbyfloat(K key, K field, double amount);
-  - RedisFuture<Map<K, V>> hgetall(K key);
-  - RedisFuture<Long> hgetall(KeyValueStreamingChannel<K, V> channel, K key);
-  - RedisFuture<List<K>> hkeys(K key);
-  - RedisFuture<Long> hkeys(KeyStreamingChannel<K> channel, K key);
-  - RedisFuture<Long> hlen(K key);
-  - RedisFuture<List<KeyValue<K, V>>> hmget(K key, K... fields);
-  - RedisFuture<Long> hmget(KeyValueStreamingChannel<K, V> channel, K key, K... fields);
-  - RedisFuture<String> hmset(K key, Map<K, V> map);
-  - RedisFuture<K> hrandfield(K key);
-  - RedisFuture<List<K>> hrandfield(K key, long count);
-  - RedisFuture<KeyValue<K, V>> hrandfieldWithvalues(K key);
-  - RedisFuture<List<KeyValue<K, V>>> hrandfieldWithvalues(K key, long count);
-  - RedisFuture<MapScanCursor<K, V>> hscan(K key);
-  - RedisFuture<MapScanCursor<K, V>> hscan(K key, ScanArgs scanArgs);
-  - RedisFuture<MapScanCursor<K, V>> hscan(K key, ScanCursor scanCursor, ScanArgs scanArgs);
-  - RedisFuture<MapScanCursor<K, V>> hscan(K key, ScanCursor scanCursor);
-  - RedisFuture<StreamScanCursor> hscan(KeyValueStreamingChannel<K, V> channel, K key);
-  - RedisFuture<StreamScanCursor> hscan(KeyValueStreamingChannel<K, V> channel, K key, ScanArgs scanArgs);
-  - RedisFuture<StreamScanCursor> hscan(KeyValueStreamingChannel<K, V> channel, K key, ScanCursor scanCursor, ScanArgs scanArgs);
-  - RedisFuture<StreamScanCursor> hscan(KeyValueStreamingChannel<K, V> channel, K key, ScanCursor scanCursor);
-  - RedisFuture<Boolean> hset(K key, K field, V value);
-  - RedisFuture<Long> hset(K key, Map<K, V> map);
-  - RedisFuture<Boolean> hsetnx(K key, K field, V value);
-  - RedisFuture<Long> hstrlen(K key, K field);
-  - RedisFuture<List<V>> hvals(K key);
-  - RedisFuture<Long> hvals(ValueStreamingChannel<V> channel, K key);
+  - fun: RedisFuture<Long> hdel(K key, K... fields);
+  - fun: RedisFuture<Boolean> hexists(K key, K field);
+  - fun: RedisFuture<V> hget(K key, K field);
+    opt: [ nullable ]
+  - fun: RedisFuture<Long> hincrby(K key, K field, long amount);
+  - fun: RedisFuture<Double> hincrbyfloat(K key, K field, double amount);
+  - fun: RedisFuture<Map<K, V>> hgetall(K key);
+  - fun: RedisFuture<Long> hgetall(KeyValueStreamingChannel<K, V> channel, K key);
+  - fun: RedisFuture<List<K>> hkeys(K key);
+  - fun: RedisFuture<Long> hkeys(KeyStreamingChannel<K> channel, K key);
+  - fun: RedisFuture<Long> hlen(K key);
+  - fun: RedisFuture<List<KeyValue<K, V>>> hmget(K key, K... fields);
+  - fun: RedisFuture<Long> hmget(KeyValueStreamingChannel<K, V> channel, K key, K... fields);
+  - fun: RedisFuture<String> hmset(K key, Map<K, V> map);
+  - fun: RedisFuture<K> hrandfield(K key);
+  - fun: RedisFuture<List<K>> hrandfield(K key, long count);
+  - fun: RedisFuture<KeyValue<K, V>> hrandfieldWithvalues(K key);
+  - fun: RedisFuture<List<KeyValue<K, V>>> hrandfieldWithvalues(K key, long count);
+  - fun: RedisFuture<MapScanCursor<K, V>> hscan(K key);
+  - fun: RedisFuture<MapScanCursor<K, V>> hscan(K key, ScanArgs scanArgs);
+  - fun: RedisFuture<MapScanCursor<K, V>> hscan(K key, ScanCursor scanCursor, ScanArgs scanArgs);
+  - fun: RedisFuture<MapScanCursor<K, V>> hscan(K key, ScanCursor scanCursor);
+  - fun: RedisFuture<StreamScanCursor> hscan(KeyValueStreamingChannel<K, V> channel, K key);
+  - fun: RedisFuture<StreamScanCursor> hscan(KeyValueStreamingChannel<K, V> channel, K key, ScanArgs scanArgs);
+  - fun: RedisFuture<StreamScanCursor> hscan(KeyValueStreamingChannel<K, V> channel, K key, ScanCursor scanCursor, ScanArgs scanArgs);
+  - fun: RedisFuture<StreamScanCursor> hscan(KeyValueStreamingChannel<K, V> channel, K key, ScanCursor scanCursor);
+  - fun: RedisFuture<Boolean> hset(K key, K field, V value);
+  - fun: RedisFuture<Long> hset(K key, Map<K, V> map);
+  - fun: RedisFuture<Boolean> hsetnx(K key, K field, V value);
+  - fun: RedisFuture<Long> hstrlen(K key, K field);
+  - fun: RedisFuture<List<V>> hvals(K key);
+  - fun: RedisFuture<Long> hvals(ValueStreamingChannel<V> channel, K key);
   imports:
   - io.lettucef.core.models._
   - io.lettuce.core.ScanArgs
@@ -263,49 +262,50 @@
 - underlying: RedisHLLAsyncCommands[K, V]
   output: HLLCommands
   methods:
-  - RedisFuture<Long> pfadd(K key, V... values);
-  - RedisFuture<String> pfmerge(K destkey, K... sourcekeys);
-  - RedisFuture<Long> pfcount(K... keys);
+  - fun: RedisFuture<Long> pfadd(K key, V... values);
+  - fun: RedisFuture<String> pfmerge(K destkey, K... sourcekeys);
+  - fun: RedisFuture<Long> pfcount(K... keys);
   imports: []
 
 - underlying: RedisListAsyncCommands[K, V]
   output: ListCommands
-  nullable:
-  - lindex
-  - lpop
-  - lpos
-  - rpop
   methods:
-  - RedisFuture<V> blmove(K source, K destination, LMoveArgs args, long timeout);
-  - RedisFuture<V> blmove(K source, K destination, LMoveArgs args, double timeout);
-  - RedisFuture<KeyValue<K, V>> blpop(long timeout, K... keys);
-  - RedisFuture<KeyValue<K, V>> blpop(double timeout, K... keys);
-  - RedisFuture<KeyValue<K, V>> brpop(long timeout, K... keys);
-  - RedisFuture<KeyValue<K, V>> brpop(double timeout, K... keys);
-  - RedisFuture<V> brpoplpush(long timeout, K source, K destination);
-  - RedisFuture<V> brpoplpush(double timeout, K source, K destination);
-  - RedisFuture<V> lindex(K key, long index);
-  - RedisFuture<Long> linsert(K key, boolean before, V pivot, V value);
-  - RedisFuture<Long> llen(K key);
-  - RedisFuture<V> lmove(K source, K destination, LMoveArgs args);
-  - RedisFuture<V> lpop(K key);
-  - RedisFuture<List<V>> lpop(K key, long count);
-  - RedisFuture<Long> lpos(K key, V value);
-  - RedisFuture<Long> lpos(K key, V value, LPosArgs args);
-  - RedisFuture<List<Long>> lpos(K key, V value, int count);
-  - RedisFuture<List<Long>> lpos(K key, V value, int count, LPosArgs args);
-  - RedisFuture<Long> lpush(K key, V... values);
-  - RedisFuture<Long> lpushx(K key, V... values);
-  - RedisFuture<List<V>> lrange(K key, long start, long stop);
-  - RedisFuture<Long> lrange(ValueStreamingChannel<V> channel, K key, long start, long stop);
-  - RedisFuture<Long> lrem(K key, long count, V value);
-  - RedisFuture<String> lset(K key, long index, V value);
-  - RedisFuture<String> ltrim(K key, long start, long stop);
-  - RedisFuture<V> rpop(K key);
-  - RedisFuture<List<V>> rpop(K key, long count);
-  - RedisFuture<V> rpoplpush(K source, K destination);
-  - RedisFuture<Long> rpush(K key, V... values);
-  - RedisFuture<Long> rpushx(K key, V... values);
+  - fun: RedisFuture<V> blmove(K source, K destination, LMoveArgs args, long timeout);
+  - fun: RedisFuture<V> blmove(K source, K destination, LMoveArgs args, double timeout);
+  - fun: RedisFuture<KeyValue<K, V>> blpop(long timeout, K... keys);
+  - fun: RedisFuture<KeyValue<K, V>> blpop(double timeout, K... keys);
+  - fun: RedisFuture<KeyValue<K, V>> brpop(long timeout, K... keys);
+  - fun: RedisFuture<KeyValue<K, V>> brpop(double timeout, K... keys);
+  - fun: RedisFuture<V> brpoplpush(long timeout, K source, K destination);
+  - fun: RedisFuture<V> brpoplpush(double timeout, K source, K destination);
+  - fun: RedisFuture<V> lindex(K key, long index);
+    opt: [ nullable ]
+  - fun: RedisFuture<Long> linsert(K key, boolean before, V pivot, V value);
+  - fun: RedisFuture<Long> llen(K key);
+  - fun: RedisFuture<V> lmove(K source, K destination, LMoveArgs args);
+  - fun: RedisFuture<V> lpop(K key);
+    opt: [ nullable ]
+  - fun: RedisFuture<List<V>> lpop(K key, long count);
+  - fun: RedisFuture<Long> lpos(K key, V value);
+    opt: [ nullable ]
+  - fun: RedisFuture<Long> lpos(K key, V value, LPosArgs args);
+    opt: [ nullable ]
+  - fun: RedisFuture<List<Long>> lpos(K key, V value, int count);
+  - fun: RedisFuture<List<Long>> lpos(K key, V value, int count, LPosArgs args);
+  - fun: RedisFuture<Long> lpush(K key, V... values);
+  - fun: RedisFuture<Long> lpushx(K key, V... values);
+  - fun: RedisFuture<List<V>> lrange(K key, long start, long stop);
+  - fun: RedisFuture<Long> lrange(ValueStreamingChannel<V> channel, K key, long start, long stop);
+  - fun: RedisFuture<Long> lrem(K key, long count, V value);
+  - fun: RedisFuture<String> lset(K key, long index, V value);
+  - fun: RedisFuture<String> ltrim(K key, long start, long stop);
+  - fun: RedisFuture<V> rpop(K key);
+    opt: [ nullable ]
+  - fun: RedisFuture<List<V>> rpop(K key, long count);
+  - fun: RedisFuture<V> rpoplpush(K source, K destination);
+    opt: [ nullable ]
+  - fun: RedisFuture<Long> rpush(K key, V... values);
+  - fun: RedisFuture<Long> rpushx(K key, V... values);
   imports:
   - io.lettuce.core.LMoveArgs
   - io.lettuce.core.LPosArgs
@@ -313,52 +313,52 @@
 - underlying: RedisServerAsyncCommands[K, V]
   output: ServerCommands
   methods:
-  - RedisFuture<String> bgrewriteaof();
-  - RedisFuture<String> bgsave();
-  - RedisFuture<String> clientCaching(boolean enabled);
-  - RedisFuture<K> clientGetname();
-  - RedisFuture<Long> clientGetredir();
-  - RedisFuture<Long> clientId();
-  - RedisFuture<String> clientKill(String addr);
-  - RedisFuture<Long> clientKill(KillArgs killArgs);
-  - RedisFuture<String> clientList();
-  - RedisFuture<String> clientPause(long timeout);
-  - RedisFuture<String> clientSetname(K name);
-  - RedisFuture<String> clientTracking(TrackingArgs args);
-  - RedisFuture<Long> clientUnblock(long id, UnblockType type);
-  - RedisFuture<List<Object>> command();
-  - RedisFuture<Long> commandCount();
-  - RedisFuture<List<Object>> commandInfo(String... commands);
-#  - RedisFuture<List<Object>> commandInfo(CommandType... commands);
-  - RedisFuture<Map<String, String>> configGet(String parameter);
-  - RedisFuture<String> configResetstat();
-  - RedisFuture<String> configRewrite();
-  - RedisFuture<String> configSet(String parameter, String value);
-  - RedisFuture<Long> dbsize();
-  - RedisFuture<String> debugCrashAndRecover(Long delay);
-  - RedisFuture<String> debugHtstats(int db);
-  - RedisFuture<String> debugObject(K key);
-  - RedisFuture<String> debugReload();
-  - RedisFuture<String> debugRestart(Long delay);
-  - RedisFuture<String> debugSdslen(K key);
-  - RedisFuture<String> flushall();
-  - RedisFuture<String> flushall(FlushMode flushMode);
-  # - RedisFuture<String> flushallAsync();
-  - RedisFuture<String> flushdb();
-  - RedisFuture<String> flushdb(FlushMode flushMode);
-  # - RedisFuture<String> flushdbAsync();
-  - RedisFuture<String> info();
-  - RedisFuture<String> info(String section);
-  - RedisFuture<Date> lastsave();
-  - RedisFuture<Long> memoryUsage(K key);
-  - RedisFuture<String> save();
-  - RedisFuture<String> slaveof(String host, int port);
-  - RedisFuture<String> slaveofNoOne();
-  - RedisFuture<List<Object>> slowlogGet();
-  - RedisFuture<List<Object>> slowlogGet(int count);
-  - RedisFuture<Long> slowlogLen();
-  - RedisFuture<String> slowlogReset();
-  - RedisFuture<List<V>> time();
+  - fun: RedisFuture<String> bgrewriteaof();
+  - fun: RedisFuture<String> bgsave();
+  - fun: RedisFuture<String> clientCaching(boolean enabled);
+  - fun: RedisFuture<K> clientGetname();
+  - fun: RedisFuture<Long> clientGetredir();
+  - fun: RedisFuture<Long> clientId();
+  - fun: RedisFuture<String> clientKill(String addr);
+  - fun: RedisFuture<Long> clientKill(KillArgs killArgs);
+  - fun: RedisFuture<String> clientList();
+  - fun: RedisFuture<String> clientPause(long timeout);
+  - fun: RedisFuture<String> clientSetname(K name);
+  - fun: RedisFuture<String> clientTracking(TrackingArgs args);
+  - fun: RedisFuture<Long> clientUnblock(long id, UnblockType type);
+  - fun: RedisFuture<List<Object>> command();
+  - fun: RedisFuture<Long> commandCount();
+  - fun: RedisFuture<List<Object>> commandInfo(String... commands);
+#  - fun: RedisFuture<List<Object>> commandInfo(CommandType... commands);
+  - fun: RedisFuture<Map<String, String>> configGet(String parameter);
+  - fun: RedisFuture<String> configResetstat();
+  - fun: RedisFuture<String> configRewrite();
+  - fun: RedisFuture<String> configSet(String parameter, String value);
+  - fun: RedisFuture<Long> dbsize();
+  - fun: RedisFuture<String> debugCrashAndRecover(Long delay);
+  - fun: RedisFuture<String> debugHtstats(int db);
+  - fun: RedisFuture<String> debugObject(K key);
+  - fun: RedisFuture<String> debugReload();
+  - fun: RedisFuture<String> debugRestart(Long delay);
+  - fun: RedisFuture<String> debugSdslen(K key);
+  - fun: RedisFuture<String> flushall();
+  - fun: RedisFuture<String> flushall(FlushMode flushMode);
+  # - fun: RedisFuture<String> flushallAsync();
+  - fun: RedisFuture<String> flushdb();
+  - fun: RedisFuture<String> flushdb(FlushMode flushMode);
+  # - fun: RedisFuture<String> flushdbAsync();
+  - fun: RedisFuture<String> info();
+  - fun: RedisFuture<String> info(String section);
+  - fun: RedisFuture<Date> lastsave();
+  - fun: RedisFuture<Long> memoryUsage(K key);
+  - fun: RedisFuture<String> save();
+  - fun: RedisFuture<String> slaveof(String host, int port);
+  - fun: RedisFuture<String> slaveofNoOne();
+  - fun: RedisFuture<List<Object>> slowlogGet();
+  - fun: RedisFuture<List<Object>> slowlogGet(int count);
+  - fun: RedisFuture<Long> slowlogLen();
+  - fun: RedisFuture<String> slowlogReset();
+  - fun: RedisFuture<List<V>> time();
   imports:
   - java.util.Date
   - io.lettuce.core.FlushMode
@@ -370,40 +370,39 @@
 
 - underlying: RedisSetAsyncCommands[K, V]
   output: SetCommands
-  nullable:
-  - spop
-  - srandmember
   methods:
-  - RedisFuture<Long> sadd(K key, V... members);
-  - RedisFuture<Long> scard(K key);
-  - RedisFuture<Set<V>> sdiff(K... keys);
-  - RedisFuture<Long> sdiff(ValueStreamingChannel<V> channel, K... keys);
-  - RedisFuture<Long> sdiffstore(K destination, K... keys);
-  - RedisFuture<Set<V>> sinter(K... keys);
-  - RedisFuture<Long> sinter(ValueStreamingChannel<V> channel, K... keys);
-  - RedisFuture<Long> sinterstore(K destination, K... keys);
-  - RedisFuture<Boolean> sismember(K key, V member);
-  - RedisFuture<Set<V>> smembers(K key);
-  - RedisFuture<Long> smembers(ValueStreamingChannel<V> channel, K key);
-  - RedisFuture<List<Boolean>> smismember(K key, V... members);
-  - RedisFuture<Boolean> smove(K source, K destination, V member);
-  - RedisFuture<V> spop(K key);
-  - RedisFuture<Set<V>> spop(K key, long count);
-  - RedisFuture<V> srandmember(K key);
-  - RedisFuture<List<V>> srandmember(K key, long count);
-  - RedisFuture<Long> srandmember(ValueStreamingChannel<V> channel, K key, long count);
-  - RedisFuture<Long> srem(K key, V... members);
-  - RedisFuture<Set<V>> sunion(K... keys);
-  - RedisFuture<Long> sunion(ValueStreamingChannel<V> channel, K... keys);
-  - RedisFuture<Long> sunionstore(K destination, K... keys);
-  - RedisFuture<ValueScanCursor<V>> sscan(K key);
-  - RedisFuture<ValueScanCursor<V>> sscan(K key, ScanArgs scanArgs);
-  - RedisFuture<ValueScanCursor<V>> sscan(K key, ScanCursor scanCursor, ScanArgs scanArgs);
-  - RedisFuture<ValueScanCursor<V>> sscan(K key, ScanCursor scanCursor);
-  - RedisFuture<StreamScanCursor> sscan(ValueStreamingChannel<V> channel, K key);
-  - RedisFuture<StreamScanCursor> sscan(ValueStreamingChannel<V> channel, K key, ScanArgs scanArgs);
-  - RedisFuture<StreamScanCursor> sscan(ValueStreamingChannel<V> channel, K key, ScanCursor scanCursor, ScanArgs scanArgs);
-  - RedisFuture<StreamScanCursor> sscan(ValueStreamingChannel<V> channel, K key, ScanCursor scanCursor);
+  - fun: RedisFuture<Long> sadd(K key, V... members);
+  - fun: RedisFuture<Long> scard(K key);
+  - fun: RedisFuture<Set<V>> sdiff(K... keys);
+  - fun: RedisFuture<Long> sdiff(ValueStreamingChannel<V> channel, K... keys);
+  - fun: RedisFuture<Long> sdiffstore(K destination, K... keys);
+  - fun: RedisFuture<Set<V>> sinter(K... keys);
+  - fun: RedisFuture<Long> sinter(ValueStreamingChannel<V> channel, K... keys);
+  - fun: RedisFuture<Long> sinterstore(K destination, K... keys);
+  - fun: RedisFuture<Boolean> sismember(K key, V member);
+  - fun: RedisFuture<Set<V>> smembers(K key);
+  - fun: RedisFuture<Long> smembers(ValueStreamingChannel<V> channel, K key);
+  - fun: RedisFuture<List<Boolean>> smismember(K key, V... members);
+  - fun: RedisFuture<Boolean> smove(K source, K destination, V member);
+  - fun: RedisFuture<V> spop(K key);
+    opt: [ nullable ]
+  - fun: RedisFuture<Set<V>> spop(K key, long count);
+  - fun: RedisFuture<V> srandmember(K key);
+    opt: [ nullable ]
+  - fun: RedisFuture<List<V>> srandmember(K key, long count);
+  - fun: RedisFuture<Long> srandmember(ValueStreamingChannel<V> channel, K key, long count);
+  - fun: RedisFuture<Long> srem(K key, V... members);
+  - fun: RedisFuture<Set<V>> sunion(K... keys);
+  - fun: RedisFuture<Long> sunion(ValueStreamingChannel<V> channel, K... keys);
+  - fun: RedisFuture<Long> sunionstore(K destination, K... keys);
+  - fun: RedisFuture<ValueScanCursor<V>> sscan(K key);
+  - fun: RedisFuture<ValueScanCursor<V>> sscan(K key, ScanArgs scanArgs);
+  - fun: RedisFuture<ValueScanCursor<V>> sscan(K key, ScanCursor scanCursor, ScanArgs scanArgs);
+  - fun: RedisFuture<ValueScanCursor<V>> sscan(K key, ScanCursor scanCursor);
+  - fun: RedisFuture<StreamScanCursor> sscan(ValueStreamingChannel<V> channel, K key);
+  - fun: RedisFuture<StreamScanCursor> sscan(ValueStreamingChannel<V> channel, K key, ScanArgs scanArgs);
+  - fun: RedisFuture<StreamScanCursor> sscan(ValueStreamingChannel<V> channel, K key, ScanCursor scanCursor, ScanArgs scanArgs);
+  - fun: RedisFuture<StreamScanCursor> sscan(ValueStreamingChannel<V> channel, K key, ScanCursor scanCursor);
   imports:
   - io.lettuce.core.ScanArgs
   - io.lettuce.core.ScanCursor
@@ -412,133 +411,135 @@
 - underlying: RedisSortedSetAsyncCommands[K, V]
   output: SortedSetCommands
   methods:
-  - RedisFuture<KeyValue<K, ScoredValue<V>>> bzpopmin(long timeout, K... keys);
-  - RedisFuture<KeyValue<K, ScoredValue<V>>> bzpopmin(double timeout, K... keys);
-  - RedisFuture<KeyValue<K, ScoredValue<V>>> bzpopmax(long timeout, K... keys);
-  - RedisFuture<KeyValue<K, ScoredValue<V>>> bzpopmax(double timeout, K... keys);
-  - RedisFuture<Long> zadd(K key, double score, V member);
-  - RedisFuture<Long> zadd(K key, Object... scoresAndValues);
-  - RedisFuture<Long> zadd(K key, ScoredValue<V>... scoredValues);
-  - RedisFuture<Long> zadd(K key, ZAddArgs zAddArgs, double score, V member);
-  - RedisFuture<Long> zadd(K key, ZAddArgs zAddArgs, Object... scoresAndValues);
-  - RedisFuture<Long> zadd(K key, ZAddArgs zAddArgs, ScoredValue<V>... scoredValues);
-  - RedisFuture<Double> zaddincr(K key, double score, V member);
-  - RedisFuture<Double> zaddincr(K key, ZAddArgs zAddArgs, double score, V member);
-  - RedisFuture<Long> zcard(K key);
-  # - RedisFuture<Long> zcount(K key, double min, double max);
-  # - RedisFuture<Long> zcount(K key, String min, String max);
-  - RedisFuture<Long> zcount(K key, Range<? extends Number> range);
-  - RedisFuture<List<V>> zdiff(K... keys);
-  - RedisFuture<Long> zdiffstore(K destKey, K... srcKeys);
-  - RedisFuture<List<ScoredValue<V>>> zdiffWithScores(K... keys);
-  - RedisFuture<Double> zincrby(K key, double amount, V member);
-  - RedisFuture<List<V>> zinter(K... keys);
-  - RedisFuture<List<V>> zinter(ZAggregateArgs aggregateArgs, K... keys);
-  - RedisFuture<List<ScoredValue<V>>> zinterWithScores(ZAggregateArgs aggregateArgs, K... keys);
-  - RedisFuture<List<ScoredValue<V>>> zinterWithScores(K... keys);
-  - RedisFuture<Long> zinterstore(K destination, K... keys);
-  - RedisFuture<Long> zinterstore(K destination, ZStoreArgs storeArgs, K... keys);
-  # - RedisFuture<Long> zlexcount(K key, String min, String max);
-  - RedisFuture<Long> zlexcount(K key, Range<? extends V> range);
-  - RedisFuture<List<Double>> zmscore(K key, V... members);
-  - RedisFuture<ScoredValue<V>> zpopmin(K key);
-  - RedisFuture<List<ScoredValue<V>>> zpopmin(K key, long count);
-  - RedisFuture<ScoredValue<V>> zpopmax(K key);
-  - RedisFuture<List<ScoredValue<V>>> zpopmax(K key, long count);
-  - RedisFuture<V> zrandmember(K key);
-  - RedisFuture<List<V>> zrandmember(K key, long count);
-  - RedisFuture<ScoredValue<V>> zrandmemberWithScores(K key);
-  - RedisFuture<List<ScoredValue<V>>> zrandmemberWithScores(K key, long count);
-  - RedisFuture<List<V>> zrange(K key, long start, long stop);
-  - RedisFuture<Long> zrange(ValueStreamingChannel<V> channel, K key, long start, long stop);
-  - RedisFuture<List<ScoredValue<V>>> zrangeWithScores(K key, long start, long stop);
-  - RedisFuture<Long> zrangeWithScores(ScoredValueStreamingChannel<V> channel, K key, long start, long stop);
-  # - RedisFuture<List<V>> zrangebylex(K key, String min, String max);
-  - RedisFuture<List<V>> zrangebylex(K key, Range<? extends V> range);
-  # - RedisFuture<List<V>> zrangebylex(K key, String min, String max, long offset, long count);
-  - RedisFuture<List<V>> zrangebylex(K key, Range<? extends V> range, Limit limit);
-  # - RedisFuture<List<V>> zrangebyscore(K key, double min, double max);
-  # - RedisFuture<List<V>> zrangebyscore(K key, String min, String max);
-  - RedisFuture<List<V>> zrangebyscore(K key, Range<? extends Number> range);
-  # - RedisFuture<List<V>> zrangebyscore(K key, double min, double max, long offset, long count);
-  # - RedisFuture<List<V>> zrangebyscore(K key, String min, String max, long offset, long count);
-  - RedisFuture<List<V>> zrangebyscore(K key, Range<? extends Number> range, Limit limit);
-  # - RedisFuture<Long> zrangebyscore(ValueStreamingChannel<V> channel, K key, double min, double max);
-  # - RedisFuture<Long> zrangebyscore(ValueStreamingChannel<V> channel, K key, String min, String max);
-  - RedisFuture<Long> zrangebyscore(ValueStreamingChannel<V> channel, K key, Range<? extends Number> range);
-  # - RedisFuture<Long> zrangebyscore(ValueStreamingChannel<V> channel, K key, double min, double max, long offset, long count);
-  # - RedisFuture<Long> zrangebyscore(ValueStreamingChannel<V> channel, K key, String min, String max, long offset, long count);
-  - RedisFuture<Long> zrangebyscore(ValueStreamingChannel<V> channel, K key, Range<? extends Number> range, Limit limit);
-  # - RedisFuture<List<ScoredValue<V>>> zrangebyscoreWithScores(K key, double min, double max);
-  # - RedisFuture<List<ScoredValue<V>>> zrangebyscoreWithScores(K key, String min, String max);
-  - RedisFuture<List<ScoredValue<V>>> zrangebyscoreWithScores(K key, Range<? extends Number> range);
-  # - RedisFuture<List<ScoredValue<V>>> zrangebyscoreWithScores(K key, double min, double max, long offset, long count);
-  # - RedisFuture<List<ScoredValue<V>>> zrangebyscoreWithScores(K key, String min, String max, long offset, long count);
-  - RedisFuture<List<ScoredValue<V>>> zrangebyscoreWithScores(K key, Range<? extends Number> range, Limit limit);
-  # - RedisFuture<Long> zrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, double min, double max);
-  # - RedisFuture<Long> zrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, String min, String max);
-  - RedisFuture<Long> zrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, Range<? extends Number> range);
-  # - RedisFuture<Long> zrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, double min, double max, long offset, long count);
-  # - RedisFuture<Long> zrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, String min, String max, long offset, long count);
-  - RedisFuture<Long> zrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, Range<? extends Number> range, Limit limit);
-  - RedisFuture<Long> zrangestorebylex(K dstKey, K srcKey, Range<? extends V> range, Limit limit);
-  - RedisFuture<Long> zrangestorebyscore(K dstKey, K srcKey, Range<? extends Number> range, Limit limit);
-  - RedisFuture<Long> zrank(K key, V member);
-  - RedisFuture<Long> zrem(K key, V... members);
-  # - RedisFuture<Long> zremrangebylex(K key, String min, String max);
-  - RedisFuture<Long> zremrangebylex(K key, Range<? extends V> range);
-  - RedisFuture<Long> zremrangebyrank(K key, long start, long stop);
-  # - RedisFuture<Long> zremrangebyscore(K key, double min, double max);
-  # - RedisFuture<Long> zremrangebyscore(K key, String min, String max);
-  - RedisFuture<Long> zremrangebyscore(K key, Range<? extends Number> range);
-  - RedisFuture<List<V>> zrevrange(K key, long start, long stop);
-  - RedisFuture<Long> zrevrange(ValueStreamingChannel<V> channel, K key, long start, long stop);
-  - RedisFuture<List<ScoredValue<V>>> zrevrangeWithScores(K key, long start, long stop);
-  - RedisFuture<Long> zrevrangeWithScores(ScoredValueStreamingChannel<V> channel, K key, long start, long stop);
-  - RedisFuture<List<V>> zrevrangebylex(K key, Range<? extends V> range);
-  - RedisFuture<List<V>> zrevrangebylex(K key, Range<? extends V> range, Limit limit);
-  # - RedisFuture<List<V>> zrevrangebyscore(K key, double max, double min);
-  # - RedisFuture<List<V>> zrevrangebyscore(K key, String max, String min);
-  - RedisFuture<List<V>> zrevrangebyscore(K key, Range<? extends Number> range);
-  # - RedisFuture<List<V>> zrevrangebyscore(K key, double max, double min, long offset, long count);
-  # - RedisFuture<List<V>> zrevrangebyscore(K key, String max, String min, long offset, long count);
-  - RedisFuture<List<V>> zrevrangebyscore(K key, Range<? extends Number> range, Limit limit);
-  # - RedisFuture<Long> zrevrangebyscore(ValueStreamingChannel<V> channel, K key, double max, double min);
-  # - RedisFuture<Long> zrevrangebyscore(ValueStreamingChannel<V> channel, K key, String max, String min);
-  - RedisFuture<Long> zrevrangebyscore(ValueStreamingChannel<V> channel, K key, Range<? extends Number> range);
-  # - RedisFuture<Long> zrevrangebyscore(ValueStreamingChannel<V> channel, K key, double max, double min, long offset, long count);
-  # - RedisFuture<Long> zrevrangebyscore(ValueStreamingChannel<V> channel, K key, String max, String min, long offset, long count);
-  - RedisFuture<Long> zrevrangebyscore(ValueStreamingChannel<V> channel, K key, Range<? extends Number> range, Limit limit);
-  # - RedisFuture<List<ScoredValue<V>>> zrevrangebyscoreWithScores(K key, double max, double min);
-  # - RedisFuture<List<ScoredValue<V>>> zrevrangebyscoreWithScores(K key, String max, String min);
-  - RedisFuture<List<ScoredValue<V>>> zrevrangebyscoreWithScores(K key, Range<? extends Number> range);
-  # - RedisFuture<List<ScoredValue<V>>> zrevrangebyscoreWithScores(K key, double max, double min, long offset, long count);
-  # - RedisFuture<List<ScoredValue<V>>> zrevrangebyscoreWithScores(K key, String max, String min, long offset, long count);
-  - RedisFuture<List<ScoredValue<V>>> zrevrangebyscoreWithScores(K key, Range<? extends Number> range, Limit limit);
-  # - RedisFuture<Long> zrevrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, double max, double min);
-  # - RedisFuture<Long> zrevrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, String max, String min);
-  - RedisFuture<Long> zrevrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, Range<? extends Number> range);
-  # - RedisFuture<Long> zrevrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, double max, double min, long offset, long count);
-  # - RedisFuture<Long> zrevrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, String max, String min, long offset, long count);
-  - RedisFuture<Long> zrevrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, Range<? extends Number> range, Limit limit);
-  - RedisFuture<Long> zrevrangestorebylex(K dstKey, K srcKey, Range<? extends V> range, Limit limit);
-  - RedisFuture<Long> zrevrangestorebyscore(K dstKey, K srcKey, Range<? extends Number> range, Limit limit);
-  - RedisFuture<Long> zrevrank(K key, V member);
-  - RedisFuture<ScoredValueScanCursor<V>> zscan(K key);
-  - RedisFuture<ScoredValueScanCursor<V>> zscan(K key, ScanArgs scanArgs);
-  - RedisFuture<ScoredValueScanCursor<V>> zscan(K key, ScanCursor scanCursor, ScanArgs scanArgs);
-  - RedisFuture<ScoredValueScanCursor<V>> zscan(K key, ScanCursor scanCursor);
-  - RedisFuture<StreamScanCursor> zscan(ScoredValueStreamingChannel<V> channel, K key);
-  - RedisFuture<StreamScanCursor> zscan(ScoredValueStreamingChannel<V> channel, K key, ScanArgs scanArgs);
-  - RedisFuture<StreamScanCursor> zscan(ScoredValueStreamingChannel<V> channel, K key, ScanCursor scanCursor, ScanArgs scanArgs);
-  - RedisFuture<StreamScanCursor> zscan(ScoredValueStreamingChannel<V> channel, K key, ScanCursor scanCursor);
-  - RedisFuture<Double> zscore(K key, V member);
-  - RedisFuture<List<V>> zunion(K... keys);
-  - RedisFuture<List<V>> zunion(ZAggregateArgs aggregateArgs, K... keys);
-  - RedisFuture<List<ScoredValue<V>>> zunionWithScores(ZAggregateArgs aggregateArgs, K... keys);
-  - RedisFuture<List<ScoredValue<V>>> zunionWithScores(K... keys);
-  - RedisFuture<Long> zunionstore(K destination, K... keys);
-  - RedisFuture<Long> zunionstore(K destination, ZStoreArgs storeArgs, K... keys);
+  - fun: RedisFuture<KeyValue<K, ScoredValue<V>>> bzpopmin(long timeout, K... keys);
+  - fun: RedisFuture<KeyValue<K, ScoredValue<V>>> bzpopmin(double timeout, K... keys);
+  - fun: RedisFuture<KeyValue<K, ScoredValue<V>>> bzpopmax(long timeout, K... keys);
+  - fun: RedisFuture<KeyValue<K, ScoredValue<V>>> bzpopmax(double timeout, K... keys);
+  - fun: RedisFuture<Long> zadd(K key, double score, V member);
+  - fun: RedisFuture<Long> zadd(K key, Object... scoresAndValues);
+  - fun: RedisFuture<Long> zadd(K key, ScoredValue<V>... scoredValues);
+  - fun: RedisFuture<Long> zadd(K key, ZAddArgs zAddArgs, double score, V member);
+  - fun: RedisFuture<Long> zadd(K key, ZAddArgs zAddArgs, Object... scoresAndValues);
+  - fun: RedisFuture<Long> zadd(K key, ZAddArgs zAddArgs, ScoredValue<V>... scoredValues);
+  - fun: RedisFuture<Double> zaddincr(K key, double score, V member);
+    opt: [ nullable ]
+  - fun: RedisFuture<Double> zaddincr(K key, ZAddArgs zAddArgs, double score, V member);
+    opt: [ nullable ]
+  - fun: RedisFuture<Long> zcard(K key);
+  # - fun: RedisFuture<Long> zcount(K key, double min, double max);
+  # - fun: RedisFuture<Long> zcount(K key, String min, String max);
+  - fun: RedisFuture<Long> zcount(K key, Range<? extends Number> range);
+  - fun: RedisFuture<List<V>> zdiff(K... keys);
+  - fun: RedisFuture<Long> zdiffstore(K destKey, K... srcKeys);
+  - fun: RedisFuture<List<ScoredValue<V>>> zdiffWithScores(K... keys);
+  - fun: RedisFuture<Double> zincrby(K key, double amount, V member);
+  - fun: RedisFuture<List<V>> zinter(K... keys);
+  - fun: RedisFuture<List<V>> zinter(ZAggregateArgs aggregateArgs, K... keys);
+  - fun: RedisFuture<List<ScoredValue<V>>> zinterWithScores(ZAggregateArgs aggregateArgs, K... keys);
+  - fun: RedisFuture<List<ScoredValue<V>>> zinterWithScores(K... keys);
+  - fun: RedisFuture<Long> zinterstore(K destination, K... keys);
+  - fun: RedisFuture<Long> zinterstore(K destination, ZStoreArgs storeArgs, K... keys);
+  # - fun: RedisFuture<Long> zlexcount(K key, String min, String max);
+  - fun: RedisFuture<Long> zlexcount(K key, Range<? extends V> range);
+  - fun: RedisFuture<List<Double>> zmscore(K key, V... members);
+  - fun: RedisFuture<ScoredValue<V>> zpopmin(K key);
+  - fun: RedisFuture<List<ScoredValue<V>>> zpopmin(K key, long count);
+  - fun: RedisFuture<ScoredValue<V>> zpopmax(K key);
+  - fun: RedisFuture<List<ScoredValue<V>>> zpopmax(K key, long count);
+  - fun: RedisFuture<V> zrandmember(K key);
+  - fun: RedisFuture<List<V>> zrandmember(K key, long count);
+  - fun: RedisFuture<ScoredValue<V>> zrandmemberWithScores(K key);
+  - fun: RedisFuture<List<ScoredValue<V>>> zrandmemberWithScores(K key, long count);
+  - fun: RedisFuture<List<V>> zrange(K key, long start, long stop);
+  - fun: RedisFuture<Long> zrange(ValueStreamingChannel<V> channel, K key, long start, long stop);
+  - fun: RedisFuture<List<ScoredValue<V>>> zrangeWithScores(K key, long start, long stop);
+  - fun: RedisFuture<Long> zrangeWithScores(ScoredValueStreamingChannel<V> channel, K key, long start, long stop);
+  # - fun: RedisFuture<List<V>> zrangebylex(K key, String min, String max);
+  - fun: RedisFuture<List<V>> zrangebylex(K key, Range<? extends V> range);
+  # - fun: RedisFuture<List<V>> zrangebylex(K key, String min, String max, long offset, long count);
+  - fun: RedisFuture<List<V>> zrangebylex(K key, Range<? extends V> range, Limit limit);
+  # - fun: RedisFuture<List<V>> zrangebyscore(K key, double min, double max);
+  # - fun: RedisFuture<List<V>> zrangebyscore(K key, String min, String max);
+  - fun: RedisFuture<List<V>> zrangebyscore(K key, Range<? extends Number> range);
+  # - fun: RedisFuture<List<V>> zrangebyscore(K key, double min, double max, long offset, long count);
+  # - fun: RedisFuture<List<V>> zrangebyscore(K key, String min, String max, long offset, long count);
+  - fun: RedisFuture<List<V>> zrangebyscore(K key, Range<? extends Number> range, Limit limit);
+  # - fun: RedisFuture<Long> zrangebyscore(ValueStreamingChannel<V> channel, K key, double min, double max);
+  # - fun: RedisFuture<Long> zrangebyscore(ValueStreamingChannel<V> channel, K key, String min, String max);
+  - fun: RedisFuture<Long> zrangebyscore(ValueStreamingChannel<V> channel, K key, Range<? extends Number> range);
+  # - fun: RedisFuture<Long> zrangebyscore(ValueStreamingChannel<V> channel, K key, double min, double max, long offset, long count);
+  # - fun: RedisFuture<Long> zrangebyscore(ValueStreamingChannel<V> channel, K key, String min, String max, long offset, long count);
+  - fun: RedisFuture<Long> zrangebyscore(ValueStreamingChannel<V> channel, K key, Range<? extends Number> range, Limit limit);
+  # - fun: RedisFuture<List<ScoredValue<V>>> zrangebyscoreWithScores(K key, double min, double max);
+  # - fun: RedisFuture<List<ScoredValue<V>>> zrangebyscoreWithScores(K key, String min, String max);
+  - fun: RedisFuture<List<ScoredValue<V>>> zrangebyscoreWithScores(K key, Range<? extends Number> range);
+  # - fun: RedisFuture<List<ScoredValue<V>>> zrangebyscoreWithScores(K key, double min, double max, long offset, long count);
+  # - fun: RedisFuture<List<ScoredValue<V>>> zrangebyscoreWithScores(K key, String min, String max, long offset, long count);
+  - fun: RedisFuture<List<ScoredValue<V>>> zrangebyscoreWithScores(K key, Range<? extends Number> range, Limit limit);
+  # - fun: RedisFuture<Long> zrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, double min, double max);
+  # - fun: RedisFuture<Long> zrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, String min, String max);
+  - fun: RedisFuture<Long> zrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, Range<? extends Number> range);
+  # - fun: RedisFuture<Long> zrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, double min, double max, long offset, long count);
+  # - fun: RedisFuture<Long> zrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, String min, String max, long offset, long count);
+  - fun: RedisFuture<Long> zrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, Range<? extends Number> range, Limit limit);
+  - fun: RedisFuture<Long> zrangestorebylex(K dstKey, K srcKey, Range<? extends V> range, Limit limit);
+  - fun: RedisFuture<Long> zrangestorebyscore(K dstKey, K srcKey, Range<? extends Number> range, Limit limit);
+  - fun: RedisFuture<Long> zrank(K key, V member);
+  - fun: RedisFuture<Long> zrem(K key, V... members);
+  # - fun: RedisFuture<Long> zremrangebylex(K key, String min, String max);
+  - fun: RedisFuture<Long> zremrangebylex(K key, Range<? extends V> range);
+  - fun: RedisFuture<Long> zremrangebyrank(K key, long start, long stop);
+  # - fun: RedisFuture<Long> zremrangebyscore(K key, double min, double max);
+  # - fun: RedisFuture<Long> zremrangebyscore(K key, String min, String max);
+  - fun: RedisFuture<Long> zremrangebyscore(K key, Range<? extends Number> range);
+  - fun: RedisFuture<List<V>> zrevrange(K key, long start, long stop);
+  - fun: RedisFuture<Long> zrevrange(ValueStreamingChannel<V> channel, K key, long start, long stop);
+  - fun: RedisFuture<List<ScoredValue<V>>> zrevrangeWithScores(K key, long start, long stop);
+  - fun: RedisFuture<Long> zrevrangeWithScores(ScoredValueStreamingChannel<V> channel, K key, long start, long stop);
+  - fun: RedisFuture<List<V>> zrevrangebylex(K key, Range<? extends V> range);
+  - fun: RedisFuture<List<V>> zrevrangebylex(K key, Range<? extends V> range, Limit limit);
+  # - fun: RedisFuture<List<V>> zrevrangebyscore(K key, double max, double min);
+  # - fun: RedisFuture<List<V>> zrevrangebyscore(K key, String max, String min);
+  - fun: RedisFuture<List<V>> zrevrangebyscore(K key, Range<? extends Number> range);
+  # - fun: RedisFuture<List<V>> zrevrangebyscore(K key, double max, double min, long offset, long count);
+  # - fun: RedisFuture<List<V>> zrevrangebyscore(K key, String max, String min, long offset, long count);
+  - fun: RedisFuture<List<V>> zrevrangebyscore(K key, Range<? extends Number> range, Limit limit);
+  # - fun: RedisFuture<Long> zrevrangebyscore(ValueStreamingChannel<V> channel, K key, double max, double min);
+  # - fun: RedisFuture<Long> zrevrangebyscore(ValueStreamingChannel<V> channel, K key, String max, String min);
+  - fun: RedisFuture<Long> zrevrangebyscore(ValueStreamingChannel<V> channel, K key, Range<? extends Number> range);
+  # - fun: RedisFuture<Long> zrevrangebyscore(ValueStreamingChannel<V> channel, K key, double max, double min, long offset, long count);
+  # - fun: RedisFuture<Long> zrevrangebyscore(ValueStreamingChannel<V> channel, K key, String max, String min, long offset, long count);
+  - fun: RedisFuture<Long> zrevrangebyscore(ValueStreamingChannel<V> channel, K key, Range<? extends Number> range, Limit limit);
+  # - fun: RedisFuture<List<ScoredValue<V>>> zrevrangebyscoreWithScores(K key, double max, double min);
+  # - fun: RedisFuture<List<ScoredValue<V>>> zrevrangebyscoreWithScores(K key, String max, String min);
+  - fun: RedisFuture<List<ScoredValue<V>>> zrevrangebyscoreWithScores(K key, Range<? extends Number> range);
+  # - fun: RedisFuture<List<ScoredValue<V>>> zrevrangebyscoreWithScores(K key, double max, double min, long offset, long count);
+  # - fun: RedisFuture<List<ScoredValue<V>>> zrevrangebyscoreWithScores(K key, String max, String min, long offset, long count);
+  - fun: RedisFuture<List<ScoredValue<V>>> zrevrangebyscoreWithScores(K key, Range<? extends Number> range, Limit limit);
+  # - fun: RedisFuture<Long> zrevrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, double max, double min);
+  # - fun: RedisFuture<Long> zrevrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, String max, String min);
+  - fun: RedisFuture<Long> zrevrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, Range<? extends Number> range);
+  # - fun: RedisFuture<Long> zrevrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, double max, double min, long offset, long count);
+  # - fun: RedisFuture<Long> zrevrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, String max, String min, long offset, long count);
+  - fun: RedisFuture<Long> zrevrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, Range<? extends Number> range, Limit limit);
+  - fun: RedisFuture<Long> zrevrangestorebylex(K dstKey, K srcKey, Range<? extends V> range, Limit limit);
+  - fun: RedisFuture<Long> zrevrangestorebyscore(K dstKey, K srcKey, Range<? extends Number> range, Limit limit);
+  - fun: RedisFuture<Long> zrevrank(K key, V member);
+  - fun: RedisFuture<ScoredValueScanCursor<V>> zscan(K key);
+  - fun: RedisFuture<ScoredValueScanCursor<V>> zscan(K key, ScanArgs scanArgs);
+  - fun: RedisFuture<ScoredValueScanCursor<V>> zscan(K key, ScanCursor scanCursor, ScanArgs scanArgs);
+  - fun: RedisFuture<ScoredValueScanCursor<V>> zscan(K key, ScanCursor scanCursor);
+  - fun: RedisFuture<StreamScanCursor> zscan(ScoredValueStreamingChannel<V> channel, K key);
+  - fun: RedisFuture<StreamScanCursor> zscan(ScoredValueStreamingChannel<V> channel, K key, ScanArgs scanArgs);
+  - fun: RedisFuture<StreamScanCursor> zscan(ScoredValueStreamingChannel<V> channel, K key, ScanCursor scanCursor, ScanArgs scanArgs);
+  - fun: RedisFuture<StreamScanCursor> zscan(ScoredValueStreamingChannel<V> channel, K key, ScanCursor scanCursor);
+  - fun: RedisFuture<Double> zscore(K key, V member);
+  - fun: RedisFuture<List<V>> zunion(K... keys);
+  - fun: RedisFuture<List<V>> zunion(ZAggregateArgs aggregateArgs, K... keys);
+  - fun: RedisFuture<List<ScoredValue<V>>> zunionWithScores(ZAggregateArgs aggregateArgs, K... keys);
+  - fun: RedisFuture<List<ScoredValue<V>>> zunionWithScores(K... keys);
+  - fun: RedisFuture<Long> zunionstore(K destination, K... keys);
+  - fun: RedisFuture<Long> zunionstore(K destination, ZStoreArgs storeArgs, K... keys);
   imports:
   - io.lettuce.core.Limit
   - io.lettuce.core.ZStoreArgs
@@ -551,24 +552,24 @@
 - underlying: RedisGeoAsyncCommands[K, V]
   output: GeoCommands
   methods:
-  - RedisFuture<Long> geoadd(K key, double longitude, double latitude, V member);
-  - RedisFuture<Long> geoadd(K key, double longitude, double latitude, V member, GeoAddArgs args);
-  - RedisFuture<Long> geoadd(K key, Object... lngLatMember);
-  - RedisFuture<Long> geoadd(K key, GeoValue<V>... values);
-  - RedisFuture<Long> geoadd(K key, GeoAddArgs args, Object... lngLatMember);
-  - RedisFuture<Long> geoadd(K key, GeoAddArgs args, GeoValue<V>... values);
-  - RedisFuture<Double> geodist(K key, V from, V to, GeoArgs.Unit unit);
-  - RedisFuture<List<Value<String>>> geohash(K key, V... members);
-  - RedisFuture<List<GeoCoordinates>> geopos(K key, V... members);
-  - RedisFuture<Set<V>> georadius(K key, double longitude, double latitude, double distance, GeoArgs.Unit unit);
-  - RedisFuture<List<GeoWithin<V>>> georadius(K key, double longitude, double latitude, double distance, GeoArgs.Unit unit, GeoArgs geoArgs);
-  - RedisFuture<Long> georadius(K key, double longitude, double latitude, double distance, GeoArgs.Unit unit, GeoRadiusStoreArgs<K> geoRadiusStoreArgs);
-  - RedisFuture<Set<V>> georadiusbymember(K key, V member, double distance, GeoArgs.Unit unit);
-  - RedisFuture<List<GeoWithin<V>>> georadiusbymember(K key, V member, double distance, GeoArgs.Unit unit, GeoArgs geoArgs);
-  - RedisFuture<Long> georadiusbymember(K key, V member, double distance, GeoArgs.Unit unit, GeoRadiusStoreArgs<K> geoRadiusStoreArgs);
-  - RedisFuture<Set<V>> geosearch(K key, GeoSearch.GeoRef<K> reference, GeoSearch.GeoPredicate predicate);
-  - RedisFuture<List<GeoWithin<V>>> geosearch(K key, GeoSearch.GeoRef<K> reference, GeoSearch.GeoPredicate predicate, GeoArgs geoArgs);
-  - RedisFuture<Long> geosearchstore(K destination, K key, GeoSearch.GeoRef<K> reference, GeoSearch.GeoPredicate predicate, GeoArgs geoArgs, boolean storeDist);
+  - fun: RedisFuture<Long> geoadd(K key, double longitude, double latitude, V member);
+  - fun: RedisFuture<Long> geoadd(K key, double longitude, double latitude, V member, GeoAddArgs args);
+  - fun: RedisFuture<Long> geoadd(K key, Object... lngLatMember);
+  - fun: RedisFuture<Long> geoadd(K key, GeoValue<V>... values);
+  - fun: RedisFuture<Long> geoadd(K key, GeoAddArgs args, Object... lngLatMember);
+  - fun: RedisFuture<Long> geoadd(K key, GeoAddArgs args, GeoValue<V>... values);
+  - fun: RedisFuture<Double> geodist(K key, V from, V to, GeoArgs.Unit unit);
+  - fun: RedisFuture<List<Value<String>>> geohash(K key, V... members);
+  - fun: RedisFuture<List<GeoCoordinates>> geopos(K key, V... members);
+  - fun: RedisFuture<Set<V>> georadius(K key, double longitude, double latitude, double distance, GeoArgs.Unit unit);
+  - fun: RedisFuture<List<GeoWithin<V>>> georadius(K key, double longitude, double latitude, double distance, GeoArgs.Unit unit, GeoArgs geoArgs);
+  - fun: RedisFuture<Long> georadius(K key, double longitude, double latitude, double distance, GeoArgs.Unit unit, GeoRadiusStoreArgs<K> geoRadiusStoreArgs);
+  - fun: RedisFuture<Set<V>> georadiusbymember(K key, V member, double distance, GeoArgs.Unit unit);
+  - fun: RedisFuture<List<GeoWithin<V>>> georadiusbymember(K key, V member, double distance, GeoArgs.Unit unit, GeoArgs geoArgs);
+  - fun: RedisFuture<Long> georadiusbymember(K key, V member, double distance, GeoArgs.Unit unit, GeoRadiusStoreArgs<K> geoRadiusStoreArgs);
+  - fun: RedisFuture<Set<V>> geosearch(K key, GeoSearch.GeoRef<K> reference, GeoSearch.GeoPredicate predicate);
+  - fun: RedisFuture<List<GeoWithin<V>>> geosearch(K key, GeoSearch.GeoRef<K> reference, GeoSearch.GeoPredicate predicate, GeoArgs geoArgs);
+  - fun: RedisFuture<Long> geosearchstore(K destination, K key, GeoSearch.GeoRef<K> reference, GeoSearch.GeoPredicate predicate, GeoArgs geoArgs, boolean storeDist);
   imports:
   - io.lettuce.core.GeoAddArgs
   - io.lettuce.core.GeoArgs
@@ -581,21 +582,21 @@
 - underlying: RedisAclAsyncCommands[K, V]
   output: AclCommands
   methods:
-  - RedisFuture<Set<AclCategory>> aclCat();
-  - RedisFuture<Set<CommandType>> aclCat(AclCategory category);
-  - RedisFuture<Long> aclDeluser(String... usernames);
-  - RedisFuture<String> aclGenpass();
-  - RedisFuture<String> aclGenpass(int bits);
-  - RedisFuture<List<Object>> aclGetuser(String username);
-  - RedisFuture<List<String>> aclList();
-  - RedisFuture<String> aclLoad();
-  - RedisFuture<List<Map<String, Object>>> aclLog();
-  - RedisFuture<List<Map<String, Object>>> aclLog(int count);
-  - RedisFuture<String> aclLogReset();
-  - RedisFuture<String> aclSave();
-  - RedisFuture<String> aclSetuser(String username, AclSetuserArgs setuserArgs);
-  - RedisFuture<List<String>> aclUsers();
-  - RedisFuture<String> aclWhoami();
+  - fun: RedisFuture<Set<AclCategory>> aclCat();
+  - fun: RedisFuture<Set<CommandType>> aclCat(AclCategory category);
+  - fun: RedisFuture<Long> aclDeluser(String... usernames);
+  - fun: RedisFuture<String> aclGenpass();
+  - fun: RedisFuture<String> aclGenpass(int bits);
+  - fun: RedisFuture<List<Object>> aclGetuser(String username);
+  - fun: RedisFuture<List<String>> aclList();
+  - fun: RedisFuture<String> aclLoad();
+  - fun: RedisFuture<List<Map<String, Object>>> aclLog();
+  - fun: RedisFuture<List<Map<String, Object>>> aclLog(int count);
+  - fun: RedisFuture<String> aclLogReset();
+  - fun: RedisFuture<String> aclSave();
+  - fun: RedisFuture<String> aclSetuser(String username, AclSetuserArgs setuserArgs);
+  - fun: RedisFuture<List<String>> aclUsers();
+  - fun: RedisFuture<String> aclWhoami();
   imports:
   - io.lettuce.core.AclCategory
   - io.lettuce.core.AclSetuserArgs

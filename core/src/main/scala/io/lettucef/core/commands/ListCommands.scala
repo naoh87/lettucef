@@ -53,8 +53,8 @@ trait ListCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def lpop(key: K): F[Option[V]] =
     JF.toAsync(underlying.lpop(key)).map(Option(_))
   
-  def lpop(key: K, count: Long): F[Option[Seq[V]]] =
-    JF.toAsync(underlying.lpop(key, count)).map(Option(_).map(_.asScala.toSeq))
+  def lpop(key: K, count: Long): F[Seq[V]] =
+    JF.toAsync(underlying.lpop(key, count)).map(_.asScala.toSeq)
   
   def lpos(key: K, value: V): F[Option[Long]] =
     JF.toAsync(underlying.lpos(key, value)).map(Option(_).map(Long2long))
@@ -62,11 +62,11 @@ trait ListCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def lpos(key: K, value: V, args: LPosArgs): F[Option[Long]] =
     JF.toAsync(underlying.lpos(key, value, args)).map(Option(_).map(Long2long))
   
-  def lpos(key: K, value: V, count: Int): F[Option[Seq[Long]]] =
-    JF.toAsync(underlying.lpos(key, value, count)).map(Option(_).map(_.asScala.toSeq.map(Long2long)))
+  def lpos(key: K, value: V, count: Int): F[Seq[Long]] =
+    JF.toAsync(underlying.lpos(key, value, count)).map(_.asScala.toSeq.map(Long2long))
   
-  def lpos(key: K, value: V, count: Int, args: LPosArgs): F[Option[Seq[Long]]] =
-    JF.toAsync(underlying.lpos(key, value, count, args)).map(Option(_).map(_.asScala.toSeq.map(Long2long)))
+  def lpos(key: K, value: V, count: Int, args: LPosArgs): F[Seq[Long]] =
+    JF.toAsync(underlying.lpos(key, value, count, args)).map(_.asScala.toSeq.map(Long2long))
   
   def lpush(key: K, values: V*): F[Long] =
     JF.toAsync(underlying.lpush(key, values: _*)).map(Long2long)
@@ -89,11 +89,11 @@ trait ListCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def rpop(key: K): F[Option[V]] =
     JF.toAsync(underlying.rpop(key)).map(Option(_))
   
-  def rpop(key: K, count: Long): F[Option[Seq[V]]] =
-    JF.toAsync(underlying.rpop(key, count)).map(Option(_).map(_.asScala.toSeq))
+  def rpop(key: K, count: Long): F[Seq[V]] =
+    JF.toAsync(underlying.rpop(key, count)).map(_.asScala.toSeq)
   
-  def rpoplpush(source: K, destination: K): F[V] =
-    JF.toAsync(underlying.rpoplpush(source, destination))
+  def rpoplpush(source: K, destination: K): F[Option[V]] =
+    JF.toAsync(underlying.rpoplpush(source, destination)).map(Option(_))
   
   def rpush(key: K, values: V*): F[Long] =
     JF.toAsync(underlying.rpush(key, values: _*)).map(Long2long)

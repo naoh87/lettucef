@@ -5,7 +5,8 @@ import io.lettucef.core.util.LettuceValueConverter
 import scala.jdk.CollectionConverters._
 
 class DataScanCursor[A](val elements: Seq[A], cursor: String, finished: Boolean) extends ScanCursor(cursor, finished) {
-  def map[B](f: A => B): DataScanCursor[B] = new DataScanCursor[B](elements.map(f), cursor, finished)
+  def map[B](f: A => B): DataScanCursor[B] =
+    new DataScanCursor[B](elements.map(f), cursor, finished)
 }
 
 object DataScanCursor {

@@ -43,11 +43,11 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def zadd(key: K, zAddArgs: ZAddArgs, scoredValues: (Double, V)*): F[Long] =
     JF.toAsync(underlying.zadd(key, zAddArgs, scoredValues.map(LettuceValueConverter.toScoredValue): _*)).map(Long2long)
   
-  def zaddincr(key: K, score: Double, member: V): F[Double] =
-    JF.toAsync(underlying.zaddincr(key, score, member)).map(Double2double)
+  def zaddincr(key: K, score: Double, member: V): F[Option[Double]] =
+    JF.toAsync(underlying.zaddincr(key, score, member)).map(Option(_).map(Double2double))
   
-  def zaddincr(key: K, zAddArgs: ZAddArgs, score: Double, member: V): F[Double] =
-    JF.toAsync(underlying.zaddincr(key, zAddArgs, score, member)).map(Double2double)
+  def zaddincr(key: K, zAddArgs: ZAddArgs, score: Double, member: V): F[Option[Double]] =
+    JF.toAsync(underlying.zaddincr(key, zAddArgs, score, member)).map(Option(_).map(Double2double))
   
   def zcard(key: K): F[Long] =
     JF.toAsync(underlying.zcard(key)).map(Long2long)

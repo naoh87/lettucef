@@ -41,7 +41,7 @@ object GeneratorApp extends IOApp {
         .newline
         .indented(_
           .add(s"protected val underlying: ${async.underlying}").newline
-          .print(async.methods) {
+          .print(async.methods.map(_.fun)) {
             case (p, m) if m.existArgs(_.existName(skipArgType)) =>
               println(s"- skipped ${m.scalaDef}")
               p
@@ -72,11 +72,9 @@ object GeneratorApp extends IOApp {
 case class Async(
   underlying: String,
   output: String,
-  methods: List[Method],
+  methods: List[Async.FunDef],
   imports: List[String],
-  nullable: Option[List[String]],
 ) {
-  val nullMethodName: Set[String] = nullable.toList.flatten.toSet
 
   def refine(): Async =
     copy(
@@ -85,10 +83,24 @@ case class Async(
         case name if name.startsWith("scala.") => (2, name)
         case name => (1, name)
       },
-      methods = methods.map(m => m.copy(checkNull = nullMethodName(m.name))))
+      methods = methods.map(_.refine()))
 }
 
 object Async {
+  case class FunDef(
+    fun: Method,
+    opt: Option[List[String]],
+  ) {
+    val options: Seq[String] = opt.toList.flatten
+
+    def refine(): FunDef =
+      if (options.contains("nullable")) {
+        copy(fun = fun.copy(checkNull = true))
+      } else {
+        this
+      }
+  }
+
   val constantImports = List(
     "cats.syntax.functor._",
     "io.lettuce.core.api.async._",
