@@ -271,18 +271,27 @@
   output: ListCommands
   methods:
   - fun: RedisFuture<V> blmove(K source, K destination, LMoveArgs args, long timeout);
+    opt: [ nullable ]
   - fun: RedisFuture<V> blmove(K source, K destination, LMoveArgs args, double timeout);
+    opt: [ nullable ]
   - fun: RedisFuture<KeyValue<K, V>> blpop(long timeout, K... keys);
+    opt: [ nullable ]
   - fun: RedisFuture<KeyValue<K, V>> blpop(double timeout, K... keys);
+    opt: [ nullable ]
   - fun: RedisFuture<KeyValue<K, V>> brpop(long timeout, K... keys);
+    opt: [ nullable ]
   - fun: RedisFuture<KeyValue<K, V>> brpop(double timeout, K... keys);
+    opt: [ nullable ]
   - fun: RedisFuture<V> brpoplpush(long timeout, K source, K destination);
+    opt: [ nullable ]
   - fun: RedisFuture<V> brpoplpush(double timeout, K source, K destination);
+    opt: [ nullable ]
   - fun: RedisFuture<V> lindex(K key, long index);
     opt: [ nullable ]
   - fun: RedisFuture<Long> linsert(K key, boolean before, V pivot, V value);
   - fun: RedisFuture<Long> llen(K key);
   - fun: RedisFuture<V> lmove(K source, K destination, LMoveArgs args);
+    opt: [ nullable ]
   - fun: RedisFuture<V> lpop(K key);
     opt: [ nullable ]
   - fun: RedisFuture<List<V>> lpop(K key, long count);

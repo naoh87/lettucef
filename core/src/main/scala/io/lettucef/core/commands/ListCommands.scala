@@ -14,29 +14,29 @@ trait ListCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
 
   protected val underlying: RedisListAsyncCommands[K, V]
   
-  def blmove(source: K, destination: K, args: LMoveArgs, timeout: Long): F[V] =
-    JF.toAsync(underlying.blmove(source, destination, args, timeout))
+  def blmove(source: K, destination: K, args: LMoveArgs, timeout: Long): F[Option[V]] =
+    JF.toAsync(underlying.blmove(source, destination, args, timeout)).map(Option(_))
   
-  def blmove(source: K, destination: K, args: LMoveArgs, timeout: Double): F[V] =
-    JF.toAsync(underlying.blmove(source, destination, args, timeout))
+  def blmove(source: K, destination: K, args: LMoveArgs, timeout: Double): F[Option[V]] =
+    JF.toAsync(underlying.blmove(source, destination, args, timeout)).map(Option(_))
   
-  def blpop(timeout: Long, keys: K*): F[(K, Option[V])] =
-    JF.toAsync(underlying.blpop(timeout, keys: _*)).map(kv => LettuceValueConverter.fromKeyValue(kv))
+  def blpop(timeout: Long, keys: K*): F[Option[(K, Option[V])]] =
+    JF.toAsync(underlying.blpop(timeout, keys: _*)).map(Option(_).map(kv => LettuceValueConverter.fromKeyValue(kv)))
   
-  def blpop(timeout: Double, keys: K*): F[(K, Option[V])] =
-    JF.toAsync(underlying.blpop(timeout, keys: _*)).map(kv => LettuceValueConverter.fromKeyValue(kv))
+  def blpop(timeout: Double, keys: K*): F[Option[(K, Option[V])]] =
+    JF.toAsync(underlying.blpop(timeout, keys: _*)).map(Option(_).map(kv => LettuceValueConverter.fromKeyValue(kv)))
   
-  def brpop(timeout: Long, keys: K*): F[(K, Option[V])] =
-    JF.toAsync(underlying.brpop(timeout, keys: _*)).map(kv => LettuceValueConverter.fromKeyValue(kv))
+  def brpop(timeout: Long, keys: K*): F[Option[(K, Option[V])]] =
+    JF.toAsync(underlying.brpop(timeout, keys: _*)).map(Option(_).map(kv => LettuceValueConverter.fromKeyValue(kv)))
   
-  def brpop(timeout: Double, keys: K*): F[(K, Option[V])] =
-    JF.toAsync(underlying.brpop(timeout, keys: _*)).map(kv => LettuceValueConverter.fromKeyValue(kv))
+  def brpop(timeout: Double, keys: K*): F[Option[(K, Option[V])]] =
+    JF.toAsync(underlying.brpop(timeout, keys: _*)).map(Option(_).map(kv => LettuceValueConverter.fromKeyValue(kv)))
   
-  def brpoplpush(timeout: Long, source: K, destination: K): F[V] =
-    JF.toAsync(underlying.brpoplpush(timeout, source, destination))
+  def brpoplpush(timeout: Long, source: K, destination: K): F[Option[V]] =
+    JF.toAsync(underlying.brpoplpush(timeout, source, destination)).map(Option(_))
   
-  def brpoplpush(timeout: Double, source: K, destination: K): F[V] =
-    JF.toAsync(underlying.brpoplpush(timeout, source, destination))
+  def brpoplpush(timeout: Double, source: K, destination: K): F[Option[V]] =
+    JF.toAsync(underlying.brpoplpush(timeout, source, destination)).map(Option(_))
   
   def lindex(key: K, index: Long): F[Option[V]] =
     JF.toAsync(underlying.lindex(key, index)).map(Option(_))
@@ -47,8 +47,8 @@ trait ListCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def llen(key: K): F[Long] =
     JF.toAsync(underlying.llen(key)).map(Long2long)
   
-  def lmove(source: K, destination: K, args: LMoveArgs): F[V] =
-    JF.toAsync(underlying.lmove(source, destination, args))
+  def lmove(source: K, destination: K, args: LMoveArgs): F[Option[V]] =
+    JF.toAsync(underlying.lmove(source, destination, args)).map(Option(_))
   
   def lpop(key: K): F[Option[V]] =
     JF.toAsync(underlying.lpop(key)).map(Option(_))
