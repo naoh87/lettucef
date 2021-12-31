@@ -1,12 +1,10 @@
 package io.lettucef
 
+import java.io.FileWriter
 import java.nio.file.Paths
 import cats.effect.ExitCode
 import cats.effect.IO
 import cats.effect.IOApp
-import fs2.Chunk
-import fs2.io.file.Files
-import fs2.io.file.Path
 
 object GeneratorApp extends IOApp {
 
@@ -27,7 +25,7 @@ object GeneratorApp extends IOApp {
 
     asyncList.map { async =>
       println("-" * 32 + "\n" + async.underlying)
-      val outputDir = Paths.get(s"core/src/main/scala/io/lettucef/core/commands/${async.output}.scala").toAbsolutePath
+      val outputDir = Paths.get(s"../core/src/main/scala/io/lettucef/core/commands/${async.output}.scala").toAbsolutePath
 
       val skipArgType = Set("Object", "Date", "ValueStreamingChannel", "KeyStreamingChannel", "KeyValueStreamingChannel", "ScoredValueStreamingChannel")
 
@@ -55,7 +53,7 @@ object GeneratorApp extends IOApp {
           })
         .add("}")
         .newline
-        .pipe(print(Path.fromNioPath(outputDir), _))
+        .pipe(print(outputDir.toFile, _))
     }.sequence >> IO.delay {
       println(s"\ntotal method generation count: $outputMeth")
       ExitCode.Success
@@ -63,9 +61,17 @@ object GeneratorApp extends IOApp {
   }
 
 
-  def print(path: Path, printer: FunctionalPrinter): IO[Unit] = {
-    val content = fs2.Stream.iterable(printer.content).map(s => Chunk.iterable(s.getBytes) ++ Chunk.singleton('\n'.toByte)).unchunks
-    Files[IO].writeAll(path)(content).compile.drain
+  def print(path: java.io.File, printer: FunctionalPrinter): IO[Unit] = IO.blocking {
+    val fw = new FileWriter(path)
+    try {
+      printer.content.foreach { line =>
+        fw.write(line)
+        fw.write('\n')
+      }
+      fw.flush()
+    } finally {
+      fw.close()
+    }
   }
 }
 
