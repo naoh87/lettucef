@@ -338,7 +338,8 @@
   - fun: RedisFuture<List<Object>> command();
   - fun: RedisFuture<Long> commandCount();
   - fun: RedisFuture<List<Object>> commandInfo(String... commands);
-#  - fun: RedisFuture<List<Object>> commandInfo(CommandType... commands);
+  - fun: RedisFuture<List<Object>> commandInfo(CommandType... commands);
+    opt: [ ignore ]
   - fun: RedisFuture<Map<String, String>> configGet(String parameter);
   - fun: RedisFuture<String> configResetstat();
   - fun: RedisFuture<String> configRewrite();
@@ -352,10 +353,12 @@
   - fun: RedisFuture<String> debugSdslen(K key);
   - fun: RedisFuture<String> flushall();
   - fun: RedisFuture<String> flushall(FlushMode flushMode);
-  # - fun: RedisFuture<String> flushallAsync();
+  - fun: RedisFuture<String> flushallAsync();
+    opt: [ deprecated ]
   - fun: RedisFuture<String> flushdb();
   - fun: RedisFuture<String> flushdb(FlushMode flushMode);
-  # - fun: RedisFuture<String> flushdbAsync();
+  - fun: RedisFuture<String> flushdbAsync();
+    opt: [ deprecated ]
   - fun: RedisFuture<String> info();
   - fun: RedisFuture<String> info(String section);
   - fun: RedisFuture<Date> lastsave();

@@ -89,7 +89,7 @@ case class Async(
         case name if name.startsWith("scala.") => (2, name)
         case name => (1, name)
       },
-      methods = methods.map(_.refine()))
+      methods = methods.map(_.refine()).filter(_.isOutputTarget))
 }
 
 object Async {
@@ -98,6 +98,8 @@ object Async {
     opt: Option[List[String]],
   ) {
     val options: Seq[String] = opt.toList.flatten
+
+    def isOutputTarget: Boolean = options.forall(!Set("ignore", "deprecated")(_))
 
     def refine(): FunDef =
       if (options.contains("nullable")) {
