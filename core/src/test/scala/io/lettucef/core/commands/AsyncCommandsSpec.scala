@@ -35,42 +35,4 @@ class AsyncCommandsSpec extends AnyFreeSpec with Matchers {
   }
 }
 
-object RedisTest {
-  val codec: RedisCodec[RedisKey, RedisValue] =
-    new RedisCodec[RedisKey, RedisValue] {
-      override def decodeKey(bytes: ByteBuffer): RedisKey =
-        RedisKey(StringCodec.UTF8.decodeKey(bytes))
 
-      override def decodeValue(bytes: ByteBuffer): RedisValue =
-        RedisValue(StringCodec.UTF8.decodeValue(bytes))
-
-      override def encodeKey(key: RedisKey): ByteBuffer =
-        StringCodec.UTF8.encodeKey(key.key)
-
-      override def encodeValue(value: RedisValue): ByteBuffer =
-        StringCodec.UTF8.encodeValue(value.value)
-    }
-
-  case class RedisKey(key: String)
-
-  case class RedisValue(value: String) {
-    override def toString: String = value
-  }
-
-  object syntax {
-    implicit class StringOps(expr: String) {
-      def asKey: RedisKey = RedisKey(expr)
-
-      def asValue: RedisValue = RedisValue(expr)
-    }
-  }
-
-  import scala.util.chaining._
-
-  def commands[R](f: RedisClusterCommandsF[IO, RedisKey, RedisValue] => IO[R]): R =
-    RedisClientF
-      .resource[IO](RedisClusterClient.create("redis://127.0.0.1:7000").tap(_.setOptions(ClusterClientOptions.builder().protocolVersion(ProtocolVersion.RESP3).build())))
-      .flatMap(_.connect(codec).map(_.async()))
-      .use(f)
-      .unsafeRunSync()(IORuntime.global)
-}

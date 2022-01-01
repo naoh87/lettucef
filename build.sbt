@@ -11,7 +11,7 @@ lazy val core = (project in file("core")).settings(
   name := "lettucef-core",
   scalaVersion := scala213,
   crossScalaVersions := Seq(scala213, scala310),
-  test / fork := true,
+  Test / fork := true,
   libraryDependencies ++= Seq(
     "io.lettuce" % "lettuce-core" % "6.1.5.RELEASE",
     "org.typelevel" %% "cats-effect" % "3.3.1",

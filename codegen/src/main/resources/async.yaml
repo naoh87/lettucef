@@ -15,6 +15,7 @@
   - fun: RedisFuture<Boolean> expireat(K key, Instant timestamp);
   - fun: RedisFuture<List<K>> keys(K pattern);
   - fun: RedisFuture<Long> keys(KeyStreamingChannel<K> channel, K pattern);
+    opt: [ ignore ]
   - fun: RedisFuture<String> migrate(String host, int port, K key, int db, long timeout);
   - fun: RedisFuture<String> migrate(String host, int port, int db, long timeout, MigrateArgs<K> migrateArgs);
   - fun: RedisFuture<Boolean> move(K key, int db);
@@ -37,8 +38,10 @@
   - fun: RedisFuture<String> restore(K key, byte[] value, RestoreArgs args);
   - fun: RedisFuture<List<V>> sort(K key);
   - fun: RedisFuture<Long> sort(ValueStreamingChannel<V> channel, K key);
+    opt: [ ignore ]
   - fun: RedisFuture<List<V>> sort(K key, SortArgs sortArgs);
   - fun: RedisFuture<Long> sort(ValueStreamingChannel<V> channel, K key, SortArgs sortArgs);
+    opt: [ ignore ]
   - fun: RedisFuture<Long> sortStore(K key, SortArgs sortArgs, K destination);
   - fun: RedisFuture<Long> touch(K... keys);
   - fun: RedisFuture<Long> ttl(K key);
@@ -48,9 +51,13 @@
   - fun: RedisFuture<KeyScanCursor<K>> scan(ScanCursor scanCursor, ScanArgs scanArgs);
   - fun: RedisFuture<KeyScanCursor<K>> scan(ScanCursor scanCursor);
   - fun: RedisFuture<StreamScanCursor> scan(KeyStreamingChannel<K> channel);
+    opt: [ ignore ]
   - fun: RedisFuture<StreamScanCursor> scan(KeyStreamingChannel<K> channel, ScanArgs scanArgs);
+    opt: [ ignore ]
   - fun: RedisFuture<StreamScanCursor> scan(KeyStreamingChannel<K> channel, ScanCursor scanCursor, ScanArgs scanArgs);
+    opt: [ ignore ]
   - fun: RedisFuture<StreamScanCursor> scan(KeyStreamingChannel<K> channel, ScanCursor scanCursor);
+    opt: [ ignore ]
   imports:
   - java.time.Duration
   - java.time.Instant
@@ -144,6 +151,7 @@
   - fun: RedisFuture<Double> incrbyfloat(K key, double amount);
   - fun: RedisFuture<List<KeyValue<K, V>>> mget(K... keys);
   - fun: RedisFuture<Long> mget(KeyValueStreamingChannel<K, V> channel, K... keys);
+    opt: [ ignore ]
   - fun: RedisFuture<String> mset(Map<K, V> map);
   - fun: RedisFuture<Boolean> msetnx(Map<K, V> map);
   - fun: RedisFuture<String> set(K key, V value);
@@ -230,11 +238,14 @@
   - fun: RedisFuture<Double> hincrbyfloat(K key, K field, double amount);
   - fun: RedisFuture<Map<K, V>> hgetall(K key);
   - fun: RedisFuture<Long> hgetall(KeyValueStreamingChannel<K, V> channel, K key);
+    opt: [ ignore ]
   - fun: RedisFuture<List<K>> hkeys(K key);
   - fun: RedisFuture<Long> hkeys(KeyStreamingChannel<K> channel, K key);
+    opt: [ ignore ]
   - fun: RedisFuture<Long> hlen(K key);
   - fun: RedisFuture<List<KeyValue<K, V>>> hmget(K key, K... fields);
   - fun: RedisFuture<Long> hmget(KeyValueStreamingChannel<K, V> channel, K key, K... fields);
+    opt: [ ignore ]
   - fun: RedisFuture<String> hmset(K key, Map<K, V> map);
   - fun: RedisFuture<K> hrandfield(K key);
   - fun: RedisFuture<List<K>> hrandfield(K key, long count);
@@ -245,15 +256,20 @@
   - fun: RedisFuture<MapScanCursor<K, V>> hscan(K key, ScanCursor scanCursor, ScanArgs scanArgs);
   - fun: RedisFuture<MapScanCursor<K, V>> hscan(K key, ScanCursor scanCursor);
   - fun: RedisFuture<StreamScanCursor> hscan(KeyValueStreamingChannel<K, V> channel, K key);
+    opt: [ ignore ]
   - fun: RedisFuture<StreamScanCursor> hscan(KeyValueStreamingChannel<K, V> channel, K key, ScanArgs scanArgs);
+    opt: [ ignore ]
   - fun: RedisFuture<StreamScanCursor> hscan(KeyValueStreamingChannel<K, V> channel, K key, ScanCursor scanCursor, ScanArgs scanArgs);
+    opt: [ ignore ]
   - fun: RedisFuture<StreamScanCursor> hscan(KeyValueStreamingChannel<K, V> channel, K key, ScanCursor scanCursor);
+    opt: [ ignore ]
   - fun: RedisFuture<Boolean> hset(K key, K field, V value);
   - fun: RedisFuture<Long> hset(K key, Map<K, V> map);
   - fun: RedisFuture<Boolean> hsetnx(K key, K field, V value);
   - fun: RedisFuture<Long> hstrlen(K key, K field);
   - fun: RedisFuture<List<V>> hvals(K key);
   - fun: RedisFuture<Long> hvals(ValueStreamingChannel<V> channel, K key);
+    opt: [ ignore ]
   imports:
   - io.lettucef.core.models._
   - io.lettuce.core.ScanArgs
@@ -305,6 +321,7 @@
   - fun: RedisFuture<Long> lpushx(K key, V... values);
   - fun: RedisFuture<List<V>> lrange(K key, long start, long stop);
   - fun: RedisFuture<Long> lrange(ValueStreamingChannel<V> channel, K key, long start, long stop);
+    opt: [ ignore ]
   - fun: RedisFuture<Long> lrem(K key, long count, V value);
   - fun: RedisFuture<String> lset(K key, long index, V value);
   - fun: RedisFuture<String> ltrim(K key, long start, long stop);
@@ -387,13 +404,16 @@
   - fun: RedisFuture<Long> scard(K key);
   - fun: RedisFuture<Set<V>> sdiff(K... keys);
   - fun: RedisFuture<Long> sdiff(ValueStreamingChannel<V> channel, K... keys);
+    opt: [ ignore ]
   - fun: RedisFuture<Long> sdiffstore(K destination, K... keys);
   - fun: RedisFuture<Set<V>> sinter(K... keys);
   - fun: RedisFuture<Long> sinter(ValueStreamingChannel<V> channel, K... keys);
+    opt: [ ignore ]
   - fun: RedisFuture<Long> sinterstore(K destination, K... keys);
   - fun: RedisFuture<Boolean> sismember(K key, V member);
   - fun: RedisFuture<Set<V>> smembers(K key);
   - fun: RedisFuture<Long> smembers(ValueStreamingChannel<V> channel, K key);
+    opt: [ ignore ]
   - fun: RedisFuture<List<Boolean>> smismember(K key, V... members);
   - fun: RedisFuture<Boolean> smove(K source, K destination, V member);
   - fun: RedisFuture<V> spop(K key);
@@ -403,18 +423,24 @@
     opt: [ nullable ]
   - fun: RedisFuture<List<V>> srandmember(K key, long count);
   - fun: RedisFuture<Long> srandmember(ValueStreamingChannel<V> channel, K key, long count);
+    opt: [ ignore ]
   - fun: RedisFuture<Long> srem(K key, V... members);
   - fun: RedisFuture<Set<V>> sunion(K... keys);
   - fun: RedisFuture<Long> sunion(ValueStreamingChannel<V> channel, K... keys);
+    opt: [ ignore ]
   - fun: RedisFuture<Long> sunionstore(K destination, K... keys);
   - fun: RedisFuture<ValueScanCursor<V>> sscan(K key);
   - fun: RedisFuture<ValueScanCursor<V>> sscan(K key, ScanArgs scanArgs);
   - fun: RedisFuture<ValueScanCursor<V>> sscan(K key, ScanCursor scanCursor, ScanArgs scanArgs);
   - fun: RedisFuture<ValueScanCursor<V>> sscan(K key, ScanCursor scanCursor);
   - fun: RedisFuture<StreamScanCursor> sscan(ValueStreamingChannel<V> channel, K key);
+    opt: [ ignore ]
   - fun: RedisFuture<StreamScanCursor> sscan(ValueStreamingChannel<V> channel, K key, ScanArgs scanArgs);
+    opt: [ ignore ]
   - fun: RedisFuture<StreamScanCursor> sscan(ValueStreamingChannel<V> channel, K key, ScanCursor scanCursor, ScanArgs scanArgs);
+    opt: [ ignore ]
   - fun: RedisFuture<StreamScanCursor> sscan(ValueStreamingChannel<V> channel, K key, ScanCursor scanCursor);
+    opt: [ ignore ]
   imports:
   - io.lettuce.core.ScanArgs
   - io.lettuce.core.ScanCursor
@@ -438,8 +464,10 @@
   - fun: RedisFuture<Double> zaddincr(K key, ZAddArgs zAddArgs, double score, V member);
     opt: [ nullable ]
   - fun: RedisFuture<Long> zcard(K key);
-  # - fun: RedisFuture<Long> zcount(K key, double min, double max);
-  # - fun: RedisFuture<Long> zcount(K key, String min, String max);
+  - fun: RedisFuture<Long> zcount(K key, double min, double max);
+    opt: [ deprecated ]
+  - fun: RedisFuture<Long> zcount(K key, String min, String max);
+    opt: [ deprecated ]
   - fun: RedisFuture<Long> zcount(K key, Range<? extends Number> range);
   - fun: RedisFuture<List<V>> zdiff(K... keys);
   - fun: RedisFuture<Long> zdiffstore(K destKey, K... srcKeys);
@@ -451,7 +479,8 @@
   - fun: RedisFuture<List<ScoredValue<V>>> zinterWithScores(K... keys);
   - fun: RedisFuture<Long> zinterstore(K destination, K... keys);
   - fun: RedisFuture<Long> zinterstore(K destination, ZStoreArgs storeArgs, K... keys);
-  # - fun: RedisFuture<Long> zlexcount(K key, String min, String max);
+  - fun: RedisFuture<Long> zlexcount(K key, String min, String max);
+    opt: [ deprecated ]
   - fun: RedisFuture<Long> zlexcount(K key, Range<? extends V> range);
   - fun: RedisFuture<List<Double>> zmscore(K key, V... members);
   - fun: RedisFuture<ScoredValue<V>> zpopmin(K key);
@@ -464,76 +493,125 @@
   - fun: RedisFuture<List<ScoredValue<V>>> zrandmemberWithScores(K key, long count);
   - fun: RedisFuture<List<V>> zrange(K key, long start, long stop);
   - fun: RedisFuture<Long> zrange(ValueStreamingChannel<V> channel, K key, long start, long stop);
+    opt: [ ignore ]
   - fun: RedisFuture<List<ScoredValue<V>>> zrangeWithScores(K key, long start, long stop);
   - fun: RedisFuture<Long> zrangeWithScores(ScoredValueStreamingChannel<V> channel, K key, long start, long stop);
-  # - fun: RedisFuture<List<V>> zrangebylex(K key, String min, String max);
+    opt: [ ignore ]
+  - fun: RedisFuture<List<V>> zrangebylex(K key, String min, String max);
+    opt: [ deprecated ]
   - fun: RedisFuture<List<V>> zrangebylex(K key, Range<? extends V> range);
-  # - fun: RedisFuture<List<V>> zrangebylex(K key, String min, String max, long offset, long count);
+  - fun: RedisFuture<List<V>> zrangebylex(K key, String min, String max, long offset, long count);
+    opt: [ deprecated ]
   - fun: RedisFuture<List<V>> zrangebylex(K key, Range<? extends V> range, Limit limit);
-  # - fun: RedisFuture<List<V>> zrangebyscore(K key, double min, double max);
-  # - fun: RedisFuture<List<V>> zrangebyscore(K key, String min, String max);
+  - fun: RedisFuture<List<V>> zrangebyscore(K key, double min, double max);
+    opt: [ deprecated ]
+  - fun: RedisFuture<List<V>> zrangebyscore(K key, String min, String max);
+    opt: [ deprecated ]
   - fun: RedisFuture<List<V>> zrangebyscore(K key, Range<? extends Number> range);
-  # - fun: RedisFuture<List<V>> zrangebyscore(K key, double min, double max, long offset, long count);
-  # - fun: RedisFuture<List<V>> zrangebyscore(K key, String min, String max, long offset, long count);
+  - fun: RedisFuture<List<V>> zrangebyscore(K key, double min, double max, long offset, long count);
+    opt: [ deprecated ]
+  - fun: RedisFuture<List<V>> zrangebyscore(K key, String min, String max, long offset, long count);
+    opt: [ deprecated ]
   - fun: RedisFuture<List<V>> zrangebyscore(K key, Range<? extends Number> range, Limit limit);
-  # - fun: RedisFuture<Long> zrangebyscore(ValueStreamingChannel<V> channel, K key, double min, double max);
-  # - fun: RedisFuture<Long> zrangebyscore(ValueStreamingChannel<V> channel, K key, String min, String max);
+  - fun: RedisFuture<Long> zrangebyscore(ValueStreamingChannel<V> channel, K key, double min, double max);
+    opt: [ deprecated ]
+  - fun: RedisFuture<Long> zrangebyscore(ValueStreamingChannel<V> channel, K key, String min, String max);
+    opt: [ deprecated ]
   - fun: RedisFuture<Long> zrangebyscore(ValueStreamingChannel<V> channel, K key, Range<? extends Number> range);
-  # - fun: RedisFuture<Long> zrangebyscore(ValueStreamingChannel<V> channel, K key, double min, double max, long offset, long count);
-  # - fun: RedisFuture<Long> zrangebyscore(ValueStreamingChannel<V> channel, K key, String min, String max, long offset, long count);
+    opt: [ ignore ]
+  - fun: RedisFuture<Long> zrangebyscore(ValueStreamingChannel<V> channel, K key, double min, double max, long offset, long count);
+    opt: [ deprecated ]
+  - fun: RedisFuture<Long> zrangebyscore(ValueStreamingChannel<V> channel, K key, String min, String max, long offset, long count);
+    opt: [ deprecated ]
   - fun: RedisFuture<Long> zrangebyscore(ValueStreamingChannel<V> channel, K key, Range<? extends Number> range, Limit limit);
-  # - fun: RedisFuture<List<ScoredValue<V>>> zrangebyscoreWithScores(K key, double min, double max);
-  # - fun: RedisFuture<List<ScoredValue<V>>> zrangebyscoreWithScores(K key, String min, String max);
+    opt: [ ignore ]
+  - fun: RedisFuture<List<ScoredValue<V>>> zrangebyscoreWithScores(K key, double min, double max);
+    opt: [ deprecated ]
+  - fun: RedisFuture<List<ScoredValue<V>>> zrangebyscoreWithScores(K key, String min, String max);
+    opt: [ deprecated ]
   - fun: RedisFuture<List<ScoredValue<V>>> zrangebyscoreWithScores(K key, Range<? extends Number> range);
-  # - fun: RedisFuture<List<ScoredValue<V>>> zrangebyscoreWithScores(K key, double min, double max, long offset, long count);
-  # - fun: RedisFuture<List<ScoredValue<V>>> zrangebyscoreWithScores(K key, String min, String max, long offset, long count);
+  - fun: RedisFuture<List<ScoredValue<V>>> zrangebyscoreWithScores(K key, double min, double max, long offset, long count);
+    opt: [ deprecated ]
+  - fun: RedisFuture<List<ScoredValue<V>>> zrangebyscoreWithScores(K key, String min, String max, long offset, long count);
+    opt: [ deprecated ]
   - fun: RedisFuture<List<ScoredValue<V>>> zrangebyscoreWithScores(K key, Range<? extends Number> range, Limit limit);
-  # - fun: RedisFuture<Long> zrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, double min, double max);
-  # - fun: RedisFuture<Long> zrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, String min, String max);
+  - fun: RedisFuture<Long> zrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, double min, double max);
+    opt: [ deprecated ]
+  - fun: RedisFuture<Long> zrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, String min, String max);
+    opt: [ deprecated ]
   - fun: RedisFuture<Long> zrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, Range<? extends Number> range);
-  # - fun: RedisFuture<Long> zrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, double min, double max, long offset, long count);
-  # - fun: RedisFuture<Long> zrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, String min, String max, long offset, long count);
+    opt: [ ignore ]
+  - fun: RedisFuture<Long> zrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, double min, double max, long offset, long count);
+    opt: [ deprecated ]
+  - fun: RedisFuture<Long> zrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, String min, String max, long offset, long count);
+    opt: [ deprecated ]
   - fun: RedisFuture<Long> zrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, Range<? extends Number> range, Limit limit);
+    opt: [ ignore ]
   - fun: RedisFuture<Long> zrangestorebylex(K dstKey, K srcKey, Range<? extends V> range, Limit limit);
   - fun: RedisFuture<Long> zrangestorebyscore(K dstKey, K srcKey, Range<? extends Number> range, Limit limit);
   - fun: RedisFuture<Long> zrank(K key, V member);
   - fun: RedisFuture<Long> zrem(K key, V... members);
-  # - fun: RedisFuture<Long> zremrangebylex(K key, String min, String max);
+  - fun: RedisFuture<Long> zremrangebylex(K key, String min, String max);
+    opt: [ deprecated ]
   - fun: RedisFuture<Long> zremrangebylex(K key, Range<? extends V> range);
   - fun: RedisFuture<Long> zremrangebyrank(K key, long start, long stop);
-  # - fun: RedisFuture<Long> zremrangebyscore(K key, double min, double max);
-  # - fun: RedisFuture<Long> zremrangebyscore(K key, String min, String max);
+  - fun: RedisFuture<Long> zremrangebyscore(K key, double min, double max);
+    opt: [ deprecated ]
+  - fun: RedisFuture<Long> zremrangebyscore(K key, String min, String max);
+    opt: [ deprecated ]
   - fun: RedisFuture<Long> zremrangebyscore(K key, Range<? extends Number> range);
   - fun: RedisFuture<List<V>> zrevrange(K key, long start, long stop);
   - fun: RedisFuture<Long> zrevrange(ValueStreamingChannel<V> channel, K key, long start, long stop);
+    opt: [ ignore ]
   - fun: RedisFuture<List<ScoredValue<V>>> zrevrangeWithScores(K key, long start, long stop);
   - fun: RedisFuture<Long> zrevrangeWithScores(ScoredValueStreamingChannel<V> channel, K key, long start, long stop);
+    opt: [ ignore ]
   - fun: RedisFuture<List<V>> zrevrangebylex(K key, Range<? extends V> range);
   - fun: RedisFuture<List<V>> zrevrangebylex(K key, Range<? extends V> range, Limit limit);
-  # - fun: RedisFuture<List<V>> zrevrangebyscore(K key, double max, double min);
-  # - fun: RedisFuture<List<V>> zrevrangebyscore(K key, String max, String min);
+  - fun: RedisFuture<List<V>> zrevrangebyscore(K key, double max, double min);
+    opt: [ deprecated ]
+  - fun: RedisFuture<List<V>> zrevrangebyscore(K key, String max, String min);
+    opt: [ deprecated ]
   - fun: RedisFuture<List<V>> zrevrangebyscore(K key, Range<? extends Number> range);
-  # - fun: RedisFuture<List<V>> zrevrangebyscore(K key, double max, double min, long offset, long count);
-  # - fun: RedisFuture<List<V>> zrevrangebyscore(K key, String max, String min, long offset, long count);
+  - fun: RedisFuture<List<V>> zrevrangebyscore(K key, double max, double min, long offset, long count);
+    opt: [ deprecated ]
+  - fun: RedisFuture<List<V>> zrevrangebyscore(K key, String max, String min, long offset, long count);
+    opt: [ deprecated ]
   - fun: RedisFuture<List<V>> zrevrangebyscore(K key, Range<? extends Number> range, Limit limit);
-  # - fun: RedisFuture<Long> zrevrangebyscore(ValueStreamingChannel<V> channel, K key, double max, double min);
-  # - fun: RedisFuture<Long> zrevrangebyscore(ValueStreamingChannel<V> channel, K key, String max, String min);
+  - fun: RedisFuture<Long> zrevrangebyscore(ValueStreamingChannel<V> channel, K key, double max, double min);
+    opt: [ deprecated ]
+  - fun: RedisFuture<Long> zrevrangebyscore(ValueStreamingChannel<V> channel, K key, String max, String min);
+    opt: [ deprecated ]
   - fun: RedisFuture<Long> zrevrangebyscore(ValueStreamingChannel<V> channel, K key, Range<? extends Number> range);
-  # - fun: RedisFuture<Long> zrevrangebyscore(ValueStreamingChannel<V> channel, K key, double max, double min, long offset, long count);
-  # - fun: RedisFuture<Long> zrevrangebyscore(ValueStreamingChannel<V> channel, K key, String max, String min, long offset, long count);
+    opt: [ ignore ]
+  - fun: RedisFuture<Long> zrevrangebyscore(ValueStreamingChannel<V> channel, K key, double max, double min, long offset, long count);
+    opt: [ deprecated ]
+  - fun: RedisFuture<Long> zrevrangebyscore(ValueStreamingChannel<V> channel, K key, String max, String min, long offset, long count);
+    opt: [ deprecated ]
   - fun: RedisFuture<Long> zrevrangebyscore(ValueStreamingChannel<V> channel, K key, Range<? extends Number> range, Limit limit);
-  # - fun: RedisFuture<List<ScoredValue<V>>> zrevrangebyscoreWithScores(K key, double max, double min);
-  # - fun: RedisFuture<List<ScoredValue<V>>> zrevrangebyscoreWithScores(K key, String max, String min);
+    opt: [ ignore ]
+  - fun: RedisFuture<List<ScoredValue<V>>> zrevrangebyscoreWithScores(K key, double max, double min);
+    opt: [ deprecated ]
+  - fun: RedisFuture<List<ScoredValue<V>>> zrevrangebyscoreWithScores(K key, String max, String min);
+    opt: [ deprecated ]
   - fun: RedisFuture<List<ScoredValue<V>>> zrevrangebyscoreWithScores(K key, Range<? extends Number> range);
-  # - fun: RedisFuture<List<ScoredValue<V>>> zrevrangebyscoreWithScores(K key, double max, double min, long offset, long count);
-  # - fun: RedisFuture<List<ScoredValue<V>>> zrevrangebyscoreWithScores(K key, String max, String min, long offset, long count);
+  - fun: RedisFuture<List<ScoredValue<V>>> zrevrangebyscoreWithScores(K key, double max, double min, long offset, long count);
+    opt: [ deprecated ]
+  - fun: RedisFuture<List<ScoredValue<V>>> zrevrangebyscoreWithScores(K key, String max, String min, long offset, long count);
+    opt: [ deprecated ]
   - fun: RedisFuture<List<ScoredValue<V>>> zrevrangebyscoreWithScores(K key, Range<? extends Number> range, Limit limit);
-  # - fun: RedisFuture<Long> zrevrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, double max, double min);
-  # - fun: RedisFuture<Long> zrevrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, String max, String min);
+  - fun: RedisFuture<Long> zrevrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, double max, double min);
+    opt: [ deprecated ]
+  - fun: RedisFuture<Long> zrevrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, String max, String min);
+    opt: [ deprecated ]
   - fun: RedisFuture<Long> zrevrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, Range<? extends Number> range);
-  # - fun: RedisFuture<Long> zrevrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, double max, double min, long offset, long count);
-  # - fun: RedisFuture<Long> zrevrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, String max, String min, long offset, long count);
+    opt: [ ignore ]
+  - fun: RedisFuture<Long> zrevrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, double max, double min, long offset, long count);
+    opt: [ deprecated ]
+  - fun: RedisFuture<Long> zrevrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, String max, String min, long offset, long count);
+    opt: [ deprecated ]
   - fun: RedisFuture<Long> zrevrangebyscoreWithScores(ScoredValueStreamingChannel<V> channel, K key, Range<? extends Number> range, Limit limit);
+    opt: [ ignore ]
   - fun: RedisFuture<Long> zrevrangestorebylex(K dstKey, K srcKey, Range<? extends V> range, Limit limit);
   - fun: RedisFuture<Long> zrevrangestorebyscore(K dstKey, K srcKey, Range<? extends Number> range, Limit limit);
   - fun: RedisFuture<Long> zrevrank(K key, V member);
@@ -542,9 +620,13 @@
   - fun: RedisFuture<ScoredValueScanCursor<V>> zscan(K key, ScanCursor scanCursor, ScanArgs scanArgs);
   - fun: RedisFuture<ScoredValueScanCursor<V>> zscan(K key, ScanCursor scanCursor);
   - fun: RedisFuture<StreamScanCursor> zscan(ScoredValueStreamingChannel<V> channel, K key);
+    opt: [ ignore ]
   - fun: RedisFuture<StreamScanCursor> zscan(ScoredValueStreamingChannel<V> channel, K key, ScanArgs scanArgs);
+    opt: [ ignore ]
   - fun: RedisFuture<StreamScanCursor> zscan(ScoredValueStreamingChannel<V> channel, K key, ScanCursor scanCursor, ScanArgs scanArgs);
+    opt: [ ignore ]
   - fun: RedisFuture<StreamScanCursor> zscan(ScoredValueStreamingChannel<V> channel, K key, ScanCursor scanCursor);
+    opt: [ ignore ]
   - fun: RedisFuture<Double> zscore(K key, V member);
   - fun: RedisFuture<List<V>> zunion(K... keys);
   - fun: RedisFuture<List<V>> zunion(ZAggregateArgs aggregateArgs, K... keys);

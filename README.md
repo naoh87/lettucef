@@ -16,7 +16,16 @@ This library hide the troublesome matters when you use Lettuce.
 - [x] New type-safe Lua scripting I/F
 - [x] Eliminate java.lang.Object I/F
 - [x] Eliminate null
-  - [ ] Read all commands document one by one
+  - [ ] Inspect all redis commands document one by one
+    - [ ] Strings
+    - [ ] Keys
+    - [ ] List
+    - [ ] Set
+    - [ ] Hash
+    - [ ] SortedSet
+    - [ ] HLL
+    - [ ] Geo
+    - [ ] Stream
+    - [ ] etc
 - [x] Add useful datatype for Scala
-- [ ] Convert Flux I/F with fs2.Stream
-  - [ ] Sub
+- [x] Add PubSub Interface
