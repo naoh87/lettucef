@@ -2,14 +2,14 @@ package io.lettucef.core.commands
 
 import java.nio.ByteBuffer
 import cats.effect.IO
+import cats.effect.Resource
 import cats.effect.unsafe.IORuntime
-import io.lettuce.core.cluster.ClusterClientOptions
 import io.lettuce.core.cluster.RedisClusterClient
 import io.lettuce.core.codec.RedisCodec
 import io.lettuce.core.codec.StringCodec
-import io.lettuce.core.protocol.ProtocolVersion
 import io.lettucef.core.RedisClientF
 import io.lettucef.core.RedisClusterCommandsF
+import io.lettucef.core.RedisPubSubF
 
 object RedisTest {
   val codec: RedisCodec[RedisKey, RedisValue] =
@@ -41,12 +41,19 @@ object RedisTest {
     }
   }
 
-  import scala.util.chaining._
+  type CommandF = RedisClusterCommandsF[IO, RedisKey, RedisValue]
+  type PubSubF = RedisPubSubF[IO, RedisKey, RedisValue]
 
-  def commands[R](f: RedisClusterCommandsF[IO, RedisKey, RedisValue] => IO[R]): R =
+  def commands[R](f: CommandF => IO[R]): R =
     RedisClientF
       .resource[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
       .flatMap(_.connect(codec).map(_.async()))
       .use(f)
+      .unsafeRunSync()(IORuntime.global)
+
+  def runWith[R](f: (Resource[IO, CommandF], Resource[IO, PubSubF]) => Resource[IO, IO[R]]): R =
+    RedisClientF
+      .resource[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
+      .use(c => f(c.connect(codec).map(_.async()), c.connectPubSub(codec)).use(identity))
       .unsafeRunSync()(IORuntime.global)
 }
