@@ -12,7 +12,7 @@ class NullCheckSpec extends  AnyFreeSpec with Matchers {
 
   private val emptyKey = "empty".asKey
 
-  def checkNone(io: IO[Option[_]]): IO[Unit] =
+  def expectNone(io: IO[Option[_]]): IO[Unit] =
     io.map(_ shouldBe None)
 
   def notNull[R](io: IO[R]): IO[Unit] =
@@ -21,13 +21,14 @@ class NullCheckSpec extends  AnyFreeSpec with Matchers {
   "keys" in RedisTest.commands { r =>
     for {
       _ <- r.flushdb() >> IO.sleep(1.seconds)
-      _ <- checkNone(r.dump(emptyKey))
-      _ <- checkNone(r.objectEncoding(emptyKey))
-      _ <- checkNone(r.geodist(emptyKey, "a".asValue, "b".asValue, GeoArgs.Unit.m))
-      _ <- checkNone(r.hget(emptyKey, emptyKey))
-      _ <- checkNone(r.hrandfield(emptyKey))
+      _ <- expectNone(r.dump(emptyKey))
+      _ <- expectNone(r.objectEncoding(emptyKey))
+      _ <- expectNone(r.geodist(emptyKey, "a".asValue, "b".asValue, GeoArgs.Unit.m))
+      _ <- expectNone(r.hget(emptyKey, emptyKey))
+      _ <- expectNone(r.hrandfield(emptyKey))
       _ <- notNull(r.rpop(emptyKey, 1))
-      _ <- notNull(r.bzpopmin(0.1, emptyKey))
+      _ <- expectNone(r.bzpopmin(0.1, emptyKey))
+      _ <- expectNone(r.blpop(0.1, emptyKey))
     } yield {
 
     }

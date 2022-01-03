@@ -19,17 +19,17 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
 
   protected val underlying: RedisSortedSetAsyncCommands[K, V]
   
-  def bzpopmin(timeout: Long, keys: K*): F[(K, Option[(Double, V)])] =
-    JF.toAsync(underlying.bzpopmin(timeout, keys: _*)).map(kv => LettuceValueConverter.fromKeyValue(kv).fmap(_.map(LettuceValueConverter.fromScoredValueUnsafe)))
+  def bzpopmin(timeout: Long, keys: K*): F[Option[(K, (Double, V))]] =
+    JF.toAsync(underlying.bzpopmin(timeout, keys: _*)).map(Option(_).map(kv => LettuceValueConverter.fromKeyValueUnsafe(kv).fmap(LettuceValueConverter.fromScoredValueUnsafe)))
   
-  def bzpopmin(timeout: Double, keys: K*): F[(K, Option[(Double, V)])] =
-    JF.toAsync(underlying.bzpopmin(timeout, keys: _*)).map(kv => LettuceValueConverter.fromKeyValue(kv).fmap(_.map(LettuceValueConverter.fromScoredValueUnsafe)))
+  def bzpopmin(timeout: Double, keys: K*): F[Option[(K, (Double, V))]] =
+    JF.toAsync(underlying.bzpopmin(timeout, keys: _*)).map(Option(_).map(kv => LettuceValueConverter.fromKeyValueUnsafe(kv).fmap(LettuceValueConverter.fromScoredValueUnsafe)))
   
-  def bzpopmax(timeout: Long, keys: K*): F[(K, Option[(Double, V)])] =
-    JF.toAsync(underlying.bzpopmax(timeout, keys: _*)).map(kv => LettuceValueConverter.fromKeyValue(kv).fmap(_.map(LettuceValueConverter.fromScoredValueUnsafe)))
+  def bzpopmax(timeout: Long, keys: K*): F[Option[(K, (Double, V))]] =
+    JF.toAsync(underlying.bzpopmax(timeout, keys: _*)).map(Option(_).map(kv => LettuceValueConverter.fromKeyValueUnsafe(kv).fmap(LettuceValueConverter.fromScoredValueUnsafe)))
   
-  def bzpopmax(timeout: Double, keys: K*): F[(K, Option[(Double, V)])] =
-    JF.toAsync(underlying.bzpopmax(timeout, keys: _*)).map(kv => LettuceValueConverter.fromKeyValue(kv).fmap(_.map(LettuceValueConverter.fromScoredValueUnsafe)))
+  def bzpopmax(timeout: Double, keys: K*): F[Option[(K, (Double, V))]] =
+    JF.toAsync(underlying.bzpopmax(timeout, keys: _*)).map(Option(_).map(kv => LettuceValueConverter.fromKeyValueUnsafe(kv).fmap(LettuceValueConverter.fromScoredValueUnsafe)))
   
   def zadd(key: K, score: Double, member: V): F[Long] =
     JF.toAsync(underlying.zadd(key, score, member)).map(Long2long)
@@ -91,14 +91,14 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def zmscore(key: K, members: V*): F[Seq[Double]] =
     JF.toAsync(underlying.zmscore(key, members: _*)).map(_.asScala.toSeq.map(Double2double))
   
-  def zpopmin(key: K): F[Option[(Double, V)]] =
-    JF.toAsync(underlying.zpopmin(key)).map(LettuceValueConverter.fromScoredValue)
+  def zpopmin(key: K): F[(Double, V)] =
+    JF.toAsync(underlying.zpopmin(key)).map(LettuceValueConverter.fromScoredValueUnsafe)
   
   def zpopmin(key: K, count: Long): F[Seq[(Double, V)]] =
     JF.toAsync(underlying.zpopmin(key, count)).map(_.asScala.toSeq.map(LettuceValueConverter.fromScoredValueUnsafe))
   
-  def zpopmax(key: K): F[Option[(Double, V)]] =
-    JF.toAsync(underlying.zpopmax(key)).map(LettuceValueConverter.fromScoredValue)
+  def zpopmax(key: K): F[(Double, V)] =
+    JF.toAsync(underlying.zpopmax(key)).map(LettuceValueConverter.fromScoredValueUnsafe)
   
   def zpopmax(key: K, count: Long): F[Seq[(Double, V)]] =
     JF.toAsync(underlying.zpopmax(key, count)).map(_.asScala.toSeq.map(LettuceValueConverter.fromScoredValueUnsafe))
@@ -109,8 +109,8 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def zrandmember(key: K, count: Long): F[Seq[V]] =
     JF.toAsync(underlying.zrandmember(key, count)).map(_.asScala.toSeq)
   
-  def zrandmemberWithScores(key: K): F[Option[(Double, V)]] =
-    JF.toAsync(underlying.zrandmemberWithScores(key)).map(LettuceValueConverter.fromScoredValue)
+  def zrandmemberWithScores(key: K): F[(Double, V)] =
+    JF.toAsync(underlying.zrandmemberWithScores(key)).map(LettuceValueConverter.fromScoredValueUnsafe)
   
   def zrandmemberWithScores(key: K, count: Long): F[Seq[(Double, V)]] =
     JF.toAsync(underlying.zrandmemberWithScores(key, count)).map(_.asScala.toSeq.map(LettuceValueConverter.fromScoredValueUnsafe))

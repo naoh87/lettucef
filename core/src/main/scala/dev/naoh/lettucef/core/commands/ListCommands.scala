@@ -20,17 +20,17 @@ trait ListCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def blmove(source: K, destination: K, args: LMoveArgs, timeout: Double): F[Option[V]] =
     JF.toAsync(underlying.blmove(source, destination, args, timeout)).map(Option(_))
   
-  def blpop(timeout: Long, keys: K*): F[Option[(K, Option[V])]] =
-    JF.toAsync(underlying.blpop(timeout, keys: _*)).map(Option(_).map(kv => LettuceValueConverter.fromKeyValue(kv)))
+  def blpop(timeout: Long, keys: K*): F[Option[(K, V)]] =
+    JF.toAsync(underlying.blpop(timeout, keys: _*)).map(Option(_).map(kv => LettuceValueConverter.fromKeyValueUnsafe(kv)))
   
-  def blpop(timeout: Double, keys: K*): F[Option[(K, Option[V])]] =
-    JF.toAsync(underlying.blpop(timeout, keys: _*)).map(Option(_).map(kv => LettuceValueConverter.fromKeyValue(kv)))
+  def blpop(timeout: Double, keys: K*): F[Option[(K, V)]] =
+    JF.toAsync(underlying.blpop(timeout, keys: _*)).map(Option(_).map(kv => LettuceValueConverter.fromKeyValueUnsafe(kv)))
   
-  def brpop(timeout: Long, keys: K*): F[Option[(K, Option[V])]] =
-    JF.toAsync(underlying.brpop(timeout, keys: _*)).map(Option(_).map(kv => LettuceValueConverter.fromKeyValue(kv)))
+  def brpop(timeout: Long, keys: K*): F[Option[(K, V)]] =
+    JF.toAsync(underlying.brpop(timeout, keys: _*)).map(Option(_).map(kv => LettuceValueConverter.fromKeyValueUnsafe(kv)))
   
-  def brpop(timeout: Double, keys: K*): F[Option[(K, Option[V])]] =
-    JF.toAsync(underlying.brpop(timeout, keys: _*)).map(Option(_).map(kv => LettuceValueConverter.fromKeyValue(kv)))
+  def brpop(timeout: Double, keys: K*): F[Option[(K, V)]] =
+    JF.toAsync(underlying.brpop(timeout, keys: _*)).map(Option(_).map(kv => LettuceValueConverter.fromKeyValueUnsafe(kv)))
   
   def brpoplpush(timeout: Long, source: K, destination: K): F[Option[V]] =
     JF.toAsync(underlying.brpoplpush(timeout, source, destination)).map(Option(_))

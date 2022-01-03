@@ -24,6 +24,9 @@ object LettuceValueConverter {
       (kv.getKey, None)
     }
 
+  def fromKeyValueUnsafe[K, V](kv: KeyValue[K, V]): (K, V) =
+    (kv.getKey, kv.getValue)
+
   def fromValue[V](v: Value[V]): Option[V] =
     if (v.hasValue) {
       Some(v.getValue)

@@ -68,9 +68,17 @@ case class Method(name: String, args: List[Argument], output: TypeExpr, checkNul
               s"v => LettuceValueConverter.fromValue(v)$postfix"
             }
           case "KeyValue" =>
-            val postfix = javaToScalaF(from.p2, to.p2.p1).map(fun => s".fmap(_.map($fun))").getOrElse("")
-            Some {
-              s"kv => LettuceValueConverter.fromKeyValue(kv)$postfix"
+            to.p2.name.expr match {
+              case "Option" =>
+                val postfix = javaToScalaF(from.p2, to.p2.p1).map(fun => s".fmap(_.map($fun))").getOrElse("")
+                Some {
+                  s"kv => LettuceValueConverter.fromKeyValue(kv)$postfix"
+                }
+              case _ =>
+                val postfix = javaToScalaF(from.p2, to.p2).map(fun => s".fmap($fun)").getOrElse("")
+                Some {
+                  s"kv => LettuceValueConverter.fromKeyValueUnsafe(kv)$postfix"
+                }
             }
           case "ScoredValue" =>
             to.name.expr match {
@@ -138,7 +146,7 @@ object Method {
       }
     }
 
-    def toScala(parent: List[TypeName] = Nil): TypeExpr = {
+    def toScala(parent: List[TypeName] = Nil, checkNull: Boolean = false): TypeExpr = {
       if (name.isArray) {
         TypeExpr(TypeName("Array"), List(TypeExpr(TypeName(name.expr), generics, None).toScala(parent)), covar)
       } else {
@@ -159,21 +167,26 @@ object Method {
           case "Value" =>
             TypeExpr.create("Option", p1.toScala(name :: parent) :: Nil)
           case "KeyValue" =>
-            TypeExpr.create("Tuple2", p1 :: TypeExpr.create("Option", p2.toScala(name :: parent) :: Nil) :: Nil)
-          case "ScoredValue" =>
-            val tpl = TypeExpr.create("Tuple2", TypeExpr.one("Double") :: p1.toScala(name :: parent) :: Nil)
-            parent.headOption.map(_.expr) match {
-              case Some("RedisFuture") =>
-                TypeExpr.create("Option", tpl :: Nil)
-              case _ =>
-                tpl
+            if (checkNull) {
+              TypeExpr.create("Tuple2", p1 :: p2.toScala(name :: parent) :: Nil)
+            } else {
+              TypeExpr.create("Tuple2", p1 :: TypeExpr.create("Option", p2.toScala(name :: parent) :: Nil) :: Nil)
             }
+          case "ScoredValue" =>
+            TypeExpr.create("Tuple2", TypeExpr.one("Double") :: p1.toScala(name :: parent) :: Nil)
           case "ValueScanCursor" | "KeyScanCursor" =>
             TypeExpr.create("DataScanCursor", p1 :: Nil)
           case "MapScanCursor" =>
             TypeExpr.create("DataScanCursor", TypeExpr.tuple(generics) :: Nil)
           case "ScoredValueScanCursor" =>
             TypeExpr.create("DataScanCursor", TypeExpr.tuple(TypeExpr.one("Double") :: p1 :: Nil) :: Nil)
+          case "RedisFuture" =>
+            val p1s = p1.toScala(name :: parent, checkNull)
+//            if (checkNull) {
+//              copy(generics = TypeExpr.create("Option", p1s :: Nil) :: Nil)
+//            } else {
+              copy(generics = p1s :: Nil)
+//            }
           case _ => copy(generics = generics.map(_.toScala(name :: parent)))
         }
       }

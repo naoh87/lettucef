@@ -453,9 +453,13 @@
   output: SortedSetCommands
   methods:
   - fun: RedisFuture<KeyValue<K, ScoredValue<V>>> bzpopmin(long timeout, K... keys);
+    opt: [ nullable ]
   - fun: RedisFuture<KeyValue<K, ScoredValue<V>>> bzpopmin(double timeout, K... keys);
+    opt: [ nullable ]
   - fun: RedisFuture<KeyValue<K, ScoredValue<V>>> bzpopmax(long timeout, K... keys);
+    opt: [ nullable ]
   - fun: RedisFuture<KeyValue<K, ScoredValue<V>>> bzpopmax(double timeout, K... keys);
+    opt: [ nullable ]
   - fun: RedisFuture<Long> zadd(K key, double score, V member);
   - fun: RedisFuture<Long> zadd(K key, Object... scoresAndValues);
   - fun: RedisFuture<Long> zadd(K key, ScoredValue<V>... scoredValues);
