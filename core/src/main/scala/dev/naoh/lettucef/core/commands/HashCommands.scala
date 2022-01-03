@@ -45,8 +45,8 @@ trait HashCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def hmset(key: K, map: Map[K, V]): F[String] =
     JF.toAsync(underlying.hmset(key, map.asJava))
   
-  def hrandfield(key: K): F[K] =
-    JF.toAsync(underlying.hrandfield(key))
+  def hrandfield(key: K): F[Option[K]] =
+    JF.toAsync(underlying.hrandfield(key)).map(Option(_))
   
   def hrandfield(key: K, count: Long): F[Seq[K]] =
     JF.toAsync(underlying.hrandfield(key, count)).map(_.asScala.toSeq)

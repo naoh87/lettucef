@@ -9,9 +9,9 @@ object LettuceValueConverter {
 
   def fromScoredValue[V](sv: ScoredValue[V]): Option[(Double, V)] =
     if (sv.hasValue) {
-      None
-    } else {
       Some((sv.getScore, sv.getValue))
+    } else {
+      None
     }
 
   def fromScoredValueUnsafe[V](sv: ScoredValue[V]): (Double, V) =
@@ -26,9 +26,9 @@ object LettuceValueConverter {
 
   def fromValue[V](v: Value[V]): Option[V] =
     if (v.hasValue) {
-      None
-    } else {
       Some(v.getValue)
+    } else {
+      None
     }
 
   def toValue[V](v: Option[V]): Value[V] =

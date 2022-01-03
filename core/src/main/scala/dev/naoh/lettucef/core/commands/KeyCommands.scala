@@ -33,8 +33,8 @@ trait KeyCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def unlink(keys: K*): F[Long] =
     JF.toAsync(underlying.unlink(keys: _*)).map(Long2long)
   
-  def dump(key: K): F[Array[Byte]] =
-    JF.toAsync(underlying.dump(key))
+  def dump(key: K): F[Option[Array[Byte]]] =
+    JF.toAsync(underlying.dump(key)).map(Option(_))
   
   def exists(keys: K*): F[Long] =
     JF.toAsync(underlying.exists(keys: _*)).map(Long2long)
@@ -63,8 +63,8 @@ trait KeyCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def move(key: K, db: Int): F[Boolean] =
     JF.toAsync(underlying.move(key, db)).map(Boolean2boolean)
   
-  def objectEncoding(key: K): F[String] =
-    JF.toAsync(underlying.objectEncoding(key))
+  def objectEncoding(key: K): F[Option[String]] =
+    JF.toAsync(underlying.objectEncoding(key)).map(Option(_))
   
   def objectFreq(key: K): F[Long] =
     JF.toAsync(underlying.objectFreq(key)).map(Long2long)

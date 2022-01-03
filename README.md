@@ -17,15 +17,15 @@ This library hide the troublesome matters when you use Lettuce.
 - [x] Eliminate java.lang.Object I/F
 - [x] Eliminate null
   - [ ] Inspect all redis commands document one by one
-    - [ ] Strings
-    - [ ] Keys
-    - [ ] List
-    - [ ] Set
-    - [ ] Hash
+    - [x] Strings/Bitmaps
+    - [x] Keys
+    - [x] List
+    - [x] Set
+    - [x] Hash
     - [ ] SortedSet
-    - [ ] HLL
-    - [ ] Geo
-    - [ ] Stream
+    - [x] HLL
+    - [x] Geo
+    - [x] Stream
     - [ ] etc
 - [x] Add useful datatype for Scala
 - [x] Add PubSub Interface

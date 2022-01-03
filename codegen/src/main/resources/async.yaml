@@ -7,6 +7,7 @@
   - fun: RedisFuture<Long> del(K... keys);
   - fun: RedisFuture<Long> unlink(K... keys);
   - fun: RedisFuture<byte[]> dump(K key);
+    opt: [ nullable ]
   - fun: RedisFuture<Long> exists(K... keys);
   - fun: RedisFuture<Boolean> expire(K key, long seconds);
   - fun: RedisFuture<Boolean> expire(K key, Duration seconds);
@@ -20,6 +21,7 @@
   - fun: RedisFuture<String> migrate(String host, int port, int db, long timeout, MigrateArgs<K> migrateArgs);
   - fun: RedisFuture<Boolean> move(K key, int db);
   - fun: RedisFuture<String> objectEncoding(K key);
+    opt: [ nullable ]
   - fun: RedisFuture<Long> objectFreq(K key);
   - fun: RedisFuture<Long> objectIdletime(K key);
   - fun: RedisFuture<Long> objectRefcount(K key);
@@ -248,6 +250,7 @@
     opt: [ ignore ]
   - fun: RedisFuture<String> hmset(K key, Map<K, V> map);
   - fun: RedisFuture<K> hrandfield(K key);
+    opt: [ nullable ]
   - fun: RedisFuture<List<K>> hrandfield(K key, long count);
   - fun: RedisFuture<KeyValue<K, V>> hrandfieldWithvalues(K key);
   - fun: RedisFuture<List<KeyValue<K, V>>> hrandfieldWithvalues(K key, long count);
@@ -653,6 +656,7 @@
   - fun: RedisFuture<Long> geoadd(K key, GeoAddArgs args, Object... lngLatMember);
   - fun: RedisFuture<Long> geoadd(K key, GeoAddArgs args, GeoValue<V>... values);
   - fun: RedisFuture<Double> geodist(K key, V from, V to, GeoArgs.Unit unit);
+    opt: [ nullable ]
   - fun: RedisFuture<List<Value<String>>> geohash(K key, V... members);
   - fun: RedisFuture<List<GeoCoordinates>> geopos(K key, V... members);
   - fun: RedisFuture<Set<V>> georadius(K key, double longitude, double latitude, double distance, GeoArgs.Unit unit);

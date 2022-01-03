@@ -31,8 +31,8 @@ trait GeoCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
   def geoadd(key: K, args: GeoAddArgs, values: GeoValue[V]*): F[Long] =
     JF.toAsync(underlying.geoadd(key, args, values: _*)).map(Long2long)
   
-  def geodist(key: K, from: V, to: V, unit: GeoArgs.Unit): F[Double] =
-    JF.toAsync(underlying.geodist(key, from, to, unit)).map(Double2double)
+  def geodist(key: K, from: V, to: V, unit: GeoArgs.Unit): F[Option[Double]] =
+    JF.toAsync(underlying.geodist(key, from, to, unit)).map(Option(_).map(Double2double))
   
   def geohash(key: K, members: V*): F[Seq[Option[String]]] =
     JF.toAsync(underlying.geohash(key, members: _*)).map(_.asScala.toSeq.map(v => LettuceValueConverter.fromValue(v)))
