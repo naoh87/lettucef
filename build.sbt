@@ -1,13 +1,19 @@
-ThisBuild / version := "0.0.1-SNAPSHOT"
+val scala213 = "2.13.7"
+val scala310 = "3.1.0"
+
+
+def dev(ghUser: String, name: String, email: String): Developer =
+  Developer(ghUser, name, email, url(s"https://github.com/$ghUser"))
+
+ThisBuild / version := "0.0.4-SNAPSHOT"
 ThisBuild / licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 ThisBuild / organization := "dev.naoh"
 ThisBuild / homepage := Some(url("https://github.com/naoh87/lettucef"))
 ThisBuild / scmInfo  := Some(ScmInfo(url("https://github.com/naoh87/lettucef"), "scm:git@github.com:naoh87/lettucef.git"))
 ThisBuild / versionScheme := Some("semver-spec")
-
-
-val scala213 = "2.13.7"
-val scala310 = "3.1.0"
+ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
+ThisBuild / sonatypeRepository := "https://s01.oss.sonatype.org/service/local"
+ThisBuild / developers := List(dev("naoh87", "naoh", "naoh87@gmail.coma"))
 
 lazy val root = (project in file("."))
   .settings(
@@ -29,22 +35,7 @@ lazy val core = (project in file("core")).settings(
   ),
   publishMavenStyle := true,
   Test / publishArtifact := false,
-  publishTo := {
-    val nexus = "https://s01.oss.sonatype.org/"
-    if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
-    else Some("releases" at nexus + "service/local/staging/deploy/maven2")
-  },
-  credentials ++=
-    (for {
-      user <- sys.env.get("SONATYPE_USER")
-      password <- sys.env.get("SONATYPE_PASSWORD")
-    } yield
-      Credentials(
-        "Sonatype Nexus Repository Manager",
-        "s01.oss.sonatype.org",
-        user,
-        password
-      )).toList
+  publishTo := sonatypePublishTo.value
 )
 
 val circeVersion = "0.14.1"

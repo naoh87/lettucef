@@ -18,7 +18,7 @@ case class RedisRange[A](from: Boundary[A], to: Boundary[A]) {
 object RedisRange {
   val unbounded: RedisRange[Nothing] = RedisRange[Nothing](Unbounded, Unbounded)
 
-  def inclusive[A](from: A, to: A): RedisRange[A] = RedisRange(Inclusive(from), Inclusive(to))
+  def between[A](from: A, to: A): RedisRange[A] = RedisRange(Inclusive(from), Inclusive(to))
 
   def inclusive[A](from: A): Inclusive[A] = Inclusive(from)
 
