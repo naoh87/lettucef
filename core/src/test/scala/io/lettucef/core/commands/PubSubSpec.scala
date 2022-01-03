@@ -1,8 +1,10 @@
 package io.lettucef.core.commands
 
 import cats.effect.IO
+import cats.effect.Resource
 import fs2._
-import io.lettucef.core.models.pubsub.PushedMessage
+import fs2.concurrent.SignallingRef
+import io.lettucef.core.RedisPubSubF
 import io.lettucef.core.models.pubsub.PushedMessage._
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
@@ -18,9 +20,11 @@ class PubSubSpec extends AnyFreeSpec with Matchers {
       client <- asyncR
       subscribeCon <- pubsubR
       subscribed <- subscribeCon.startListen()
+      state <- subscribingState(subscribeCon)
     } yield for {
       _ <- subscribeCon.subscribe(key)
-      numsub <- client.pubsubNumsub(key)
+      _ <- state.takeWhile(!_.contains(key)).compile.drain
+      numsub <- client.pubsubChannels()
       ret <-
         subscribed.takeWhile(!_.isInstanceOf[Unsubscribed[_]], takeFailure = true)
           .timeout(5.seconds).compile.toList.start
@@ -29,13 +33,25 @@ class PubSubSpec extends AnyFreeSpec with Matchers {
           .range(0, 10)
           .evalMap(s => client.publish(key, s.toString.asValue))
           .compile.drain
-      _ <- subscribeCon.unsubscribe(key)
+      _ <- IO.sleep(500.milli) >> subscribeCon.unsubscribe(key)
+      _ <- state.takeWhile(_.contains(key)).compile.drain
       ret <- ret.joinWithNever
     } yield {
-      numsub shouldBe Map(key -> 1)
+      numsub shouldBe List(key)
       val messages = (0 until 10).map(i => Message(key, i.toString.asValue)).toList
       ret shouldBe Subscribed(key, 1) +: messages :+ Unsubscribed(key, 0)
     }
   }
+
+  def subscribingState[K, V](pubsub: RedisPubSubF[IO, K, V]): Resource[IO, Stream[IO, Set[K]]] =
+    for {
+      s <- pubsub.startListen()
+      ref <- Resource.eval(SignallingRef[IO, Set[K]](Set.empty))
+      _ <- s.evalMap {
+        case Subscribed(channel, _) => ref.update(_ + channel)
+        case Unsubscribed(channel, _) => ref.update(_ - channel)
+        case _ => IO.unit
+      }.compile.drain.background
+    } yield ref.discrete
 
 }

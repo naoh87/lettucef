@@ -17,6 +17,12 @@ lazy val core = (project in file("core")).settings(
     "org.typelevel" %% "cats-effect" % "3.3.1",
     "co.fs2" %% "fs2-core" % "3.2.4",
     "org.scalatest" %% "scalatest" % "3.2.10" % "test",
+  ),
+  credentials += Credentials(
+    "Sonatype Nexus Repository Manager",
+    "oss.sonatype.org",
+    "naoh",
+    "<Sonatype JIRAのパスワード>"
   )
 )
 

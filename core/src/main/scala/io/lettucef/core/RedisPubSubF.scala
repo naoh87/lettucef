@@ -24,11 +24,11 @@ class RedisPubSubF[F[_], K, V](
   def unsubscribe(channels: K*): F[Unit] =
     JavaFutureUtil.toAsync(underlying.async().unsubscribe(channels: _*)).void
 
-  def pubsubChannels(): F[Seq[K]] =
-    JavaFutureUtil.toAsync(underlying.async().pubsubChannels()).map(_.asScala.toSeq)
+  def psubscribe(patterns: K*): F[Unit] =
+    JavaFutureUtil.toAsync(underlying.async().psubscribe(patterns: _*)).void
 
-  def pubsubNumsub(channels: K*): F[Map[K, Long]] =
-    JavaFutureUtil.toAsync(underlying.async().pubsubNumsub(channels: _*)).map(_.asScala.view.mapValues(Long2long).toMap)
+  def punsubscribe(patterns: K*): F[Unit] =
+    JavaFutureUtil.toAsync(underlying.async().punsubscribe(patterns: _*)).void
 
   def closeAsync(): F[Unit] =
     F.guarantee(JavaFutureUtil.toAsync(underlying.closeAsync()).void, shutdown.complete(true).void)
