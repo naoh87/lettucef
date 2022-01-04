@@ -56,4 +56,4 @@ This library hide the troublesome matters when you use Lettuce.
 - [x] Eliminate null
 - [x] Add useful datatype for Scala
 - [x] Add PubSub Interface
-- [ ] Add support non-cluster RedisClient
+- [x] Support cluster/non-cluster RedisClient
