@@ -55,9 +55,7 @@ class RedisPubSubF[F[_], K, V](
     F.delay(underlying.removeListener(listener))
 
   private def registerListener(listener: RedisPubSubListener[K, V]): Resource[F, F[Unit]] =
-    Resource.make(
-      F.delay(underlying.addListener(listener))
-        .as(F.delay(underlying.removeListener(listener))))(identity)
+    Resource.make(addListener(listener).as(removeListener(listener)))(identity)
 }
 
 object RedisPubSubF {

@@ -6,6 +6,7 @@ import cats.effect.kernel.Resource
 import cats.syntax.functor._
 import dev.naoh.lettucef.core.LettuceF.ShutdownConfig
 import dev.naoh.lettucef.core.util.JavaFutureUtil
+import io.lettuce.core.ReadFrom
 import io.lettuce.core.cluster.RedisClusterClient
 import io.lettuce.core.cluster.api.StatefulRedisClusterConnection
 import io.lettuce.core.cluster.models.partitions.Partitions
@@ -39,6 +40,20 @@ class RedisClusterConnectionF[F[_] : Async, K: ClassTag, V: ClassTag](
 ) {
   def async(): RedisClusterCommandsF[F, K, V] =
     new RedisClusterCommandsF[F, K, V](underlying.async(), codec)
+
+  def getConnection(nodeId: String): F[RedisConnectionF[F, K, V]] =
+    JavaFutureUtil.toAsync(underlying.getConnectionAsync(nodeId))
+      .map(new RedisConnectionF(_, codec))
+
+  def getConnection(host: String, port: Int): F[RedisConnectionF[F, K, V]] =
+    JavaFutureUtil.toAsync(underlying.getConnectionAsync(host, port))
+      .map(new RedisConnectionF(_, codec))
+
+  def setReadFrom(readFrom: ReadFrom): F[Unit] =
+    Async[F].delay(underlying.setReadFrom(readFrom))
+
+  def getReadFrom: F[ReadFrom] =
+    Async[F].delay(underlying.getReadFrom)
 
   def closeAsync(): F[Unit] =
     JavaFutureUtil.toAsync(underlying.closeAsync()).void
