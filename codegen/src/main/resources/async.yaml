@@ -490,11 +490,15 @@
     opt: [ deprecated ]
   - fun: RedisFuture<Long> zlexcount(K key, Range<? extends V> range);
   - fun: RedisFuture<List<Double>> zmscore(K key, V... members);
+    output:
+      tpe: Seq<Option<Double>>
+      j2s: _.asScala.toSeq.map(Option(_).map(Double2double))
   - fun: RedisFuture<ScoredValue<V>> zpopmin(K key);
   - fun: RedisFuture<List<ScoredValue<V>>> zpopmin(K key, long count);
   - fun: RedisFuture<ScoredValue<V>> zpopmax(K key);
   - fun: RedisFuture<List<ScoredValue<V>>> zpopmax(K key, long count);
   - fun: RedisFuture<V> zrandmember(K key);
+    opt: [ nullable ]
   - fun: RedisFuture<List<V>> zrandmember(K key, long count);
   - fun: RedisFuture<ScoredValue<V>> zrandmemberWithScores(K key);
   - fun: RedisFuture<List<ScoredValue<V>>> zrandmemberWithScores(K key, long count);
@@ -557,6 +561,7 @@
   - fun: RedisFuture<Long> zrangestorebylex(K dstKey, K srcKey, Range<? extends V> range, Limit limit);
   - fun: RedisFuture<Long> zrangestorebyscore(K dstKey, K srcKey, Range<? extends Number> range, Limit limit);
   - fun: RedisFuture<Long> zrank(K key, V member);
+    opt: [ nullable ]
   - fun: RedisFuture<Long> zrem(K key, V... members);
   - fun: RedisFuture<Long> zremrangebylex(K key, String min, String max);
     opt: [ deprecated ]
@@ -622,6 +627,7 @@
   - fun: RedisFuture<Long> zrevrangestorebylex(K dstKey, K srcKey, Range<? extends V> range, Limit limit);
   - fun: RedisFuture<Long> zrevrangestorebyscore(K dstKey, K srcKey, Range<? extends Number> range, Limit limit);
   - fun: RedisFuture<Long> zrevrank(K key, V member);
+    opt: [ nullable ]
   - fun: RedisFuture<ScoredValueScanCursor<V>> zscan(K key);
   - fun: RedisFuture<ScoredValueScanCursor<V>> zscan(K key, ScanArgs scanArgs);
   - fun: RedisFuture<ScoredValueScanCursor<V>> zscan(K key, ScanCursor scanCursor, ScanArgs scanArgs);
@@ -635,6 +641,7 @@
   - fun: RedisFuture<StreamScanCursor> zscan(ScoredValueStreamingChannel<V> channel, K key, ScanCursor scanCursor);
     opt: [ ignore ]
   - fun: RedisFuture<Double> zscore(K key, V member);
+    opt: [ nullable ]
   - fun: RedisFuture<List<V>> zunion(K... keys);
   - fun: RedisFuture<List<V>> zunion(ZAggregateArgs aggregateArgs, K... keys);
   - fun: RedisFuture<List<ScoredValue<V>>> zunionWithScores(ZAggregateArgs aggregateArgs, K... keys);

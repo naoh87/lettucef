@@ -15,8 +15,11 @@ class NullCheckSpec extends  AnyFreeSpec with Matchers {
   def expectNone(io: IO[Option[_]]): IO[Unit] =
     io.map(_ shouldBe None)
 
-  def notNull[R](io: IO[R]): IO[Unit] =
-    io.map(Option(_) shouldBe a[Some[_]])
+  def notNull[R](io: IO[R]): IO[Option[R]] =
+    io.map { s =>
+      Option(s) shouldBe a[Some[_]]
+      Option(s)
+    }
 
   "keys" in RedisTest.commands { r =>
     for {
@@ -29,6 +32,14 @@ class NullCheckSpec extends  AnyFreeSpec with Matchers {
       _ <- notNull(r.rpop(emptyKey, 1))
       _ <- expectNone(r.bzpopmin(0.1, emptyKey))
       _ <- expectNone(r.blpop(0.1, emptyKey))
+      _ <- expectNone(r.zpopmin(emptyKey))
+      _ <- notNull(r.getrange(emptyKey, 3, 3))
+      _ <- expectNone(r.zrandmember(emptyKey))
+      _ <- expectNone(r.zrank(emptyKey, "hoge".asValue))
+      _ <- expectNone(r.zrevrank(emptyKey, "hoge".asValue))
+      _ <- expectNone(r.zscore(emptyKey, "hoge".asValue))
+      ret <- r.zmscore(emptyKey, "hoge".asValue, "piyo".asValue)
+      _ = ret shouldBe List(None, None)
     } yield {
 
     }

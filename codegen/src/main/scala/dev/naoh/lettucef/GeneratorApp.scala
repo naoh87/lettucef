@@ -27,8 +27,6 @@ object GeneratorApp extends IOApp {
       println("-" * 32 + "\n" + async.underlying)
       val outputDir = Paths.get(s"../core/src/main/scala/dev/naoh/lettucef/core/commands/${async.output}.scala").toAbsolutePath
 
-      val skipArgType = Set("Object", "Date", "ValueStreamingChannel", "KeyStreamingChannel", "KeyValueStreamingChannel", "ScoredValueStreamingChannel")
-
       FunctionalPrinter()
         .add("// Code generated. DO NOT EDIT")
         .add("package dev.naoh.lettucef.core.commands")
@@ -39,18 +37,19 @@ object GeneratorApp extends IOApp {
         .newline
         .indented(_
           .add(s"protected val underlying: ${async.underlying}").newline
-          .print(async.methods.map(_.fun)) {
-            case (p, m) if m.existArgs(_.existName(skipArgType)) =>
-              println(s"- skipped ${m.scalaDef}")
-              p
-            case (p, m) =>
-              outputMeth += 1
-              val scalaDef = m.mapOutput(_.toScala(Nil, m.checkNull)).mapArgs(_.toScala)
-              p.add(scalaDef.toAsync.scalaDef + " =")
-                .indented(
-                  _.add(m.asyncCall(scalaDef.args, scalaDef.output)))
-                .newline
-          })
+          .print(async.methods)((p, m) => m.print(p)))
+        //          .print(async.methods.map(_.fun)) {
+        //            case (p, m) if m.existArgs(_.existName(skipArgType)) =>
+        //              println(s"- skipped ${m.scalaDef}")
+        //              p
+        //            case (p, m) =>
+        //              outputMeth += 1
+        //              val scalaDef = m.mapOutput(_.toScala(Nil, m.checkNull)).mapArgs(_.toScala)
+        //              p.add(scalaDef.toAsync.scalaDef + " =")
+        //                .indented(
+        //                  _.add(m.asyncCall(scalaDef.args, scalaDef.output)))
+        //                .newline
+        //          })
         .add("}")
         .newline
         .pipe(print(outputDir.toFile, _))
@@ -96,8 +95,11 @@ object Async {
   case class FunDef(
     fun: Method,
     opt: Option[List[String]],
+    output: Option[CustomOutput]
   ) {
     val options: Seq[String] = opt.toList.flatten
+
+    val skipArgType = Set("Object", "Date", "ValueStreamingChannel", "KeyStreamingChannel", "KeyValueStreamingChannel", "ScoredValueStreamingChannel")
 
     def isOutputTarget: Boolean = options.forall(!Set("ignore", "deprecated")(_))
 
@@ -107,7 +109,25 @@ object Async {
       } else {
         this
       }
+
+    def print(p: FunctionalPrinter): FunctionalPrinter =
+      if (isOutputTarget && !fun.existArgs(_.existName(skipArgType))) {
+        val scalaDef = fun.mapOutput(t => output.map(o => t.mapGen(_ => o.tpe :: Nil)).getOrElse(t.toScala(Nil, options.contains("nullable")))).mapArgs(_.toScala)
+        p.add(scalaDef.toAsync.scalaDef + " =")
+          .indented(
+            _.add(fun.asyncCall(scalaDef.args, scalaDef.output, output.map(_.j2s))))
+          .newline
+      } else {
+        println(s"- skipped ${fun.scalaDef}")
+        p
+      }
+
   }
+
+  case class CustomOutput(
+    tpe: Method.TypeExpr,
+    j2s: String
+  )
 
   val constantImports = List(
     "cats.syntax.functor._",

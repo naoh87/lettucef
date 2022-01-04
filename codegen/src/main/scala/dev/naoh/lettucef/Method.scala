@@ -9,20 +9,24 @@ case class Method(name: String, args: List[Argument], output: TypeExpr, checkNul
   def scalaDef: String =
     s"def ${Identifier.expr(name)}(${args.map(_.scalaDef).mkString(", ")}): ${output.scalaDef}"
 
-  def asyncCall(expr: Seq[Argument], to: TypeExpr): String = {
+  def asyncCall(expr: Seq[Argument], to: TypeExpr, customPostFix: Option[String]): String = {
     assert(expr.size == args.size)
     val call = args.zip(expr).map(ae => ae._1.call(ae._2)).mkString(", ")
-    val postFix = {
-      val mapF = javaToScalaF(output.p1, to.p1) match {
-        case Some(fun) => s".map($fun)"
-        case None => ""
+    val postFix =
+      customPostFix.map {
+        case "" => ""
+        case fun => s".map($fun)"
+      }.getOrElse {
+        val mapF = javaToScalaF(output.p1, to.p1) match {
+          case Some(fun) => s".map($fun)"
+          case None => ""
+        }
+        if (checkNull) {
+          s".map(Option(_)$mapF)"
+        } else {
+          mapF
+        }
       }
-      if (checkNull) {
-        s".map(Option(_)$mapF)"
-      } else {
-        mapF
-      }
-    }
     s"JF.toAsync(underlying.${Identifier.expr(name)}($call))$postFix"
   }
 
@@ -145,6 +149,8 @@ object Method {
           s"$preFix${name.scalaDef}$postFix"
       }
     }
+    def mapGen(f: List[TypeExpr] => List[TypeExpr]): TypeExpr =
+      copy(generics = f(generics))
 
     def toScala(parent: List[TypeName] = Nil, checkNull: Boolean = false): TypeExpr = {
       if (name.isArray) {
@@ -173,7 +179,12 @@ object Method {
               TypeExpr.create("Tuple2", p1 :: TypeExpr.create("Option", p2.toScala(name :: parent) :: Nil) :: Nil)
             }
           case "ScoredValue" =>
-            TypeExpr.create("Tuple2", TypeExpr.one("Double") :: p1.toScala(name :: parent) :: Nil)
+            val tpe = TypeExpr.create("Tuple2", TypeExpr.one("Double") :: p1.toScala(name :: parent) :: Nil)
+            if (parent.headOption.exists(_.expr == "RedisFuture")) {
+              TypeExpr.create("Option", tpe :: Nil)
+            } else {
+              tpe
+            }
           case "ValueScanCursor" | "KeyScanCursor" =>
             TypeExpr.create("DataScanCursor", p1 :: Nil)
           case "MapScanCursor" =>
@@ -182,11 +193,11 @@ object Method {
             TypeExpr.create("DataScanCursor", TypeExpr.tuple(TypeExpr.one("Double") :: p1 :: Nil) :: Nil)
           case "RedisFuture" =>
             val p1s = p1.toScala(name :: parent, checkNull)
-//            if (checkNull) {
-//              copy(generics = TypeExpr.create("Option", p1s :: Nil) :: Nil)
-//            } else {
-              copy(generics = p1s :: Nil)
-//            }
+            //            if (checkNull) {
+            //              copy(generics = TypeExpr.create("Option", p1s :: Nil) :: Nil)
+            //            } else {
+            copy(generics = p1s :: Nil)
+          //            }
           case _ => copy(generics = generics.map(_.toScala(name :: parent)))
         }
       }
@@ -213,6 +224,9 @@ object Method {
 
     def tuple(ts: List[TypeExpr]): TypeExpr =
       create(s"Tuple${ts.size}", ts)
+
+    implicit val decoder: Decoder[TypeExpr] =
+      Decoder[String].emap(e => MethodParser.tpeExpr.parseAll(e).left.map(_ => s"fail to parse as TypeExpr $e"))
   }
 
   case class Argument(name: String, tpe: TypeExpr, isVariable: Boolean) extends ToScalaCode {
