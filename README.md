@@ -2,29 +2,32 @@
 
 Scala Redis functional client wrapper for [Lettuce](https://github.com/lettuce-io/lettuce-core) with cats-effect 3
 
-
 # Getting Started
+
 Add to build.sbt
+
 ```scala
 libraryDependencies += "dev.naoh" %% "lettucef-core" % "0.0.7"
 ```
 
 Simple Redis command execution
+
 ```scala
-def run(): IO[Unit] = {
+def run: IO[Unit] = {
   for {
     client <- LettuceF.resource[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
     commands <- client.connect(StringCodec.UTF8).map(_.async())
   } yield for {
     _ <- commands.set("key", "value")
-    _ <- commands.get("key")
-  } yield ()
+    v <- commands.get("key")
+  } yield println(v) //Some(value)
 }.use(identity)
 ```
 
 PubSub
+
 ```scala
-def run(): IO[ExitCode] = {
+def run: IO[Unit] = {
   for {
     client <- LettuceF.resource[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
     cmd <- client.connect(StringCodec.UTF8).map(_.async())
@@ -40,13 +43,14 @@ def run(): IO[ExitCode] = {
     _ <- IO.sleep(100.milli)
     _ <- pubsub.unsubscribe("Topic")
     _ <- IO.sleep(100.milli)
-  } yield ExitCode.Success
+  } yield ()
 }.use(identity)
 ```
 
 Streaming
+
 ```scala
-def run(): IO[ExitCode] = {
+def run: IO[Unit] = {
   for {
     client <- LettuceF.resource[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
     conn <- client.connect(StringCodec.UTF8)
@@ -57,25 +61,24 @@ def run(): IO[ExitCode] = {
              .toList.sequence
   } yield {
     conn.stream()
-        .sscan("Set", ScanArgs.Builder.limit(20))
-        .chunks
-        .map(_.size)
-        .debug()
+      .sscan("Set", ScanArgs.Builder.limit(20))
+      .chunks
+      .map(_.size)
+      .debug()
   }
-}.use(Stream.force(_).compile.drain.as(ExitCode.Success))
+}.use(Stream.force(_).compile.drain)
 ```
 
-
-
 # Motivation
+
 [Lettuce](https://github.com/lettuce-io/lettuce-core) is incredible performance Java Redis client.
 
 But some api is not compatible with scala mind.
 
 This library hide the matters when you use Lettuce.
 
-
 # Missions
+
 - [x] Support scala 2.13.x and 3.xx
 - [x] Convert RedisFuture I/F with Async of cats-effect 3
 - [x] Convert Java collection types to scala collection
@@ -85,4 +88,4 @@ This library hide the matters when you use Lettuce.
 - [x] Add useful datatype for Scala
 - [x] Add PubSub I/F
 - [x] Support cluster/non-cluster RedisClient
-  - [ ] Support Sentinel
+    - [ ] Support Sentinel

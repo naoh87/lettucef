@@ -1,6 +1,5 @@
 package dev.naoh.lettucef.core.samples
 
-import cats.effect.ExitCode
 import cats.effect.IO
 import cats.effect.IOApp
 import cats.implicits.toTraverseOps
@@ -9,8 +8,8 @@ import io.lettuce.core.cluster.RedisClusterClient
 import io.lettuce.core.codec.StringCodec
 import scala.concurrent.duration.DurationInt
 
-object ReadMeSample2 extends IOApp {
-  override def run(args: List[String]): IO[ExitCode] = {
+object ReadMeSample2 extends IOApp.Simple {
+  def run: IO[Unit] = {
     for {
       client <- LettuceF.resource[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
       cmd <- client.connect(StringCodec.UTF8).map(_.async())
@@ -24,6 +23,6 @@ object ReadMeSample2 extends IOApp {
       _ <- IO.sleep(100.milli)
       _ <- pubsub.unsubscribe("Topic")
       _ <- IO.sleep(100.milli)
-    } yield ExitCode.Success
+    } yield ()
   }.use(identity)
 }
