@@ -686,7 +686,7 @@
   - io.lettuce.core.GeoRadiusStoreArgs
   - io.lettuce.core.GeoSearch
   - io.lettuce.core.GeoValue
-  - io.lettuce.core.GeoWithin
+  - dev.naoh.lettucef.core.models.geo._
 
 - underlying: RedisAclAsyncCommands[K, V]
   output: AclCommands

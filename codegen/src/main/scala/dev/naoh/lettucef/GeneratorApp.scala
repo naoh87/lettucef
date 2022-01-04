@@ -5,6 +5,7 @@ import java.nio.file.Paths
 import cats.effect.ExitCode
 import cats.effect.IO
 import cats.effect.IOApp
+import dev.naoh.lettucef.Method.TypeExpr
 
 object GeneratorApp extends IOApp {
 
@@ -24,7 +25,6 @@ object GeneratorApp extends IOApp {
     var outputMeth = 0
 
     asyncList.map { async =>
-      println("-" * 32 + "\n" + async.underlying)
       val outputDir = Paths.get(s"../core/src/main/scala/dev/naoh/lettucef/core/commands/${async.output}.scala").toAbsolutePath
 
       FunctionalPrinter()
@@ -38,23 +38,10 @@ object GeneratorApp extends IOApp {
         .indented(_
           .add(s"protected val underlying: ${async.underlying}").newline
           .print(async.methods)((p, m) => m.print(p)))
-        //          .print(async.methods.map(_.fun)) {
-        //            case (p, m) if m.existArgs(_.existName(skipArgType)) =>
-        //              println(s"- skipped ${m.scalaDef}")
-        //              p
-        //            case (p, m) =>
-        //              outputMeth += 1
-        //              val scalaDef = m.mapOutput(_.toScala(Nil, m.checkNull)).mapArgs(_.toScala)
-        //              p.add(scalaDef.toAsync.scalaDef + " =")
-        //                .indented(
-        //                  _.add(m.asyncCall(scalaDef.args, scalaDef.output)))
-        //                .newline
-        //          })
         .add("}")
         .newline
         .pipe(print(outputDir.toFile, _))
     }.sequence >> IO.delay {
-      println(s"\ntotal method generation count: $outputMeth")
       ExitCode.Success
     }
   }
@@ -112,7 +99,11 @@ object Async {
 
     def print(p: FunctionalPrinter): FunctionalPrinter =
       if (isOutputTarget && !fun.existArgs(_.existName(skipArgType))) {
-        val scalaDef = fun.mapOutput(t => output.map(o => t.mapGen(_ => o.tpe :: Nil)).getOrElse(t.toScala(Nil, options.contains("nullable")))).mapArgs(_.toScala)
+        def convertOut(tpe: TypeExpr): TypeExpr =
+          output.map(_.replace(tpe)).getOrElse(tpe.toScala(Nil, options.contains("nullable")))
+
+        val scalaDef =
+          fun.mapOutput(convertOut).mapArgs(_.toScala)
         p.add(scalaDef.toAsync.scalaDef + " =")
           .indented(
             _.add(fun.asyncCall(scalaDef.args, scalaDef.output, output.map(_.j2s))))
@@ -127,7 +118,10 @@ object Async {
   case class CustomOutput(
     tpe: Method.TypeExpr,
     j2s: String
-  )
+  ) {
+    def replace(rf: Method.TypeExpr): Method.TypeExpr =
+      rf.copy(generics = tpe :: Nil)
+  }
 
   val constantImports = List(
     "cats.syntax.functor._",

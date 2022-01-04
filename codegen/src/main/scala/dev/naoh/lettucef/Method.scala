@@ -36,7 +36,7 @@ case class Method(name: String, args: List[Argument], output: TypeExpr, checkNul
 
     val customConvert = Map("RedisData" -> "RedisData.from[V]")
     val supported =
-      Seq("ClaimedMessages", "StreamMessage", "PendingMessage", "PendingMessages")
+      Seq("ClaimedMessages", "StreamMessage", "PendingMessage", "PendingMessages", "GeoWithin")
         .map(e => e -> s"$e.from").toMap ++ customConvert
 
     to.name.expr match {
@@ -149,8 +149,6 @@ object Method {
           s"$preFix${name.scalaDef}$postFix"
       }
     }
-    def mapGen(f: List[TypeExpr] => List[TypeExpr]): TypeExpr =
-      copy(generics = f(generics))
 
     def toScala(parent: List[TypeName] = Nil, checkNull: Boolean = false): TypeExpr = {
       if (name.isArray) {
@@ -192,12 +190,7 @@ object Method {
           case "ScoredValueScanCursor" =>
             TypeExpr.create("DataScanCursor", TypeExpr.tuple(TypeExpr.one("Double") :: p1 :: Nil) :: Nil)
           case "RedisFuture" =>
-            val p1s = p1.toScala(name :: parent, checkNull)
-            //            if (checkNull) {
-            //              copy(generics = TypeExpr.create("Option", p1s :: Nil) :: Nil)
-            //            } else {
-            copy(generics = p1s :: Nil)
-          //            }
+            copy(generics = p1.toScala(name :: parent, checkNull) :: Nil)
           case _ => copy(generics = generics.map(_.toScala(name :: parent)))
         }
       }

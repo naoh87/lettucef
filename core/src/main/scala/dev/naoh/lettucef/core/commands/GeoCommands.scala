@@ -2,6 +2,7 @@
 package dev.naoh.lettucef.core.commands
 
 import cats.syntax.functor._
+import dev.naoh.lettucef.core.models.geo._
 import dev.naoh.lettucef.core.util.LettuceValueConverter
 import dev.naoh.lettucef.core.util.{JavaFutureUtil => JF}
 import io.lettuce.core.GeoAddArgs
@@ -10,7 +11,6 @@ import io.lettuce.core.GeoCoordinates
 import io.lettuce.core.GeoRadiusStoreArgs
 import io.lettuce.core.GeoSearch
 import io.lettuce.core.GeoValue
-import io.lettuce.core.GeoWithin
 import io.lettuce.core.api.async._
 import scala.jdk.CollectionConverters._
 
@@ -44,7 +44,7 @@ trait GeoCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
     JF.toAsync(underlying.georadius(key, longitude, latitude, distance, unit)).map(_.asScala.toSet)
   
   def georadius(key: K, longitude: Double, latitude: Double, distance: Double, unit: GeoArgs.Unit, geoArgs: GeoArgs): F[Seq[GeoWithin[V]]] =
-    JF.toAsync(underlying.georadius(key, longitude, latitude, distance, unit, geoArgs)).map(_.asScala.toSeq)
+    JF.toAsync(underlying.georadius(key, longitude, latitude, distance, unit, geoArgs)).map(_.asScala.toSeq.map(GeoWithin.from))
   
   def georadius(key: K, longitude: Double, latitude: Double, distance: Double, unit: GeoArgs.Unit, geoRadiusStoreArgs: GeoRadiusStoreArgs[K]): F[Long] =
     JF.toAsync(underlying.georadius(key, longitude, latitude, distance, unit, geoRadiusStoreArgs)).map(Long2long)
@@ -53,7 +53,7 @@ trait GeoCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
     JF.toAsync(underlying.georadiusbymember(key, member, distance, unit)).map(_.asScala.toSet)
   
   def georadiusbymember(key: K, member: V, distance: Double, unit: GeoArgs.Unit, geoArgs: GeoArgs): F[Seq[GeoWithin[V]]] =
-    JF.toAsync(underlying.georadiusbymember(key, member, distance, unit, geoArgs)).map(_.asScala.toSeq)
+    JF.toAsync(underlying.georadiusbymember(key, member, distance, unit, geoArgs)).map(_.asScala.toSeq.map(GeoWithin.from))
   
   def georadiusbymember(key: K, member: V, distance: Double, unit: GeoArgs.Unit, geoRadiusStoreArgs: GeoRadiusStoreArgs[K]): F[Long] =
     JF.toAsync(underlying.georadiusbymember(key, member, distance, unit, geoRadiusStoreArgs)).map(Long2long)
@@ -62,7 +62,7 @@ trait GeoCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
     JF.toAsync(underlying.geosearch(key, reference, predicate)).map(_.asScala.toSet)
   
   def geosearch(key: K, reference: GeoSearch.GeoRef[K], predicate: GeoSearch.GeoPredicate, geoArgs: GeoArgs): F[Seq[GeoWithin[V]]] =
-    JF.toAsync(underlying.geosearch(key, reference, predicate, geoArgs)).map(_.asScala.toSeq)
+    JF.toAsync(underlying.geosearch(key, reference, predicate, geoArgs)).map(_.asScala.toSeq.map(GeoWithin.from))
   
   def geosearchstore(destination: K, key: K, reference: GeoSearch.GeoRef[K], predicate: GeoSearch.GeoPredicate, geoArgs: GeoArgs, storeDist: Boolean): F[Long] =
     JF.toAsync(underlying.geosearchstore(destination, key, reference, predicate, geoArgs, storeDist)).map(Long2long)
