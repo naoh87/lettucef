@@ -4,9 +4,12 @@ Scala Redis functional client wrapper for [Lettuce](https://github.com/lettuce-i
 
 
 # Getting Started
+Add to build.sbt
 ```scala
 libraryDependencies += "dev.naoh" %% "lettucef-core" % "0.0.6"
 ```
+
+Simple Redis command execution
 ```scala
 def run(): IO[Unit] = {
   for {
@@ -18,6 +21,8 @@ def run(): IO[Unit] = {
   } yield ()
 }.use(identity)
 ```
+
+PubSub
 ```scala
 def run(): IO[ExitCode] = {
   for {
@@ -29,12 +34,35 @@ def run(): IO[ExitCode] = {
   } yield for {
     _ <- pubsub.subscribe("Topic")
     _ <- IO.sleep(100.milli)
-    _ <- List.range(0, 10).map(i => cmd.publish("Topic", i.toString)).sequence
+    _ <- List.range(0, 10)
+             .map(i => cmd.publish("Topic", i.toString))
+             .sequence
     _ <- IO.sleep(100.milli)
     _ <- pubsub.unsubscribe("Topic")
     _ <- IO.sleep(100.milli)
   } yield ExitCode.Success
 }.use(identity)
+```
+
+Streaming
+```scala
+def run(): IO[ExitCode] = {
+  for {
+    client <- LettuceF.resource[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
+    conn <- client.connect(StringCodec.UTF8)
+  } yield for {
+    _ <- conn.async().del("Set")
+    _ <- List.range(0, 100).map(_.toHexString).grouped(10)
+             .map(args => conn.async().sadd("Set", args: _*))
+             .toList.sequence
+  } yield {
+    conn.stream()
+        .sscan("Set", ScanArgs.Builder.limit(20))
+        .chunks
+        .map(_.size)
+        .debug()
+  }
+}.use(Stream.force(_).compile.drain.as(ExitCode.Success))
 ```
 
 
@@ -44,7 +72,7 @@ def run(): IO[ExitCode] = {
 
 But some api is not compatible with scala mind.
 
-This library hide the troublesome matters when you use Lettuce.
+This library hide the matters when you use Lettuce.
 
 
 # Missions
@@ -55,5 +83,6 @@ This library hide the troublesome matters when you use Lettuce.
 - [x] Eliminate java.lang.Object I/F
 - [x] Eliminate null
 - [x] Add useful datatype for Scala
-- [x] Add PubSub Interface
+- [x] Add PubSub I/F
 - [x] Support cluster/non-cluster RedisClient
+  - [ ] Support Sentinel
