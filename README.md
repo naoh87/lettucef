@@ -5,12 +5,12 @@ Scala Redis functional client wrapper for [Lettuce](https://github.com/lettuce-i
 
 # Getting Started
 ```scala
-libraryDependencies += "dev.naoh" %% "lettucef-core" % "0.0.4"
+libraryDependencies += "dev.naoh" %% "lettucef-core" % "0.0.5"
 ```
 ```scala
 def run(): IO[Unit] = {
   for {
-    client <- RedisClientF.resource[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
+    client <- LettuceF.resource[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
     commands <- client.connect(StringCodec.UTF8).map(_.async())
   } yield for {
     _ <- commands.set("key", "value")
@@ -18,6 +18,25 @@ def run(): IO[Unit] = {
   } yield ()
 }.use(identity)
 ```
+```scala
+def run(): IO[ExitCode] = {
+  for {
+    client <- LettuceF.resource[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
+    cmd <- client.connect(StringCodec.UTF8).map(_.async())
+    pubsub <- client.connectPubSub(StringCodec.UTF8)
+    pushed <- pubsub.pushedAwait()
+    _ <- pushed.debug().compile.drain.background
+  } yield for {
+    _ <- pubsub.subscribe("Topic")
+    _ <- IO.sleep(100.milli)
+    _ <- List.range(0, 10).map(i => cmd.publish("Topic", i.toString)).sequence
+    _ <- IO.sleep(100.milli)
+    _ <- pubsub.unsubscribe("Topic")
+    _ <- IO.sleep(100.milli)
+  } yield ExitCode.Success
+}.use(identity)
+```
+
 
 
 # Motivation
@@ -37,3 +56,4 @@ This library hide the troublesome matters when you use Lettuce.
 - [x] Eliminate null
 - [x] Add useful datatype for Scala
 - [x] Add PubSub Interface
+- [ ] Add support non-cluster RedisClient

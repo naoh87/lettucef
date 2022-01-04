@@ -7,13 +7,11 @@ import cats.effect.std.Dispatcher
 import cats.syntax.flatMap._
 import cats.syntax.functor._
 import dev.naoh.lettucef.core.models.pubsub.PushedMessage
-import dev.naoh.lettucef.core.models.pubsub.PushedMessage
 import dev.naoh.lettucef.core.util.JavaFutureUtil
 import fs2._
 import fs2.concurrent.Channel
 import io.lettuce.core.pubsub.RedisPubSubListener
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
-import scala.jdk.CollectionConverters._
 
 class RedisPubSubF[F[_], K, V](
   underlying: StatefulRedisPubSubConnection[K, V],
@@ -39,7 +37,7 @@ class RedisPubSubF[F[_], K, V](
    *
    * You should pull Stream or cause OOM error
    */
-  def startListen(): Resource[F, Stream[F, PushedMessage[K, V]]] =
+  def pushedAwait(): Resource[F, Stream[F, PushedMessage[K, V]]] =
     for {
       ch <- Resource.make(Channel.unbounded[F, PushedMessage[K, V]])(_.close.void) //This may cause OOM
       _ <- F.background(shutdown.get >> ch.close)
@@ -47,8 +45,14 @@ class RedisPubSubF[F[_], K, V](
       remove <- registerListener(RedisPubSubF.makeListener(ch, dispatcher))
     } yield ch.stream.onFinalize(remove)
 
-  def listen(): Stream[F, PushedMessage[K, V]] =
-    Stream.resource(startListen()).flatten
+  def pushed(): Stream[F, PushedMessage[K, V]] =
+    Stream.resource(pushedAwait()).flatten
+
+  def addListener(listener: RedisPubSubListener[K, V]): F[Unit] =
+    F.delay(underlying.addListener(listener))
+
+  def removeListener(listener: RedisPubSubListener[K, V]): F[Unit] =
+    F.delay(underlying.removeListener(listener))
 
   private def registerListener(listener: RedisPubSubListener[K, V]): Resource[F, F[Unit]] =
     Resource.make(

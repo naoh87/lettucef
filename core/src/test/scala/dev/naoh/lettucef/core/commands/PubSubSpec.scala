@@ -21,7 +21,7 @@ class PubSubSpec extends AnyFreeSpec with Matchers {
     for {
       client <- asyncR
       subscribeCon <- pubsubR
-      subscribed <- subscribeCon.startListen()
+      subscribed <- subscribeCon.pushedAwait()
       state <- subscribingState(subscribeCon)
     } yield for {
       _ <- subscribeCon.subscribe(key)
@@ -47,7 +47,7 @@ class PubSubSpec extends AnyFreeSpec with Matchers {
 
   def subscribingState[K, V](pubsub: RedisPubSubF[IO, K, V]): Resource[IO, Stream[IO, Set[K]]] =
     for {
-      s <- pubsub.startListen()
+      s <- pubsub.pushedAwait()
       ref <- Resource.eval(SignallingRef[IO, Set[K]](Set.empty))
       _ <- s.evalMap {
         case Subscribed(channel, _) => ref.update(_ + channel)

@@ -4,7 +4,7 @@ import java.nio.ByteBuffer
 import cats.effect.IO
 import cats.effect.Resource
 import cats.effect.unsafe.IORuntime
-import dev.naoh.lettucef.core.RedisClientF
+import dev.naoh.lettucef.core.LettuceF
 import dev.naoh.lettucef.core.RedisClusterCommandsF
 import dev.naoh.lettucef.core.RedisClusterCommandsF
 import dev.naoh.lettucef.core.RedisPubSubF
@@ -46,14 +46,14 @@ object RedisTest {
   type PubSubF = RedisPubSubF[IO, RedisKey, RedisValue]
 
   def commands[R](f: CommandF => IO[R]): R =
-    RedisClientF
+    LettuceF
       .resource[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
       .flatMap(_.connect(codec).map(_.async()))
       .use(f)
       .unsafeRunSync()(IORuntime.global)
 
   def runWith[R](f: (Resource[IO, CommandF], Resource[IO, PubSubF]) => Resource[IO, IO[R]]): R =
-    RedisClientF
+    LettuceF
       .resource[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
       .use(c => f(c.connect(codec).map(_.async()), c.connectPubSub(codec)).use(identity))
       .unsafeRunSync()(IORuntime.global)
