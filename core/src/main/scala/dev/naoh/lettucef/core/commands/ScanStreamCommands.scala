@@ -41,7 +41,7 @@ object ScanStreamCommands {
       if (cursor.isFinished) {
         Pull.output(cursor.toChunk)
       } else {
-        Pull.output(cursor.toChunk) >> Pull.eval(next(cursor)).flatMap(go)
+        (Pull.output(cursor.toChunk) >> Pull.eval(next(cursor))).flatMap(go)
       }
 
     Pull.eval(init).flatMap(go).stream

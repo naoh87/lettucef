@@ -46,14 +46,14 @@ object RedisTest {
 
   def commands[R](f: CommandF => IO[R]): R =
     LettuceF
-      .resource[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
+      .cluster[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
       .flatMap(_.connect(codec).map(_.async()))
       .use(f)
       .unsafeRunSync()(IORuntime.global)
 
   def runWith[R](f: (Resource[IO, CommandF], Resource[IO, PubSubF]) => Resource[IO, IO[R]]): R =
     LettuceF
-      .resource[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
+      .cluster[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
       .use(c => f(c.connect(codec).map(_.async()), c.connectPubSub(codec)).use(identity))
       .unsafeRunSync()(IORuntime.global)
 }

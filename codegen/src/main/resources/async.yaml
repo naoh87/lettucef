@@ -711,3 +711,29 @@
   - io.lettuce.core.AclSetuserArgs
   - io.lettuce.core.protocol.CommandType
   - dev.naoh.lettucef.core.models._
+
+- underlying: RedisSentinelAsyncCommands[K, V]
+  output: SentinelCommands
+  methods:
+  - fun: RedisFuture<SocketAddress> getMasterAddrByName(K key);
+  - fun: RedisFuture<List<Map<K, V>>> masters();
+  - fun: RedisFuture<Map<K, V>> master(K key);
+  - fun: RedisFuture<List<Map<K, V>>> slaves(K key);
+  - fun: RedisFuture<Long> reset(K key);
+  - fun: RedisFuture<String> failover(K key);
+  - fun: RedisFuture<String> monitor(K key, String ip, int port, int quorum);
+  - fun: RedisFuture<String> set(K key, String option, V value);
+  - fun: RedisFuture<String> remove(K key);
+  - fun: RedisFuture<K> clientGetname();
+  - fun: RedisFuture<String> clientSetname(K name);
+  - fun: RedisFuture<String> clientKill(String addr);
+  - fun: RedisFuture<Long> clientKill(KillArgs killArgs);
+  - fun: RedisFuture<String> clientPause(long timeout);
+  - fun: RedisFuture<String> clientList();
+  - fun: RedisFuture<String> info();
+  - fun: RedisFuture<String> info(String section);
+  - fun: RedisFuture<String> ping();
+  imports:
+  - java.net.SocketAddress
+  - io.lettuce.core.KillArgs
+  - io.lettuce.core.sentinel.api.async.RedisSentinelAsyncCommands

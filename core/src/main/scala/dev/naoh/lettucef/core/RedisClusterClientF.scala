@@ -24,6 +24,9 @@ class RedisClusterClientF[F[_]](underlying: RedisClusterClient)(implicit F: Asyn
   def connectPubSub[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V]): Resource[F, RedisPubSubF[F, K, V]] =
     RedisPubSubF.create(JavaFutureUtil.toAsync(underlying.connectPubSubAsync(codec)).map(locally))
 
+  def connectPubSubUnsafe[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V]): F[RedisPubSubF[F, K, V]] =
+    RedisPubSubF.createUnsafe(JavaFutureUtil.toAsync(underlying.connectPubSubAsync(codec)).map(locally))
+
   def getPartition: F[Partitions] =
     F.blocking(underlying.getPartitions)
 

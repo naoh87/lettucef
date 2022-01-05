@@ -12,7 +12,7 @@ import io.lettuce.core.codec.StringCodec
 object ReadMeSample3 extends IOApp.Simple {
   def run: IO[Unit] = {
     for {
-      client <- LettuceF.resource[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
+      client <- LettuceF.cluster[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
       conn <- client.connect(StringCodec.UTF8)
     } yield for {
       _ <- conn.async().del("Set")

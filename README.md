@@ -7,7 +7,7 @@ Scala Redis functional client wrapper for [Lettuce](https://github.com/lettuce-i
 Add to build.sbt
 
 ```scala
-libraryDependencies += "dev.naoh" %% "lettucef-core" % "0.0.7"
+libraryDependencies += "dev.naoh" %% "lettucef-core" % "0.0.8"
 ```
 
 Simple Redis command execution
@@ -15,7 +15,7 @@ Simple Redis command execution
 ```scala
 def run: IO[Unit] = {
   for {
-    client <- LettuceF.resource[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
+    client <- LettuceF.cluster[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
     commands <- client.connect(StringCodec.UTF8).map(_.async())
   } yield for {
     _ <- commands.set("key", "value")
@@ -29,7 +29,7 @@ PubSub
 ```scala
 def run: IO[Unit] = {
   for {
-    client <- LettuceF.resource[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
+    client <- LettuceF.cluster[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
     cmd <- client.connect(StringCodec.UTF8).map(_.async())
     pubsub <- client.connectPubSub(StringCodec.UTF8)
     pushed <- pubsub.pushedAwait()
@@ -52,7 +52,7 @@ Streaming
 ```scala
 def run: IO[Unit] = {
   for {
-    client <- LettuceF.resource[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
+    client <- LettuceF.cluster[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
     conn <- client.connect(StringCodec.UTF8)
   } yield for {
     _ <- conn.async().del("Set")

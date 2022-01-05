@@ -61,10 +61,13 @@ class RedisPubSubF[F[_], K, V](
 object RedisPubSubF {
 
   def create[F[_] : Async, K, V](connect: F[StatefulRedisPubSubConnection[K, V]]): Resource[F, RedisPubSubF[F, K, V]] =
+    Resource.make(createUnsafe(connect))(_.closeAsync())
+
+  def createUnsafe[F[_] : Async, K, V](connect: F[StatefulRedisPubSubConnection[K, V]]): F[RedisPubSubF[F, K, V]] =
     for {
-      d <- Resource.eval(Deferred[F, Boolean])
-      pubsub <- Resource.make(connect.map(c => new RedisPubSubF(c, d)))(_.closeAsync())
-    } yield pubsub
+      d <- Deferred[F, Boolean]
+      c <- connect
+    } yield new RedisPubSubF(c, d)
 
   /**
    * make Lettuce PubSubListener to send PushedMessage
