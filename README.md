@@ -13,6 +13,8 @@ libraryDependencies += "dev.naoh" %% "lettucef-core" % "0.0.8"
 Simple Redis command execution
 
 ```scala
+import dev.naoh.lettucef.core.LettuceF
+
 def run: IO[Unit] = {
   for {
     client <- LettuceF.cluster[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
@@ -27,6 +29,8 @@ def run: IO[Unit] = {
 PubSub
 
 ```scala
+import dev.naoh.lettucef.core.LettuceF
+
 def run: IO[Unit] = {
   for {
     client <- LettuceF.cluster[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
@@ -50,6 +54,8 @@ def run: IO[Unit] = {
 Streaming
 
 ```scala
+import dev.naoh.lettucef.core.LettuceF
+
 def run: IO[Unit] = {
   for {
     client <- LettuceF.cluster[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))

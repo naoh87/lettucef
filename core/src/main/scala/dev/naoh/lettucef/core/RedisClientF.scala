@@ -6,7 +6,7 @@ import cats.effect.kernel.Async
 import cats.effect.kernel.Resource
 import cats.syntax.functor._
 import dev.naoh.lettucef.core.LettuceF.ShutdownConfig
-import dev.naoh.lettucef.core.RedisClientF.ConnectionResource
+import dev.naoh.lettucef.core.RedisClientF.ConnectionResource2
 import dev.naoh.lettucef.core.util.JavaFutureUtil
 import io.lettuce.core.ReadFrom
 import io.lettuce.core.RedisClient
@@ -17,31 +17,37 @@ import io.lettuce.core.masterreplica.MasterReplica
 import io.lettuce.core.masterreplica.StatefulRedisMasterReplicaConnection
 import scala.jdk.CollectionConverters._
 import scala.reflect.ClassTag
+import scala.util.chaining._
 
 
 class RedisClientF[F[_]](underlying: RedisClient)(implicit F: Async[F]) {
-  def connect[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], redisURI: RedisURI): ConnectionResource[F, RedisConnectionF[F, K, V]] =
-    ConnectionResource.make(
-      JavaFutureUtil.toAsync(underlying.connectAsync(codec, redisURI)).map(c => new RedisConnectionF(c, codec))
-    )(_.closeAsync())
+  val connect: ConnectionResource2[F, RedisURI, RedisConnectionF] =
+    new ConnectionResource2[F, RedisURI, RedisConnectionF] {
+      override def allocate[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: RedisURI): F[(RedisConnectionF[F, K, V], F[Unit])] =
+        JavaFutureUtil.toAsync(underlying.connectAsync(codec, uri))
+          .map(new RedisConnectionF(_, codec).pipe(c => c -> c.closeAsync()))
+    }
 
-  def connectPubSub[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], redisURI: RedisURI): ConnectionResource[F, RedisPubSubF[F, K, V]] =
-    ConnectionResource.make(
-      RedisPubSubF.createUnsafe(JavaFutureUtil.toAsync(underlying.connectPubSubAsync(codec, redisURI)).map(locally))
-    )(_.closeAsync())
+  val connectPubSub: ConnectionResource2[F, RedisURI, RedisPubSubF] =
+    new ConnectionResource2[F, RedisURI, RedisPubSubF] {
+      override def allocate[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: RedisURI): F[(RedisPubSubF[F, K, V], F[Unit])] =
+        RedisPubSubF.createUnsafe(JavaFutureUtil.toAsync(underlying.connectPubSubAsync(codec, uri)))
+          .map(c => c -> c.closeAsync())
+    }
 
-  def connectSentinel[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], redisURI: RedisURI): ConnectionResource[F, RedisSentinelCommandsF[F, K, V]] =
-    ConnectionResource.make(
-      JavaFutureUtil.toAsync(underlying.connectSentinelAsync(codec, redisURI))
-        .map(new RedisSentinelCommandsF(_, codec))
-    )(_.closeAsync())
+  val connectSentinel: ConnectionResource2[F, RedisURI, RedisSentinelCommandsF] =
+    new ConnectionResource2[F, RedisURI, RedisSentinelCommandsF] {
+      override def allocate[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: RedisURI): F[(RedisSentinelCommandsF[F, K, V], F[Unit])] =
+        JavaFutureUtil.toAsync(underlying.connectSentinelAsync(codec, uri))
+          .map(new RedisSentinelCommandsF(_, codec).pipe(c => c -> c.closeAsync()))
+    }
 
-  def connectMasterReplica[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], redisURI: Seq[RedisURI]): ConnectionResource[F, MasterReplicaRedisConnectionF[F, K, V]] =
-    ConnectionResource.make(
-      JavaFutureUtil.toAsync(MasterReplica.connectAsync(underlying, codec, redisURI.asJava))
-        .map(new MasterReplicaRedisConnectionF(_, codec))
-    )(_.closeAsync())
-
+  val connectMasterReplica: ConnectionResource2[F, Seq[RedisURI], MasterReplicaRedisConnectionF] =
+    new ConnectionResource2[F, Seq[RedisURI], MasterReplicaRedisConnectionF] {
+      override def allocate[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: Seq[RedisURI]): F[(MasterReplicaRedisConnectionF[F, K, V], F[Unit])] =
+        JavaFutureUtil.toAsync(MasterReplica.connectAsync(underlying, codec, uri.asJava))
+          .map(new MasterReplicaRedisConnectionF(_, codec).pipe(c => c -> c.closeAsync()))
+    }
 
   def shutdownAsync(config: ShutdownConfig): F[Unit] =
     shutdownAsync(config.quietPeriod, config.timeout, config.timeUnit)
@@ -51,17 +57,15 @@ class RedisClientF[F[_]](underlying: RedisClient)(implicit F: Async[F]) {
 }
 
 object RedisClientF {
-  class ConnectionResource[F[_] : Functor, A](acquire: F[A], release: A => F[Unit]) {
-    def resource: Resource[F, A] = Resource.make(acquire)(release)
 
-    def unsafe: F[A] = acquire
+  abstract class ConnectionResource2[F[_] : Functor, A, R[_[_], _, _]] {
+    def allocate[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: A): F[(R[F, K, V], F[Unit])]
 
-    def withRelease: F[(A, F[Unit])] = acquire.map(a => (a, release(a)))
-  }
+    def apply[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: A): Resource[F, R[F, K, V]] =
+      Resource.make(allocate(codec, uri))(_._2).map(_._1)
 
-  object ConnectionResource {
-    def make[F[_] : Functor, A](acquire: F[A])(release: A => F[Unit]) =
-      new ConnectionResource(acquire, release)
+    def unsafe[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: A): F[R[F, K, V]] =
+      allocate(codec, uri).map(_._1)
   }
 }
 
