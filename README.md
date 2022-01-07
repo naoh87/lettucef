@@ -77,9 +77,7 @@ def run: IO[Unit] = {
 
 # Motivation
 
-[Lettuce](https://github.com/lettuce-io/lettuce-core) is incredible performance Java Redis client.
-
-But some api is not compatible with scala mind.
+[Lettuce](https://github.com/lettuce-io/lettuce-core) is incredible performance Java Redis client, but some api is not compatible with scala mind.
 
 This library hide the matters when you use Lettuce.
 
@@ -94,4 +92,21 @@ This library hide the matters when you use Lettuce.
 - [x] Add useful datatype for Scala
 - [x] Add PubSub I/F
 - [x] Support cluster/non-cluster RedisClient
-    - [ ] Support Sentinel
+- [x] Support All Commands
+  - [x] Bitmaps
+  - [x] Cluster
+  - [x] Connection
+  - [x] Geo
+  - [x] Hashed
+  - [x] HyperLogLog
+  - [x] Keys
+  - [x] Lists
+  - [x] Pub/Sub
+  - [x] Scripting
+  - [x] Sentinel
+  - [x] Server
+  - [x] Sets
+  - [x] SortedSets
+  - [x] Streams
+  - [x] Strings
+  - [ ] Transactions
