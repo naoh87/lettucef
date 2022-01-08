@@ -9,5 +9,8 @@ object JavaFutureUtil {
     Async[F].async_(cb => fut.handle((a, e) => if (e eq null) cb(Right(a)) else cb(Left(e))))
 
   def blocking[F[_], A](fut: => CompletionStage[A])(implicit F: Async[F]): F[A] =
-    F.async(cb => F.blocking(fut.handle((a, e) => if (e eq null) cb(Right(a)) else cb(Left(e)))).as(None))
+    F.async(cb => F.blocking {
+      fut.handle((a, e) => if (e eq null) cb(Right(a)) else cb(Left(e)))
+      None
+    })
 }

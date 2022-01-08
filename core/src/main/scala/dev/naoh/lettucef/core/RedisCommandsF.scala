@@ -24,8 +24,7 @@ final class RedisCommandsF[F[_], K, V](
     with SetCommands[F, K, V]
     with SortedSetCommands[F, K, V]
     with StreamCommands[F, K, V]
-    with StringCommands[F, K, V]
-    with TransactionalCommands[F, K, V] {
+    with StringCommands[F, K, V] {
   implicit protected val _async: Async[F] = F
   implicit protected val _valueTag: ClassTag[V] = V
   implicit protected val _keyTag: ClassTag[K] = K

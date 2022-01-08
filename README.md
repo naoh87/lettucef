@@ -109,4 +109,3 @@ This library hide the matters when you use Lettuce.
   - [x] SortedSets
   - [x] Streams
   - [x] Strings
-  - [x] Transactions
