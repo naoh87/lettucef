@@ -79,4 +79,3 @@ trait SetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
     JF.toAsync(underlying.sscan(key, scanCursor)).map(cur => DataScanCursor.from(cur))
   
 }
-

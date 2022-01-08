@@ -737,3 +737,14 @@
   - java.net.SocketAddress
   - io.lettuce.core.KillArgs
   - io.lettuce.core.sentinel.api.async.RedisSentinelAsyncCommands
+
+- underlying: RedisTransactionalAsyncCommands[K, V]
+  output: TransactionalCommands
+  methods:
+  - fun: RedisFuture<String> discard();
+  - fun: RedisFuture<TransactionResult> exec();
+  - fun: RedisFuture<String> multi();
+  - fun: RedisFuture<String> watch(K... keys);
+  - fun: RedisFuture<String> unwatch();
+  imports:
+  - dev.naoh.lettucef.core.models.transaction._

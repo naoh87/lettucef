@@ -22,4 +22,3 @@ trait HLLCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
     JF.toAsync(underlying.pfcount(keys: _*)).map(Long2long)
   
 }
-

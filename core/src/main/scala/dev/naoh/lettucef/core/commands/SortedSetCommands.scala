@@ -227,4 +227,3 @@ trait SortedSetCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
     JF.toAsync(underlying.zunionstore(destination, storeArgs, keys: _*)).map(Long2long)
   
 }
-

@@ -34,10 +34,10 @@ case class Method(name: String, args: List[Argument], output: TypeExpr, checkNul
     val anyVals = Set("Boolean", "Int", "Long", "Double")
     val skip = Set("Array", "K", "V", "String")
 
-    val customConvert = Map("RedisData" -> "RedisData.from[V]")
+    val valueConvert = Seq("RedisData", "TransactionResult").map(n => n -> s"$n.from[V]").toMap
     val supported =
       Seq("ClaimedMessages", "StreamMessage", "PendingMessage", "PendingMessages", "GeoWithin")
-        .map(e => e -> s"$e.from").toMap ++ customConvert
+        .map(e => e -> s"$e.from").toMap ++ valueConvert
 
     to.name.expr match {
       case expr if anyVals(expr) => Some(s"${expr}2${expr.toLowerCase}")
@@ -161,7 +161,10 @@ object Method {
           case "long" => TypeExpr.one("Long")
           case "int" => TypeExpr.one("Int")
           case "List" => TypeExpr(TypeName("Seq"), generics.map(_.toScala(name :: parent)), covar)
-          case "Object" if generics.isEmpty => TypeExpr(TypeName("RedisData"), List(TypeExpr.one("V")), covar)
+          case "Object" if generics.isEmpty =>
+            TypeExpr(TypeName("RedisData"), List(TypeExpr.one("V")), covar)
+          case "TransactionResult" if generics.isEmpty =>
+            TypeExpr(TypeName("TransactionResult"), List(TypeExpr.one("V")), covar)
           case "Range" =>
             val converted = p1.name.expr match {
               case "Number" => TypeName("Double")

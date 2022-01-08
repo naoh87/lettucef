@@ -50,4 +50,3 @@ trait BaseCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
     JF.toAsync(underlying.waitForReplication(replicas, timeout)).map(Long2long)
   
 }
-

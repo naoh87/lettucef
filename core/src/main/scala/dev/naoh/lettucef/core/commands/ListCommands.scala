@@ -102,4 +102,3 @@ trait ListCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
     JF.toAsync(underlying.rpushx(key, values: _*)).map(Long2long)
   
 }
-

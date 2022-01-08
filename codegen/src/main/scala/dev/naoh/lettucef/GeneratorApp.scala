@@ -1,6 +1,7 @@
 package dev.naoh.lettucef
 
 import java.io.FileWriter
+import java.nio.file.Files
 import java.nio.file.Paths
 import cats.effect.ExitCode
 import cats.effect.IO
@@ -40,24 +41,15 @@ object GeneratorApp extends IOApp {
           .print(async.methods)((p, m) => m.print(p)))
         .add("}")
         .newline
-        .pipe(print(outputDir.toFile, _))
+        .pipe(print(outputDir, _))
     }.sequence >> IO.delay {
       ExitCode.Success
     }
   }
 
 
-  def print(path: java.io.File, printer: FunctionalPrinter): IO[Unit] = IO.blocking {
-    val fw = new FileWriter(path)
-    try {
-      printer.content.foreach { line =>
-        fw.write(line)
-        fw.write('\n')
-      }
-      fw.flush()
-    } finally {
-      fw.close()
-    }
+  def print(path: java.nio.file.Path, printer: FunctionalPrinter): IO[Unit] = IO.blocking {
+    Files.write(path, printer.result().getBytes)
   }
 }
 

@@ -85,4 +85,3 @@ trait HashCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
     JF.toAsync(underlying.hvals(key)).map(_.asScala.toSeq)
   
 }
-

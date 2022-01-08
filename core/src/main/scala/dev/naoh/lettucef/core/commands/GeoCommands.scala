@@ -68,4 +68,3 @@ trait GeoCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
     JF.toAsync(underlying.geosearchstore(destination, key, reference, predicate, geoArgs, storeDist)).map(Long2long)
   
 }
-

@@ -96,4 +96,3 @@ trait ClusterCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
     JF.toAsync(underlying.clusterFlushslots())
   
 }
-

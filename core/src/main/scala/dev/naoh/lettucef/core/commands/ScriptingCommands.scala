@@ -2,6 +2,7 @@ package dev.naoh.lettucef.core.commands
 
 import cats.syntax.functor._
 import dev.naoh.lettucef.core.models.RedisData
+import dev.naoh.lettucef.core.util.ManualDispatchHelper
 import dev.naoh.lettucef.core.util.{JavaFutureUtil => JF}
 import io.lettuce.core.FlushMode
 import io.lettuce.core.api.async.BaseRedisAsyncCommands
@@ -12,6 +13,8 @@ import scala.jdk.CollectionConverters._
 trait ScriptingCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
 
   protected val underlying: BaseRedisAsyncCommands[K, V] with RedisScriptingAsyncCommands[K, V]
+
+  protected val dispatchHelper: ManualDispatchHelper[K, V]
 
   /**
    * Eval Lua Script

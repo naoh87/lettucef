@@ -149,4 +149,3 @@ trait ServerCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
     JF.toAsync(underlying.time()).map(_.asScala.toSeq)
   
 }
-

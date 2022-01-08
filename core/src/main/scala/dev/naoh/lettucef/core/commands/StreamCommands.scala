@@ -121,4 +121,3 @@ trait StreamCommands[F[_], K, V] extends AsyncCallCommands[F, K, V] {
     JF.toAsync(underlying.xtrim(key, args)).map(Long2long)
   
 }
-
