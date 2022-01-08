@@ -7,7 +7,7 @@ Scala Redis functional client wrapper for [Lettuce](https://github.com/lettuce-i
 Add to build.sbt
 
 ```scala
-libraryDependencies += "dev.naoh" %% "lettucef-core" % "0.0.9"
+libraryDependencies += "dev.naoh" %% "lettucef-core" % "0.0.10"
 ```
 
 Simple Redis command execution

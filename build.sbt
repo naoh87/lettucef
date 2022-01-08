@@ -5,7 +5,7 @@ val scala310 = "3.1.0"
 def dev(ghUser: String, name: String, email: String): Developer =
   Developer(ghUser, name, email, url(s"https://github.com/$ghUser"))
 
-ThisBuild / version := "0.0.9"
+ThisBuild / version := "0.0.10"
 ThisBuild / licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 ThisBuild / organization := "dev.naoh"
 ThisBuild / homepage := Some(url("https://github.com/naoh87/lettucef"))
