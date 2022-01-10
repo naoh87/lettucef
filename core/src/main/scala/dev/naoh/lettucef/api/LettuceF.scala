@@ -1,10 +1,12 @@
-package dev.naoh.lettucef.core
+package dev.naoh.lettucef.api
 
 import java.util.concurrent.TimeUnit
 import cats.effect.Sync
 import cats.effect.kernel.Async
 import cats.effect.kernel.Resource
 import cats.syntax.flatMap._
+import dev.naoh.lettucef.core.RedisClientF
+import dev.naoh.lettucef.core.RedisClusterClientF
 import io.lettuce.core.RedisClient
 import io.lettuce.core.cluster.RedisClusterClient
 

@@ -5,7 +5,7 @@ import cats.Functor
 import cats.effect.kernel.Async
 import cats.effect.kernel.Resource
 import cats.syntax.functor._
-import dev.naoh.lettucef.core.LettuceF.ShutdownConfig
+import dev.naoh.lettucef.api.LettuceF.ShutdownConfig
 import dev.naoh.lettucef.core.RedisClientF.ConnectionResource2
 import dev.naoh.lettucef.core.util.JavaFutureUtil
 import io.lettuce.core.ReadFrom

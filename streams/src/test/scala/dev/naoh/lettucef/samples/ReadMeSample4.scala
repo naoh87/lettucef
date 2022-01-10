@@ -3,11 +3,10 @@ package dev.naoh.lettucef.samples
 import cats.effect.IO
 import cats.effect.IOApp
 import cats.implicits.toTraverseOps
-import dev.naoh.lettucef.core.LettuceF
+import dev.naoh.lettucef.api.LettuceF
 import dev.naoh.lettucef.streams.api._
 import io.lettuce.core.cluster.RedisClusterClient
 import io.lettuce.core.codec.StringCodec
-import scala.concurrent.duration.DurationInt
 
 object ReadMeSample4 extends IOApp.Simple {
   def run: IO[Unit] = {

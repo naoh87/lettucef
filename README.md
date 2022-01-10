@@ -15,7 +15,7 @@ libraryDependencies += "dev.naoh" %% "lettucef-core" % "0.0.11"
 Simple Redis command execution
 
 ```scala
-import dev.naoh.lettucef.core.LettuceF
+import dev.naoh.lettucef.api.LettuceF
 
 def run: IO[Unit] = {
   for {
@@ -31,7 +31,7 @@ def run: IO[Unit] = {
 PubSub
 
 ```scala
-import dev.naoh.lettucef.core.LettuceF
+import dev.naoh.lettucef.api.LettuceF
 
 def run: IO[Unit] = {
   for {
@@ -59,7 +59,7 @@ libraryDependencies += "dev.naoh" %% "lettucef-streams" % "0.0.11"
 ```
 Scan
 ```scala
-import dev.naoh.lettucef.core.LettuceF
+import dev.naoh.lettucef.api.LettuceF
 import dev.naoh.lettucef.streams.api._
 
 def run: IO[Unit] = {
@@ -82,7 +82,7 @@ def run: IO[Unit] = {
 ```
 Subscribe
 ```scala
-import dev.naoh.lettucef.core.LettuceF
+import dev.naoh.lettucef.api.LettuceF
 import dev.naoh.lettucef.streams.api._
 
 def run: IO[Unit] = {

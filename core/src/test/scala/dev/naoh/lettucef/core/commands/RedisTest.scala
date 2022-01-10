@@ -4,7 +4,7 @@ import java.nio.ByteBuffer
 import cats.effect.IO
 import cats.effect.Resource
 import cats.effect.unsafe.IORuntime
-import dev.naoh.lettucef.core.LettuceF
+import dev.naoh.lettucef.api.LettuceF
 import dev.naoh.lettucef.core.RedisClusterCommandsF
 import dev.naoh.lettucef.core.RedisPubSubF
 import io.lettuce.core.cluster.RedisClusterClient
