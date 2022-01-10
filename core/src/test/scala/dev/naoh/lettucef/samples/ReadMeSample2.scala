@@ -1,4 +1,4 @@
-package dev.naoh.lettucef.core.samples
+package dev.naoh.lettucef.samples
 
 import cats.effect.IO
 import cats.effect.IOApp

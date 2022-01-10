@@ -1,5 +1,9 @@
-package dev.naoh.lettucef.core.commands
+package dev.naoh.lettucef.streams.commands
 
+import dev.naoh.lettucef.core.commands.HashCommands
+import dev.naoh.lettucef.core.commands.KeyCommands
+import dev.naoh.lettucef.core.commands.SetCommands
+import dev.naoh.lettucef.core.commands.SortedSetCommands
 import dev.naoh.lettucef.core.models.DataScanCursor
 import fs2._
 import io.lettuce.core.ScanArgs

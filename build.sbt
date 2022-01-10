@@ -9,7 +9,7 @@ ThisBuild / version := "0.0.11"
 ThisBuild / licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 ThisBuild / organization := "dev.naoh"
 ThisBuild / homepage := Some(url("https://github.com/naoh87/lettucef"))
-ThisBuild / scmInfo  := Some(ScmInfo(url("https://github.com/naoh87/lettucef"), "scm:git@github.com:naoh87/lettucef.git"))
+ThisBuild / scmInfo := Some(ScmInfo(url("https://github.com/naoh87/lettucef"), "scm:git@github.com:naoh87/lettucef.git"))
 ThisBuild / versionScheme := Some("semver-spec")
 ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
 ThisBuild / sonatypeRepository := "https://s01.oss.sonatype.org/service/local"
@@ -21,10 +21,18 @@ lazy val root = (project in file("."))
     crossScalaVersions := Nil,
     publishArtifact := false
   )
-  .aggregate(core)
+  .aggregate(core, streams)
 
-lazy val core = (project in file("core")).settings(
-  name := "lettucef-core",
+lazy val core = (project in file("core"))
+  .settings(name := "lettucef-core")
+  .settings(commonSettings)
+
+lazy val streams = (project in file("streams"))
+  .settings(name := "lettucef-streams")
+  .settings(commonSettings)
+  .dependsOn(core)
+
+val commonSettings = Seq(
   scalaVersion := scala213,
   crossScalaVersions := Seq(scala213, scala310),
   Test / fork := true,

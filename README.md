@@ -4,10 +4,12 @@ Scala Redis functional client wrapper for [Lettuce](https://github.com/lettuce-i
 
 # Getting Started
 
+## Core
+
 Add to build.sbt
 
 ```scala
-libraryDependencies += "dev.naoh" %% "lettucef-core" % "0.0.10"
+libraryDependencies += "dev.naoh" %% "lettucef-core" % "0.0.11"
 ```
 
 Simple Redis command execution
@@ -51,10 +53,14 @@ def run: IO[Unit] = {
 }.use(identity)
 ```
 
-Streaming
-
+## Stream Extension
+```scala
+libraryDependencies += "dev.naoh" %% "lettucef-streams" % "0.0.11"
+```
+Scan
 ```scala
 import dev.naoh.lettucef.core.LettuceF
+import dev.naoh.lettucef.streams.api._
 
 def run: IO[Unit] = {
   for {
@@ -73,6 +79,25 @@ def run: IO[Unit] = {
       .debug()
   }
 }.use(Stream.force(_).compile.drain)
+```
+Subscribe
+```scala
+import dev.naoh.lettucef.core.LettuceF
+import dev.naoh.lettucef.streams.api._
+
+def run: IO[Unit] = {
+  for {
+    client <- LettuceF.cluster[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
+    pub <- client.connect(StringCodec.UTF8).map(_.async())
+    sub <- client.connectPubSub.stream(StringCodec.UTF8)
+    _ <- sub.subscribe("A").evalMap(m => pub.publish("B", m.message)).compile.drain.background
+    _ <- sub.subscribe("B").evalMap(m => pub.publish("C", m.message)).compile.drain.background
+    _ <- sub.subscribe("A", "B", "C").debug().take(30).compile.drain.uncancelable.background
+  } yield for {
+    _ <- sub.awaitSubscribed("A", "B", "C")
+    _ <- List.range(0, 10).map(i => pub.publish("A", i.toHexString)).sequence
+  } yield ()
+}.use(identity)
 ```
 
 # Motivation

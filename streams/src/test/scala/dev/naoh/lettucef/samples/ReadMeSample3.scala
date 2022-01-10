@@ -1,9 +1,10 @@
-package dev.naoh.lettucef.core.samples
+package dev.naoh.lettucef.samples
 
 import cats.effect.IO
 import cats.effect.IOApp
 import cats.implicits.toTraverseOps
 import dev.naoh.lettucef.core.LettuceF
+import dev.naoh.lettucef.streams.api._
 import fs2._
 import io.lettuce.core.ScanArgs
 import io.lettuce.core.cluster.RedisClusterClient
