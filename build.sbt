@@ -38,7 +38,7 @@ val commonSettings = Seq(
   Test / fork := true,
   libraryDependencies ++= Seq(
     "io.lettuce" % "lettuce-core" % "6.1.5.RELEASE",
-    "org.typelevel" %% "cats-effect" % "3.3.3",
+    "org.typelevel" %% "cats-effect" % "3.3.4",
     "co.fs2" %% "fs2-core" % "3.2.4",
     "org.scalatest" %% "scalatest" % "3.2.10" % "test",
   ),
