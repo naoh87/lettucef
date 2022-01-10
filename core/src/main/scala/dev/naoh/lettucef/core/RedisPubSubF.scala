@@ -18,19 +18,19 @@ class RedisPubSubF[F[_], K, V](
   shutdown: Deferred[F, Boolean]
 )(implicit F: Async[F]) {
   def subscribe(channels: K*): F[Unit] =
-    JavaFutureUtil.toAsync(underlying.async().subscribe(channels: _*)).void
+    JavaFutureUtil.toSync(underlying.async().subscribe(channels: _*)).void
 
   def unsubscribe(channels: K*): F[Unit] =
-    JavaFutureUtil.toAsync(underlying.async().unsubscribe(channels: _*)).void
+    JavaFutureUtil.toSync(underlying.async().unsubscribe(channels: _*)).void
 
   def psubscribe(patterns: K*): F[Unit] =
-    JavaFutureUtil.toAsync(underlying.async().psubscribe(patterns: _*)).void
+    JavaFutureUtil.toSync(underlying.async().psubscribe(patterns: _*)).void
 
   def punsubscribe(patterns: K*): F[Unit] =
-    JavaFutureUtil.toAsync(underlying.async().punsubscribe(patterns: _*)).void
+    JavaFutureUtil.toSync(underlying.async().punsubscribe(patterns: _*)).void
 
   def closeAsync(): F[Unit] =
-    F.guarantee(JavaFutureUtil.toAsync(underlying.closeAsync()).void, shutdown.complete(true).void)
+    F.guarantee(JavaFutureUtil.toSync(underlying.closeAsync()).void, shutdown.complete(true).void)
 
   /**
    * Start Listen published stream

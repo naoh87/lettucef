@@ -26,15 +26,15 @@ object GeneratorApp extends IOApp {
     var outputMeth = 0
 
     asyncList.map { async =>
-      val outputDir = Paths.get(s"../core/src/main/scala/dev/naoh/lettucef/core/commands/${async.output}.scala").toAbsolutePath
+      val outputDir = Paths.get(s"../core/src/main/scala/dev/naoh/lettucef/core/sync/${async.output}.scala").toAbsolutePath
 
       FunctionalPrinter()
         .add("// Code generated. DO NOT EDIT")
-        .add("package dev.naoh.lettucef.core.commands")
+        .add("package dev.naoh.lettucef.core.sync")
         .newline
         .add(async.imports.map(expr => s"import $expr"): _*)
         .newline.newline
-        .add(s"trait ${async.output}[F[_], K, V] extends AsyncCallCommands[F, K, V] {")
+        .add(s"trait ${async.output}[F[_], K, V] extends SyncCallCommands[F, K, V] {")
         .newline
         .indented(_
           .add(s"protected val underlying: ${async.underlying}").newline
@@ -98,7 +98,7 @@ object Async {
           fun.mapOutput(convertOut).mapArgs(_.toScala)
         p.add(scalaDef.toAsync.scalaDef + " =")
           .indented(
-            _.add(fun.asyncCall(scalaDef.args, scalaDef.output, output.map(_.j2s))))
+            _.add(fun.syncCall(scalaDef.args, scalaDef.output, output.map(_.j2s))))
           .newline
       } else {
         println(s"- skipped ${fun.scalaDef}")
@@ -118,6 +118,7 @@ object Async {
   val constantImports = List(
     "cats.syntax.functor._",
     "io.lettuce.core.api.async._",
+    "dev.naoh.lettucef.core.sync.SyncCallCommands",
     "dev.naoh.lettucef.core.util.LettuceValueConverter",
     "dev.naoh.lettucef.core.util.{JavaFutureUtil => JF}",
     "scala.jdk.CollectionConverters._",

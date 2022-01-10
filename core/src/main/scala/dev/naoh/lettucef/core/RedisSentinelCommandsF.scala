@@ -1,7 +1,7 @@
 package dev.naoh.lettucef.core
 
 import cats.effect.kernel.Async
-import dev.naoh.lettucef.core.commands.SentinelCommands
+import dev.naoh.lettucef.core.sync.SentinelCommands
 import dev.naoh.lettucef.core.util.JavaFutureUtil
 import dev.naoh.lettucef.core.util.ManualDispatchHelper
 import io.lettuce.core.codec.RedisCodec
@@ -22,5 +22,5 @@ class RedisSentinelCommandsF[F[_], K, V](
   protected val dispatchHelper: ManualDispatchHelper[K, V] = new ManualDispatchHelper(codec)
 
   def closeAsync(): F[Unit] =
-    F.void(JavaFutureUtil.toAsync(conn.closeAsync())(F))
+    F.void(JavaFutureUtil.toSync(conn.closeAsync())(F))
 }

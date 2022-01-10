@@ -1,4 +1,4 @@
-package dev.naoh.lettucef.core.commands
+package dev.naoh.lettucef.core.sync
 
 import cats.effect.IO
 import cats.effect.Resource

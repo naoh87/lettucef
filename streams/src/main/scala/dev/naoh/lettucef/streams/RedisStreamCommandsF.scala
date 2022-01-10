@@ -10,10 +10,10 @@ final class RedisStreamCommandsF[F[_], K, V](
 
 trait StreamCommandApiOps {
   implicit class RedisClusterConnectionFOps[F[_], K, V](conn: RedisClusterConnectionF[F, K, V]) {
-    def stream(): RedisStreamCommandsF[F, K, V] = new RedisStreamCommandsF(conn.async())
+    def stream(): RedisStreamCommandsF[F, K, V] = new RedisStreamCommandsF(conn.sync())
   }
 
   implicit class RedisConnectionFOps[F[_], K, V](conn: RedisConnectionF[F, K, V]) {
-    def stream(): RedisStreamCommandsF[F, K, V] = new RedisStreamCommandsF(conn.async())
+    def stream(): RedisStreamCommandsF[F, K, V] = new RedisStreamCommandsF(conn.sync())
   }
 }

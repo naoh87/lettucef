@@ -16,11 +16,11 @@ object ReadMeSample3 extends IOApp.Simple {
       client <- LettuceF.cluster[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
       conn <- client.connect(StringCodec.UTF8)
     } yield for {
-      _ <- conn.async().del("Set")
+      _ <- conn.sync().del("Set")
       _ <-
         List
           .range(0, 100).map(_.toHexString).grouped(10)
-          .map(args => conn.async().sadd("Set", args: _*))
+          .map(args => conn.sync().sadd("Set", args: _*))
           .toList.sequence
     } yield {
       conn.stream()

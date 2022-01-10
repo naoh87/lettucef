@@ -12,7 +12,7 @@ object ReadMeSample2 extends IOApp.Simple {
   def run: IO[Unit] = {
     for {
       client <- LettuceF.cluster[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
-      cmd <- client.connect(StringCodec.UTF8).map(_.async())
+      cmd <- client.connect(StringCodec.UTF8).map(_.sync())
       pubsub <- client.connectPubSub(StringCodec.UTF8)
       pushed <- pubsub.pushedAwait()
       _ <- pushed.debug().compile.drain.background

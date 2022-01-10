@@ -24,28 +24,28 @@ class RedisClientF[F[_]](underlying: RedisClient)(implicit F: Async[F]) {
   val connect: ConnectionResource2[F, RedisURI, RedisConnectionF] =
     new ConnectionResource2[F, RedisURI, RedisConnectionF] {
       override def allocate[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: RedisURI): F[(RedisConnectionF[F, K, V], F[Unit])] =
-        JavaFutureUtil.toAsync(underlying.connectAsync(codec, uri))
+        JavaFutureUtil.toSync(underlying.connectAsync(codec, uri))
           .map(new RedisConnectionF(_, codec).pipe(c => c -> c.closeAsync()))
     }
 
   val connectPubSub: ConnectionResource2[F, RedisURI, RedisPubSubF] =
     new ConnectionResource2[F, RedisURI, RedisPubSubF] {
       override def allocate[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: RedisURI): F[(RedisPubSubF[F, K, V], F[Unit])] =
-        RedisPubSubF.createUnsafe(JavaFutureUtil.toAsync(underlying.connectPubSubAsync(codec, uri)))
+        RedisPubSubF.createUnsafe(JavaFutureUtil.toSync(underlying.connectPubSubAsync(codec, uri)))
           .map(c => c -> c.closeAsync())
     }
 
   val connectSentinel: ConnectionResource2[F, RedisURI, RedisSentinelCommandsF] =
     new ConnectionResource2[F, RedisURI, RedisSentinelCommandsF] {
       override def allocate[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: RedisURI): F[(RedisSentinelCommandsF[F, K, V], F[Unit])] =
-        JavaFutureUtil.toAsync(underlying.connectSentinelAsync(codec, uri))
+        JavaFutureUtil.toSync(underlying.connectSentinelAsync(codec, uri))
           .map(new RedisSentinelCommandsF(_, codec).pipe(c => c -> c.closeAsync()))
     }
 
   val connectMasterReplica: ConnectionResource2[F, Seq[RedisURI], MasterReplicaRedisConnectionF] =
     new ConnectionResource2[F, Seq[RedisURI], MasterReplicaRedisConnectionF] {
       override def allocate[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: Seq[RedisURI]): F[(MasterReplicaRedisConnectionF[F, K, V], F[Unit])] =
-        JavaFutureUtil.toAsync(MasterReplica.connectAsync(underlying, codec, uri.asJava))
+        JavaFutureUtil.toSync(MasterReplica.connectAsync(underlying, codec, uri.asJava))
           .map(new MasterReplicaRedisConnectionF(_, codec).pipe(c => c -> c.closeAsync()))
     }
 
@@ -53,7 +53,7 @@ class RedisClientF[F[_]](underlying: RedisClient)(implicit F: Async[F]) {
     shutdownAsync(config.quietPeriod, config.timeout, config.timeUnit)
 
   def shutdownAsync(quietPeriod: Long, timeout: Long, timeUnit: TimeUnit): F[Unit] =
-    JavaFutureUtil.toAsync(underlying.shutdownAsync(quietPeriod, timeout, timeUnit)).void
+    JavaFutureUtil.toSync(underlying.shutdownAsync(quietPeriod, timeout, timeUnit)).void
 }
 
 object RedisClientF {
@@ -73,11 +73,11 @@ class RedisConnectionF[F[_] : Async, K: ClassTag, V: ClassTag](
   underlying: StatefulRedisConnection[K, V],
   codec: RedisCodec[K, V]
 ) {
-  def async(): RedisCommandsF[F, K, V] =
-    new RedisCommandsF[F, K, V](underlying.async(), codec)
+  def sync(): RedisSyncCommandsF[F, K, V] =
+    new RedisSyncCommandsF[F, K, V](underlying.async(), codec)
 
   def closeAsync(): F[Unit] =
-    JavaFutureUtil.toAsync(underlying.closeAsync()).void
+    JavaFutureUtil.toSync(underlying.closeAsync()).void
 }
 
 class MasterReplicaRedisConnectionF[F[_] : Async, K: ClassTag, V: ClassTag](

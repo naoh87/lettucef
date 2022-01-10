@@ -1,7 +1,7 @@
-package dev.naoh.lettucef.core.commands
+package dev.naoh.lettucef.core.sync
 
 import cats.effect.IO
-import dev.naoh.lettucef.core.commands.RedisTest.syntax._
+import dev.naoh.lettucef.core.sync.RedisTest.syntax._
 import io.lettuce.core.GeoArgs
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers

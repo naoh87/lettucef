@@ -20,7 +20,7 @@ import dev.naoh.lettucef.api.LettuceF
 def run: IO[Unit] = {
   for {
     client <- LettuceF.cluster[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
-    commands <- client.connect(StringCodec.UTF8).map(_.async())
+    commands <- client.connect(StringCodec.UTF8).map(_.sync())
   } yield for {
     _ <- commands.set("key", "value")
     v <- commands.get("key")
@@ -36,7 +36,7 @@ import dev.naoh.lettucef.api.LettuceF
 def run: IO[Unit] = {
   for {
     client <- LettuceF.cluster[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
-    cmd <- client.connect(StringCodec.UTF8).map(_.async())
+    cmd <- client.connect(StringCodec.UTF8).map(_.sync())
     pubsub <- client.connectPubSub(StringCodec.UTF8)
     pushed <- pubsub.pushedAwait()
     _ <- pushed.debug().compile.drain.background
@@ -67,9 +67,9 @@ def run: IO[Unit] = {
     client <- LettuceF.cluster[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
     conn <- client.connect(StringCodec.UTF8)
   } yield for {
-    _ <- conn.async().del("Set")
+    _ <- conn.sync().del("Set")
     _ <- List.range(0, 100).map(_.toHexString).grouped(10)
-             .map(args => conn.async().sadd("Set", args: _*))
+             .map(args => conn.sync().sadd("Set", args: _*))
              .toList.sequence
   } yield {
     conn.stream()
@@ -88,7 +88,7 @@ import dev.naoh.lettucef.streams.api._
 def run: IO[Unit] = {
   for {
     client <- LettuceF.cluster[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
-    pub <- client.connect(StringCodec.UTF8).map(_.async())
+    pub <- client.connect(StringCodec.UTF8).map(_.sync())
     sub <- client.connectPubSub.stream(StringCodec.UTF8)
     _ <- sub.subscribe("A").evalMap(m => pub.publish("B", m.message)).compile.drain.background
     _ <- sub.subscribe("B").evalMap(m => pub.publish("C", m.message)).compile.drain.background

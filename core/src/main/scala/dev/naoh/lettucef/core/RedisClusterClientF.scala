@@ -21,14 +21,14 @@ class RedisClusterClientF[F[_]](underlying: RedisClusterClient)(implicit F: Asyn
   val connect: ConnectionResource1[F, RedisClusterConnectionF] =
     new ConnectionResource1[F, RedisClusterConnectionF] {
       override protected def allocate[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V]): F[(RedisClusterConnectionF[F, K, V], F[Unit])] =
-        JavaFutureUtil.toAsync(underlying.connectAsync(codec))
+        JavaFutureUtil.toSync(underlying.connectAsync(codec))
           .map(new RedisClusterConnectionF(_, codec).pipe(c => c -> c.closeAsync()))
     }
 
   val connectPubSub: ConnectionResource1[F, RedisPubSubF] =
     new ConnectionResource1[F, RedisPubSubF] {
       override protected def allocate[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V]): F[(RedisPubSubF[F, K, V], F[Unit])] =
-        RedisPubSubF.createUnsafe[F, K, V](JavaFutureUtil.toAsync(underlying.connectPubSubAsync(codec)).map(locally))
+        RedisPubSubF.createUnsafe[F, K, V](JavaFutureUtil.toSync(underlying.connectPubSubAsync(codec)).map(locally))
           .map(r => r -> r.closeAsync())
     }
 
@@ -39,7 +39,7 @@ class RedisClusterClientF[F[_]](underlying: RedisClusterClient)(implicit F: Asyn
     shutdownAsync(config.quietPeriod, config.timeout, config.timeUnit)
 
   def shutdownAsync(quietPeriod: Long, timeout: Long, timeUnit: TimeUnit): F[Unit] =
-    JavaFutureUtil.toAsync(underlying.shutdownAsync(quietPeriod, timeout, timeUnit)).void
+    JavaFutureUtil.toSync(underlying.shutdownAsync(quietPeriod, timeout, timeUnit)).void
 }
 
 object RedisClusterClientF {
@@ -59,15 +59,15 @@ class RedisClusterConnectionF[F[_] : Async, K: ClassTag, V: ClassTag](
   underlying: StatefulRedisClusterConnection[K, V],
   codec: RedisCodec[K, V]
 ) {
-  def async(): RedisClusterCommandsF[F, K, V] =
-    new RedisClusterCommandsF[F, K, V](underlying.async(), codec)
+  def sync(): RedisClusterSyncCommandsF[F, K, V] =
+    new RedisClusterSyncCommandsF[F, K, V](underlying.async(), codec)
 
   def getConnection(nodeId: String): F[RedisConnectionF[F, K, V]] =
-    JavaFutureUtil.toAsync(underlying.getConnectionAsync(nodeId))
+    JavaFutureUtil.toSync(underlying.getConnectionAsync(nodeId))
       .map(new RedisConnectionF(_, codec))
 
   def getConnection(host: String, port: Int): F[RedisConnectionF[F, K, V]] =
-    JavaFutureUtil.toAsync(underlying.getConnectionAsync(host, port))
+    JavaFutureUtil.toSync(underlying.getConnectionAsync(host, port))
       .map(new RedisConnectionF(_, codec))
 
   def setReadFrom(readFrom: ReadFrom): F[Unit] =
@@ -77,6 +77,6 @@ class RedisClusterConnectionF[F[_] : Async, K: ClassTag, V: ClassTag](
     Async[F].delay(underlying.getReadFrom)
 
   def closeAsync(): F[Unit] =
-    JavaFutureUtil.toAsync(underlying.closeAsync()).void
+    JavaFutureUtil.toSync(underlying.closeAsync()).void
 }
 

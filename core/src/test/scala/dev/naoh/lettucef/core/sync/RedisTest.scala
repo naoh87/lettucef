@@ -1,11 +1,11 @@
-package dev.naoh.lettucef.core.commands
+package dev.naoh.lettucef.core.sync
 
 import java.nio.ByteBuffer
 import cats.effect.IO
 import cats.effect.Resource
 import cats.effect.unsafe.IORuntime
 import dev.naoh.lettucef.api.LettuceF
-import dev.naoh.lettucef.core.RedisClusterCommandsF
+import dev.naoh.lettucef.core.RedisClusterSyncCommandsF
 import dev.naoh.lettucef.core.RedisPubSubF
 import io.lettuce.core.cluster.RedisClusterClient
 import io.lettuce.core.codec.RedisCodec
@@ -41,7 +41,7 @@ object RedisTest {
     }
   }
 
-  type CommandF = RedisClusterCommandsF[IO, RedisKey, RedisValue]
+  type CommandF = RedisClusterSyncCommandsF[IO, RedisKey, RedisValue]
   type PubSubF = RedisPubSubF[IO, RedisKey, RedisValue]
 
   def commands[R](f: CommandF => IO[R]): R =

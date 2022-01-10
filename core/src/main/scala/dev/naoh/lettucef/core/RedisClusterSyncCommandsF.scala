@@ -1,19 +1,20 @@
 package dev.naoh.lettucef.core
 
 import cats.effect.kernel.Async
-import dev.naoh.lettucef.core.commands._
+import dev.naoh.lettucef.core.sync._
 import dev.naoh.lettucef.core.util.ManualDispatchHelper
-import io.lettuce.core.api.async.RedisAsyncCommands
+import io.lettuce.core.cluster.api.async.RedisAdvancedClusterAsyncCommands
 import io.lettuce.core.codec.RedisCodec
 import scala.reflect.ClassTag
 
-final class RedisCommandsF[F[_], K, V](
-  protected val underlying: RedisAsyncCommands[K, V],
+final class RedisClusterSyncCommandsF[F[_], K, V](
+  protected val underlying: RedisAdvancedClusterAsyncCommands[K, V],
   codec: RedisCodec[K, V]
 )(implicit F: Async[F], V: ClassTag[V], K: ClassTag[K])
-  extends AsyncCallCommands[F, K, V]
+  extends SyncCallCommands[F, K, V]
     with AclCommands[F, K, V]
     with BaseCommands[F, K, V]
+    with ClusterCommands[F, K, V]
     with GeoCommands[F, K, V]
     with HashCommands[F, K, V]
     with HLLCommands[F, K, V]
