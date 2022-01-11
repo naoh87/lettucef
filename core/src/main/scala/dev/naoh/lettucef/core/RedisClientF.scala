@@ -31,8 +31,8 @@ class RedisClientF[F[_]](underlying: RedisClient)(implicit F: Async[F]) {
   val connectPubSub: ConnectionResource2[F, RedisURI, RedisPubSubF] =
     new ConnectionResource2[F, RedisURI, RedisPubSubF] {
       override def allocate[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: RedisURI): F[(RedisPubSubF[F, K, V], F[Unit])] =
-        RedisPubSubF.createUnsafe(JavaFutureUtil.toSync(underlying.connectPubSubAsync(codec, uri)))
-          .map(c => c -> c.closeAsync())
+        JavaFutureUtil.toSync(underlying.connectPubSubAsync(codec, uri))
+          .map(new RedisPubSubF(_).pipe(c => c -> c.closeAsync()))
     }
 
   val connectSentinel: ConnectionResource2[F, RedisURI, RedisSentinelCommandsF] =

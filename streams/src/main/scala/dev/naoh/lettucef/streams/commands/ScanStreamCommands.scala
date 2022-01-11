@@ -43,9 +43,9 @@ object ScanStreamCommands {
   def makeScanStream[F[_], A](init: F[DataScanCursor[A]], next: ScanCursor => F[DataScanCursor[A]]): Stream[F, A] = {
     def go(cursor: DataScanCursor[A]): Pull[F, A, Unit] =
       if (cursor.isFinished) {
-        Pull.output(cursor.toChunk)
+        Pull.output(Chunk.vector(cursor.elements))
       } else {
-        (Pull.output(cursor.toChunk) >> Pull.eval(next(cursor))).flatMap(go)
+        (Pull.output(Chunk.vector(cursor.elements)) >> Pull.eval(next(cursor))).flatMap(go)
       }
 
     Pull.eval(init).flatMap(go).stream

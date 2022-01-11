@@ -1,15 +1,12 @@
 package dev.naoh.lettucef.core.models
 
 import dev.naoh.lettucef.core.util.LettuceValueConverter
-import fs2.Chunk
 import io.lettuce.core.ScanCursor
 import scala.jdk.CollectionConverters._
 
 class DataScanCursor[A](val elements: Vector[A], cursor: String, finished: Boolean) extends ScanCursor(cursor, finished) {
   def map[B](f: A => B): DataScanCursor[B] =
     new DataScanCursor[B](elements.map(f), cursor, finished)
-
-  def toChunk: Chunk[A] = Chunk.vector(elements)
 }
 
 object DataScanCursor {

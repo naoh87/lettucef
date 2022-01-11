@@ -30,6 +30,11 @@ lazy val core = (project in file("core"))
 lazy val streams = (project in file("streams"))
   .settings(name := "lettucef-streams")
   .settings(commonSettings)
+  .settings(
+    libraryDependencies ++= Seq(
+      "co.fs2" %% "fs2-core" % "3.2.4",
+    ),
+  )
   .dependsOn(core)
 
 val commonSettings = Seq(
@@ -39,7 +44,6 @@ val commonSettings = Seq(
   libraryDependencies ++= Seq(
     "io.lettuce" % "lettuce-core" % "6.1.5.RELEASE",
     "org.typelevel" %% "cats-effect" % "3.3.4",
-    "co.fs2" %% "fs2-core" % "3.2.4",
     "org.scalatest" %% "scalatest" % "3.2.10" % "test",
   ),
   publishMavenStyle := true,

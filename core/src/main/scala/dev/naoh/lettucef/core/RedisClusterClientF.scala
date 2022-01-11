@@ -28,8 +28,8 @@ class RedisClusterClientF[F[_]](underlying: RedisClusterClient)(implicit F: Asyn
   val connectPubSub: ConnectionResource1[F, RedisPubSubF] =
     new ConnectionResource1[F, RedisPubSubF] {
       override protected def allocate[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V]): F[(RedisPubSubF[F, K, V], F[Unit])] =
-        RedisPubSubF.createUnsafe[F, K, V](JavaFutureUtil.toSync(underlying.connectPubSubAsync(codec)).map(locally))
-          .map(r => r -> r.closeAsync())
+        JavaFutureUtil.toSync(underlying.connectPubSubAsync(codec))
+          .map(new RedisPubSubF(_).pipe(c => c -> c.closeAsync()))
     }
 
   def getPartition: F[Partitions] =
