@@ -76,6 +76,9 @@ class RedisConnectionF[F[_] : Async, K: ClassTag, V: ClassTag](
   def sync(): RedisSyncCommandsF[F, K, V] =
     new RedisSyncCommandsF[F, K, V](underlying.async(), codec)
 
+  def async(): RedisAsyncCommandsF[F, K, V] =
+    new RedisAsyncCommandsF[F, K, V](underlying.async(), codec)
+
   def closeAsync(): F[Unit] =
     JavaFutureUtil.toSync(underlying.closeAsync()).void
 }

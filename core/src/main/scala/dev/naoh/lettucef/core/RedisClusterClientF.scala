@@ -62,6 +62,9 @@ class RedisClusterConnectionF[F[_] : Async, K: ClassTag, V: ClassTag](
   def sync(): RedisClusterSyncCommandsF[F, K, V] =
     new RedisClusterSyncCommandsF[F, K, V](underlying.async(), codec)
 
+  def async(): RedisClusterAsyncCommandsF[F, K, V] =
+    new RedisClusterAsyncCommandsF[F, K, V](underlying.async(), codec)
+
   def getConnection(nodeId: String): F[RedisConnectionF[F, K, V]] =
     JavaFutureUtil.toSync(underlying.getConnectionAsync(nodeId))
       .map(new RedisConnectionF(_, codec))

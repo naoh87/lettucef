@@ -9,10 +9,10 @@ Scala Redis functional client wrapper for [Lettuce](https://github.com/lettuce-i
 Add to build.sbt
 
 ```scala
-libraryDependencies += "dev.naoh" %% "lettucef-core" % "0.0.11"
+libraryDependencies += "dev.naoh" %% "lettucef-core" % "0.0.12"
 ```
 
-Simple Redis command execution
+Standard Redis sync command execution
 
 ```scala
 import dev.naoh.lettucef.api.LettuceF
@@ -24,7 +24,32 @@ def run: IO[Unit] = {
   } yield for {
     _ <- commands.set("key", "value")
     v <- commands.get("key")
-  } yield println(v) //Some(value)
+  } yield
+    println(v) //Some(value)
+}.use(identity)
+```
+
+Redis async command execution for pipelining
+
+```scala
+import dev.naoh.lettucef.api.LettuceF
+
+def run: IO[Unit] = {
+  for {
+    client <- LettuceF.cluster[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
+    conn <- client.connect(StringCodec.UTF8)
+    sync = conn.sync()
+    async = conn.async()
+  } yield for {
+    start <- IO(System.nanoTime())
+    _ <- sync.set("Ix", "0")
+    _ <- async.incr("Ix").replicateA_(100000)
+    aget <- async.get("Ix")
+    sget <- sync.get("Ix")
+    aget <- aget
+    end <- IO(System.nanoTime())
+  } yield
+    println((sget, aget, (end - start).nanos.toMillis)) //(Some(100000),Some(100000),3338)
 }.use(identity)
 ```
 
@@ -44,8 +69,8 @@ def run: IO[Unit] = {
     _ <- pubsub.subscribe("Topic")
     _ <- IO.sleep(100.milli)
     _ <- List.range(0, 10)
-             .map(i => cmd.publish("Topic", i.toString))
-             .sequence
+      .map(i => cmd.publish("Topic", i.toString))
+      .sequence
     _ <- IO.sleep(100.milli)
     _ <- pubsub.unsubscribe("Topic")
     _ <- IO.sleep(100.milli)
@@ -54,10 +79,13 @@ def run: IO[Unit] = {
 ```
 
 ## Stream Extension
+
 ```scala
 libraryDependencies += "dev.naoh" %% "lettucef-streams" % "0.0.11"
 ```
+
 Scan
+
 ```scala
 import dev.naoh.lettucef.api.LettuceF
 import dev.naoh.lettucef.streams.api._
@@ -69,8 +97,8 @@ def run: IO[Unit] = {
   } yield for {
     _ <- conn.sync().del("Set")
     _ <- List.range(0, 100).map(_.toHexString).grouped(10)
-             .map(args => conn.sync().sadd("Set", args: _*))
-             .toList.sequence
+      .map(args => conn.sync().sadd("Set", args: _*))
+      .toList.sequence
   } yield {
     conn.stream()
       .sscan("Set", ScanArgs.Builder.limit(20))
@@ -80,7 +108,9 @@ def run: IO[Unit] = {
   }
 }.use(Stream.force(_).compile.drain)
 ```
+
 Subscribe
+
 ```scala
 import dev.naoh.lettucef.api.LettuceF
 import dev.naoh.lettucef.streams.api._
@@ -102,7 +132,8 @@ def run: IO[Unit] = {
 
 # Motivation
 
-[Lettuce](https://github.com/lettuce-io/lettuce-core) is incredible performance Java Redis client, but some api is not compatible with scala mind.
+[Lettuce](https://github.com/lettuce-io/lettuce-core) is incredible performance Java Redis client, but some api is not
+compatible with scala mind.
 
 This library hide the matters when you use Lettuce.
 
@@ -118,19 +149,20 @@ This library hide the matters when you use Lettuce.
 - [x] Add PubSub I/F
 - [x] Support cluster/non-cluster RedisClient
 - [x] Support All Commands
-  - [x] Bitmaps
-  - [x] Cluster
-  - [x] Connection
-  - [x] Geo
-  - [x] Hashed
-  - [x] HyperLogLog
-  - [x] Keys
-  - [x] Lists
-  - [x] Pub/Sub
-  - [x] Scripting
-  - [x] Sentinel
-  - [x] Server
-  - [x] Sets
-  - [x] SortedSets
-  - [x] Streams
-  - [x] Strings
+    - [x] Bitmaps
+    - [x] Cluster
+    - [x] Connection
+    - [x] Geo
+    - [x] Hashed
+    - [x] HyperLogLog
+    - [x] Keys
+    - [x] Lists
+    - [x] Pub/Sub
+    - [x] Scripting
+    - [x] Sentinel
+    - [x] Server
+    - [x] Sets
+    - [x] SortedSets
+    - [x] Streams
+    - [x] Strings
+    - [ ] Transactions

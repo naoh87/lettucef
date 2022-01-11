@@ -1,5 +1,5 @@
 // Code generated. DO NOT EDIT
-package dev.naoh.lettucef.core.sync
+package dev.naoh.lettucef.core.async
 
 import cats.syntax.functor._
 import dev.naoh.lettucef.core.commands.CommandsDeps
@@ -13,13 +13,13 @@ trait HLLCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
 
   protected val underlying: RedisHLLAsyncCommands[K, V]
   
-  def pfadd(key: K, values: V*): F[Long] =
-    JF.toSync(underlying.pfadd(key, values: _*)).map(Long2long)
+  def pfadd(key: K, values: V*): F[F[Long]] =
+    JF.toAsync(underlying.pfadd(key, values: _*)).map(_.map(Long2long))
   
-  def pfmerge(destkey: K, sourcekeys: K*): F[String] =
-    JF.toSync(underlying.pfmerge(destkey, sourcekeys: _*))
+  def pfmerge(destkey: K, sourcekeys: K*): F[F[String]] =
+    JF.toAsync(underlying.pfmerge(destkey, sourcekeys: _*))
   
-  def pfcount(keys: K*): F[Long] =
-    JF.toSync(underlying.pfcount(keys: _*)).map(Long2long)
+  def pfcount(keys: K*): F[F[Long]] =
+    JF.toAsync(underlying.pfcount(keys: _*)).map(_.map(Long2long))
   
 }

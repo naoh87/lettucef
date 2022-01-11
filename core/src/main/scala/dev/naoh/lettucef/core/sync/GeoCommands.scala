@@ -2,8 +2,8 @@
 package dev.naoh.lettucef.core.sync
 
 import cats.syntax.functor._
+import dev.naoh.lettucef.core.commands.CommandsDeps
 import dev.naoh.lettucef.core.models.geo._
-import dev.naoh.lettucef.core.sync.SyncCallCommands
 import dev.naoh.lettucef.core.util.LettuceValueConverter
 import dev.naoh.lettucef.core.util.{JavaFutureUtil => JF}
 import io.lettuce.core.GeoAddArgs
@@ -16,7 +16,7 @@ import io.lettuce.core.api.async._
 import scala.jdk.CollectionConverters._
 
 
-trait GeoCommands[F[_], K, V] extends SyncCallCommands[F, K, V] {
+trait GeoCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
 
   protected val underlying: RedisGeoAsyncCommands[K, V]
   

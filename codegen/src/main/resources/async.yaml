@@ -737,3 +737,21 @@
   - java.net.SocketAddress
   - io.lettuce.core.KillArgs
   - io.lettuce.core.sentinel.api.async.RedisSentinelAsyncCommands
+
+- underlying: RedisScriptingAsyncCommands[K, V]
+  output: ScriptingCommands
+  methods:
+# - fun: RedisFuture<T> eval(String script, ScriptOutputType type, K... keys);
+# - fun: RedisFuture<T> eval(byte[] script, ScriptOutputType type, K... keys);
+# - fun: RedisFuture<T> eval(String script, ScriptOutputType type, K[] keys, V... values);
+# - fun: RedisFuture<T> eval(byte[] script, ScriptOutputType type, K[] keys, V... values);
+# - fun: RedisFuture<T> evalsha(String digest, ScriptOutputType type, K... keys);
+# - fun: RedisFuture<T> evalsha(String digest, ScriptOutputType type, K[] keys, V... values);
+  - fun: RedisFuture<List<Boolean>> scriptExists(String... digests);
+  - fun: RedisFuture<String> scriptFlush();
+  - fun: RedisFuture<String> scriptFlush(FlushMode flushMode);
+  - fun: RedisFuture<String> scriptKill();
+  - fun: RedisFuture<String> scriptLoad(String script);
+  - fun: RedisFuture<String> scriptLoad(byte[] script);
+  imports:
+  - io.lettuce.core.FlushMode

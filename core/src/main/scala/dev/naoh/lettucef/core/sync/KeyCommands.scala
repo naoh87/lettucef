@@ -4,8 +4,8 @@ package dev.naoh.lettucef.core.sync
 import java.time.Duration
 import java.time.Instant
 import cats.syntax.functor._
+import dev.naoh.lettucef.core.commands.CommandsDeps
 import dev.naoh.lettucef.core.models._
-import dev.naoh.lettucef.core.sync.SyncCallCommands
 import dev.naoh.lettucef.core.util.LettuceValueConverter
 import dev.naoh.lettucef.core.util.{JavaFutureUtil => JF}
 import io.lettuce.core.CopyArgs
@@ -18,7 +18,7 @@ import io.lettuce.core.api.async._
 import scala.jdk.CollectionConverters._
 
 
-trait KeyCommands[F[_], K, V] extends SyncCallCommands[F, K, V] {
+trait KeyCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
 
   protected val underlying: RedisKeyAsyncCommands[K, V]
   

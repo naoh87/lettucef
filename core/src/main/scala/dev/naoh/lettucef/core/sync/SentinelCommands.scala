@@ -3,7 +3,7 @@ package dev.naoh.lettucef.core.sync
 
 import java.net.SocketAddress
 import cats.syntax.functor._
-import dev.naoh.lettucef.core.sync.SyncCallCommands
+import dev.naoh.lettucef.core.commands.CommandsDeps
 import dev.naoh.lettucef.core.util.LettuceValueConverter
 import dev.naoh.lettucef.core.util.{JavaFutureUtil => JF}
 import io.lettuce.core.KillArgs
@@ -12,7 +12,7 @@ import io.lettuce.core.sentinel.api.async.RedisSentinelAsyncCommands
 import scala.jdk.CollectionConverters._
 
 
-trait SentinelCommands[F[_], K, V] extends SyncCallCommands[F, K, V] {
+trait SentinelCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
 
   protected val underlying: RedisSentinelAsyncCommands[K, V]
   

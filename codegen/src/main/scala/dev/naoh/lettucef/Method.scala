@@ -4,6 +4,7 @@ import io.circe.Decoder
 import Method.Argument
 import Method.Identifier
 import Method.TypeExpr
+import scala.util.chaining._
 
 case class Method(name: String, args: List[Argument], output: TypeExpr, checkNull: Boolean = false) extends ToScalaCode {
   def scalaDef: String =
@@ -28,6 +29,30 @@ case class Method(name: String, args: List[Argument], output: TypeExpr, checkNul
         }
       }
     s"JF.toSync(underlying.${Identifier.expr(name)}($call))$postFix"
+  }
+
+  def asyncCall(expr: Seq[Argument], to: TypeExpr, customPostFix: Option[String]): String = {
+    assert(expr.size == args.size)
+    val call = args.zip(expr).map(ae => ae._1.call(ae._2)).mkString(", ")
+    val postFix =
+      customPostFix.map {
+        case "" => ""
+        case fun => s".map($fun)"
+      }.getOrElse {
+        val mapF = javaToScalaF(output.p1, to.p1) match {
+          case Some(fun) => s".map($fun)"
+          case None => ""
+        }
+        if (checkNull) {
+          s".map(Option(_)$mapF)"
+        } else {
+          mapF
+        }
+      }.pipe {
+        case "" => ""
+        case expr => s".map(_$expr)"
+      }
+    s"JF.toAsync(underlying.${Identifier.expr(name)}($call))$postFix"
   }
 
   private def javaToScalaF(from: TypeExpr, to: TypeExpr): Option[String] = {
@@ -113,17 +138,20 @@ case class Method(name: String, args: List[Argument], output: TypeExpr, checkNul
   def mapOutput(f: TypeExpr => TypeExpr): Method =
     copy(output = f(output))
 
-  def toAsync: Method = {
+  def toSync: Method = {
     if (checkNull) {
       copy(output =
         output
           .copy(generics =
             output.generics.map(t => TypeExpr.one("Option").copy(generics = t :: Nil)))
-          .toAsync)
+          .toF)
     } else {
-      copy(output = output.toAsync)
+      copy(output = output.toF)
     }
   }
+
+  def toAsync: Method =
+    copy(output = TypeExpr.create("F", toSync.output :: Nil))
 }
 
 trait ToScalaCode {
@@ -202,7 +230,7 @@ object Method {
     def existName(f: String => Boolean): Boolean =
       f(name.expr) || generics.exists(_.existName(f))
 
-    def toAsync: TypeExpr = {
+    def toF: TypeExpr = {
       assert(generics.size == 1)
       assert(name.expr == "RedisFuture")
       copy(name = TypeName("F"))

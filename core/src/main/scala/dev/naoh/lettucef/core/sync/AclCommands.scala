@@ -2,8 +2,8 @@
 package dev.naoh.lettucef.core.sync
 
 import cats.syntax.functor._
+import dev.naoh.lettucef.core.commands.CommandsDeps
 import dev.naoh.lettucef.core.models._
-import dev.naoh.lettucef.core.sync.SyncCallCommands
 import dev.naoh.lettucef.core.util.LettuceValueConverter
 import dev.naoh.lettucef.core.util.{JavaFutureUtil => JF}
 import io.lettuce.core.AclCategory
@@ -13,7 +13,7 @@ import io.lettuce.core.protocol.CommandType
 import scala.jdk.CollectionConverters._
 
 
-trait AclCommands[F[_], K, V] extends SyncCallCommands[F, K, V] {
+trait AclCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
 
   protected val underlying: RedisAclAsyncCommands[K, V]
   
