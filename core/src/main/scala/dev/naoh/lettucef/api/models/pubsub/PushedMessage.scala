@@ -1,4 +1,4 @@
-package dev.naoh.lettucef.core.models.pubsub
+package dev.naoh.lettucef.api.models.pubsub
 
 trait PushedMessage[+K, +V]
 

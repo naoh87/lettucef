@@ -9,7 +9,7 @@ import cats.syntax.functor._
 import dev.naoh.lettucef.core.RedisClientF.ConnectionResource2
 import dev.naoh.lettucef.core.RedisClusterClientF.ConnectionResource1
 import dev.naoh.lettucef.core.RedisPubSubF
-import dev.naoh.lettucef.core.models.pubsub.PushedMessage
+import dev.naoh.lettucef.api.models.pubsub.PushedMessage
 import dev.naoh.lettucef.streams.RedisAutoSubscriber.NullListener
 import dev.naoh.lettucef.streams.RedisAutoSubscriber.State
 import fs2._

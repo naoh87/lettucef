@@ -4,7 +4,7 @@ import dev.naoh.lettucef.core.sync.HashCommands
 import dev.naoh.lettucef.core.sync.KeyCommands
 import dev.naoh.lettucef.core.sync.SetCommands
 import dev.naoh.lettucef.core.sync.SortedSetCommands
-import dev.naoh.lettucef.core.models.DataScanCursor
+import dev.naoh.lettucef.api.models.DataScanCursor
 import fs2._
 import io.lettuce.core.ScanArgs
 import io.lettuce.core.ScanCursor

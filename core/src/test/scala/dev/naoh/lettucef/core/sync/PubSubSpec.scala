@@ -6,9 +6,9 @@ import cats.effect.std.Dispatcher
 import cats.effect.std.Queue
 import cats.syntax.traverse._
 import dev.naoh.lettucef.core.RedisPubSubF
-import dev.naoh.lettucef.core.models.pubsub.PushedMessage
-import dev.naoh.lettucef.core.models.pubsub.PushedMessage.Unsubscribed
-import dev.naoh.lettucef.core.models.pubsub.PushedMessage._
+import dev.naoh.lettucef.api.models.pubsub.PushedMessage
+import dev.naoh.lettucef.api.models.pubsub.PushedMessage.Unsubscribed
+import dev.naoh.lettucef.api.models.pubsub.PushedMessage._
 import dev.naoh.lettucef.core.sync.RedisTest.RedisKey
 import dev.naoh.lettucef.core.sync.RedisTest.RedisValue
 import org.scalatest.freespec.AnyFreeSpec

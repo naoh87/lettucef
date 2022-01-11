@@ -1,4 +1,4 @@
-package dev.naoh.lettucef.core.models
+package dev.naoh.lettucef.api.models
 
 import io.lettuce.core.{Range => LRange}
 import RedisRange.Boundary.Exclusive

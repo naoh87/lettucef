@@ -43,7 +43,8 @@ def run: IO[Unit] = {
     async = conn.async()
   } yield for {
     start <- IO(System.nanoTime())
-    elapsed = (any: Any) => IO((System.nanoTime() - start).nanos.toMillis).flatTap(ms => IO.println("%4d ms > %s".format(ms, any)))
+    elapsed = (any: Any) => 
+      IO((System.nanoTime() - start).nanos).flatTap(dt => IO.println("%4d ms > %s".format(dt.toMillis, any)))
     _ <- async.set("Ix", "0")
     _ <- async.incr("Ix").replicateA_(100000)
     _ <- conn2.sync().get("Ix").flatTap(elapsed)
@@ -98,7 +99,7 @@ libraryDependencies += "dev.naoh" %% "lettucef-streams" % "0.0.12"
 
 ```scala
 import dev.naoh.lettucef.api.LettuceF
-import dev.naoh.lettucef.streams.api._
+import dev.naoh.lettucef.api.streams._
 
 def run: IO[Unit] = {
   val N = 3
@@ -129,7 +130,7 @@ def run: IO[Unit] = {
 
 ```scala
 import dev.naoh.lettucef.api.LettuceF
-import dev.naoh.lettucef.streams.api._
+import dev.naoh.lettucef.api.streams._
 
 def run: IO[Unit] = {
   for {

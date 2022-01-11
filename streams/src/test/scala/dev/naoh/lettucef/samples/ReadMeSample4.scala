@@ -5,7 +5,7 @@ import cats.effect.IOApp
 import cats.effect.Resource
 import cats.implicits.toTraverseOps
 import dev.naoh.lettucef.api.LettuceF
-import dev.naoh.lettucef.streams.api._
+import dev.naoh.lettucef.api.streams._
 import io.lettuce.core.cluster.RedisClusterClient
 import io.lettuce.core.codec.StringCodec
 import scala.concurrent.duration.DurationLong

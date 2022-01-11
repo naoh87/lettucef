@@ -1,4 +1,4 @@
-package dev.naoh.lettucef.core.models.stream
+package dev.naoh.lettucef.api.models.stream
 
 import scala.jdk.CollectionConverters._
 

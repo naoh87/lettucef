@@ -64,7 +64,7 @@
   - java.time.Duration
   - java.time.Instant
   - io.lettuce.core.CopyArgs
-  - dev.naoh.lettucef.core.models._
+  - dev.naoh.lettucef.api.models._
   - io.lettuce.core.MigrateArgs
   - io.lettuce.core.RestoreArgs
   - io.lettuce.core.ScanArgs
@@ -119,8 +119,8 @@
   - io.lettuce.core.XReadArgs.StreamOffset
   - io.lettuce.core.XReadArgs
   - io.lettuce.core.XTrimArgs
-  - dev.naoh.lettucef.core.models.stream._
-  - dev.naoh.lettucef.core.models._
+  - dev.naoh.lettucef.api.models.stream._
+  - dev.naoh.lettucef.api.models._
 
 - underlying: RedisStringAsyncCommands[K, V]
   output: StringCommands
@@ -193,7 +193,7 @@
   - fun: RedisFuture<String> quit();
   - fun: RedisFuture<Long> waitForReplication(int replicas, long timeout);
   imports:
-  - dev.naoh.lettucef.core.models._
+  - dev.naoh.lettucef.api.models._
 
 - underlying: RedisClusterAsyncCommands[K, V]
   output: ClusterCommands
@@ -227,7 +227,7 @@
   - fun: RedisFuture<String> clusterFlushslots();
   imports:
   - io.lettuce.core.cluster.api.async.RedisClusterAsyncCommands
-  - dev.naoh.lettucef.core.models._
+  - dev.naoh.lettucef.api.models._
 
 - underlying: RedisHashAsyncCommands[K, V]
   output: HashCommands
@@ -274,7 +274,7 @@
   - fun: RedisFuture<Long> hvals(ValueStreamingChannel<V> channel, K key);
     opt: [ ignore ]
   imports:
-  - dev.naoh.lettucef.core.models._
+  - dev.naoh.lettucef.api.models._
   - io.lettuce.core.ScanArgs
   - io.lettuce.core.ScanCursor
 
@@ -398,7 +398,7 @@
   - io.lettuce.core.TrackingArgs
   - io.lettuce.core.UnblockType
   - io.lettuce.core.protocol.CommandType
-  - dev.naoh.lettucef.core.models._
+  - dev.naoh.lettucef.api.models._
 
 - underlying: RedisSetAsyncCommands[K, V]
   output: SetCommands
@@ -447,7 +447,7 @@
   imports:
   - io.lettuce.core.ScanArgs
   - io.lettuce.core.ScanCursor
-  - dev.naoh.lettucef.core.models._
+  - dev.naoh.lettucef.api.models._
 
 - underlying: RedisSortedSetAsyncCommands[K, V]
   output: SortedSetCommands
@@ -655,7 +655,7 @@
   - io.lettuce.core.ZAggregateArgs
   - io.lettuce.core.ScanCursor
   - io.lettuce.core.ScanArgs
-  - dev.naoh.lettucef.core.models._
+  - dev.naoh.lettucef.api.models._
 
 - underlying: RedisGeoAsyncCommands[K, V]
   output: GeoCommands
@@ -686,7 +686,7 @@
   - io.lettuce.core.GeoRadiusStoreArgs
   - io.lettuce.core.GeoSearch
   - io.lettuce.core.GeoValue
-  - dev.naoh.lettucef.core.models.geo._
+  - dev.naoh.lettucef.api.models.geo._
 
 - underlying: RedisAclAsyncCommands[K, V]
   output: AclCommands
@@ -710,7 +710,7 @@
   - io.lettuce.core.AclCategory
   - io.lettuce.core.AclSetuserArgs
   - io.lettuce.core.protocol.CommandType
-  - dev.naoh.lettucef.core.models._
+  - dev.naoh.lettucef.api.models._
 
 - underlying: RedisSentinelAsyncCommands[K, V]
   output: SentinelCommands

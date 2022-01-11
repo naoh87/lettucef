@@ -4,7 +4,7 @@ import cats.effect.Async
 import cats.effect.Resource
 import cats.effect.std.Dispatcher
 import cats.syntax.functor._
-import dev.naoh.lettucef.core.models.pubsub.PushedMessage
+import dev.naoh.lettucef.api.models.pubsub.PushedMessage
 import dev.naoh.lettucef.core.util.JavaFutureUtil
 import io.lettuce.core.pubsub.RedisPubSubListener
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection

@@ -1,4 +1,4 @@
-package dev.naoh.lettucef.core.models.geo
+package dev.naoh.lettucef.api.models.geo
 
 import io.lettuce.core.GeoCoordinates
 import io.lettuce.core.GeoValue

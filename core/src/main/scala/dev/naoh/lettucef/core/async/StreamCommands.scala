@@ -2,9 +2,9 @@
 package dev.naoh.lettucef.core.async
 
 import cats.syntax.functor._
+import dev.naoh.lettucef.api.models._
+import dev.naoh.lettucef.api.models.stream._
 import dev.naoh.lettucef.core.commands.CommandsDeps
-import dev.naoh.lettucef.core.models._
-import dev.naoh.lettucef.core.models.stream._
 import dev.naoh.lettucef.core.util.LettuceValueConverter
 import dev.naoh.lettucef.core.util.{JavaFutureUtil => JF}
 import io.lettuce.core.Consumer

@@ -1,7 +1,7 @@
 package dev.naoh.lettucef.core.util
 
 import java.nio.ByteBuffer
-import dev.naoh.lettucef.core.models.RedisData
+import dev.naoh.lettucef.api.models.RedisData
 import io.lettuce.core.ScriptOutputType
 import io.lettuce.core.codec.RedisCodec
 import io.lettuce.core.codec.StringCodec

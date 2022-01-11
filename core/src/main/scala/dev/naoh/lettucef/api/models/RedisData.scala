@@ -1,4 +1,4 @@
-package dev.naoh.lettucef.core.models
+package dev.naoh.lettucef.api.models
 
 import scala.jdk.CollectionConverters._
 import scala.reflect.ClassTag

@@ -1,7 +1,7 @@
 package dev.naoh.lettucef.core.async
 
 import dev.naoh.lettucef.core.commands.CommandsDeps
-import dev.naoh.lettucef.core.models.RedisData
+import dev.naoh.lettucef.api.models.RedisData
 import dev.naoh.lettucef.core.util.ManualDispatchHelper
 import dev.naoh.lettucef.core.util.{JavaFutureUtil => JF}
 import io.lettuce.core.api.async.BaseRedisAsyncCommands

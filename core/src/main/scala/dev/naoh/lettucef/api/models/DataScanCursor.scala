@@ -1,4 +1,4 @@
-package dev.naoh.lettucef.core.models
+package dev.naoh.lettucef.api.models
 
 import dev.naoh.lettucef.core.util.LettuceValueConverter
 import io.lettuce.core.ScanCursor
