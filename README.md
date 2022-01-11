@@ -1,6 +1,6 @@
 # LettuceF
 
-Scala Redis functional client wrapper for [Lettuce](https://github.com/lettuce-io/lettuce-core) with cats-effect 3
+Scala Redis FP client wrapper for [Lettuce](https://github.com/lettuce-io/lettuce-core) with cats-effect 3
 
 # Getting Started
 
@@ -13,7 +13,7 @@ libraryDependencies += "dev.naoh" %% "lettucef-core" % "0.0.12"
 ```
 
 ### Basic usage
-
+Redis connection and commands are thread safe.
 ```scala
 import dev.naoh.lettucef.api.LettuceF
 
@@ -43,23 +43,25 @@ def run: IO[Unit] = {
     async = conn.async()
   } yield for {
     start <- IO(System.nanoTime())
+    elapsed = (any: Any) => IO((System.nanoTime() - start).nanos.toMillis).flatTap(ms => IO.println("%4d ms > %s".format(ms, any)))
     _ <- async.set("Ix", "0")
     _ <- async.incr("Ix").replicateA_(100000)
-    _ <- conn2.sync().get("Ix").flatTap(IO.println) // Some(6453)    Execution between different connections is out of order order
+    _ <- conn2.sync().get("Ix").flatTap(elapsed)
+    //  679 ms > Some(6426)   Executions run out of order between different connections
     aget <- async.get("Ix")
-    _ <- sync.get("Ix").flatTap(IO.println)         // Some(100000)
-    _ <- aget.flatTap(IO.println)                   // Some(100000) Execution on the same connection is in order
-    end <- IO(System.nanoTime())
-  } yield
-    println((end - start).nanos.toMillis) // 3320
+    _ <- sync.get("Ix").flatTap(elapsed)
+    // 3498 ms > Some(100000) Executions run in order on the same connection
+    _ <- aget.flatTap(elapsed)
+    // 3499 ms > Some(100000)
+  } yield ()
 }.use(identity)
 ```
 
-### Subscribe
+### PubSub
 
 This api is also just wrap lettuce api. It's bothering to control right consistency.
 
-I **recommend** to use stream extension if you want to just use subscribe or psubscribe.
+I **recommend** to use stream extension if you want to just receive messages with subscribe or psubscribe.
 ```scala
 import dev.naoh.lettucef.api.LettuceF
 
@@ -86,7 +88,7 @@ def run: IO[Unit] = {
 ## Stream Extension
 
 ```scala
-libraryDependencies += "dev.naoh" %% "lettucef-streams" % "0.0.11"
+libraryDependencies += "dev.naoh" %% "lettucef-streams" % "0.0.12"
 ```
 
 ### PubSub
