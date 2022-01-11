@@ -48,10 +48,10 @@ def run: IO[Unit] = {
     _ <- async.set("Ix", "0")
     _ <- async.incr("Ix").replicateA_(100000)
     _ <- conn2.sync().get("Ix").flatTap(elapsed)
-    //  679 ms > Some(6426)   Executions run out of order between different connections
+    //  679 ms > Some(6426)   Commands are executed out of order between different connections
     aget <- async.get("Ix")
     _ <- sync.get("Ix").flatTap(elapsed)
-    // 3498 ms > Some(100000) Executions run in order on the same connection
+    // 3498 ms > Some(100000) Commands are executed in order on the same connection
     _ <- aget.flatTap(elapsed)
     // 3499 ms > Some(100000)
   } yield ()
