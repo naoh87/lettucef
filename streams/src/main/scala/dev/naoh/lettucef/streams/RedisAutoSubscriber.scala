@@ -108,10 +108,12 @@ class RedisAutoSubscriber[F[_] : Async, K, V](
 }
 
 object RedisAutoSubscriber {
-  def create[F[_] : Async, K, V](underlying: Resource[F, RedisPubSubF[F, K, V]]): Resource[F, RedisAutoSubscriber[F, K, V]] = {
+  def create[F[_] : Async, K, V](
+    underlying: Resource[F, RedisPubSubF[F, K, V]],
+    d: Dispatcher[F]
+  ): Resource[F, RedisAutoSubscriber[F, K, V]] = {
     for {
       u <- underlying
-      d <- Dispatcher[F]
       s1 <- Resource.eval(SignallingRef.of(State.zero[K]))
       s2 <- Resource.eval(SignallingRef.of(State.zero[K]))
       as <- new RedisAutoSubscriber[F, K, V](u, d, s1, s2).init()
@@ -268,11 +270,17 @@ object SubscribeStreamHelper {
 trait AutoSubscriberApiOps {
   implicit class ConnectionResource2Extension[F[_] : Async](val base: ConnectionResource2[F, RedisURI, RedisPubSubF]) {
     def stream[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: RedisURI): Resource[F, RedisAutoSubscriber[F, K, V]] =
-      RedisAutoSubscriber.create(base(codec, uri))
+      Dispatcher[F].flatMap(d => stream(codec, uri, d))
+
+    def stream[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: RedisURI, d: Dispatcher[F]): Resource[F, RedisAutoSubscriber[F, K, V]] =
+      RedisAutoSubscriber.create(base(codec, uri), d)
   }
 
   implicit class ConnectionResource1Extension[F[_] : Async](val base: ConnectionResource1[F, RedisPubSubF]) {
     def stream[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V]): Resource[F, RedisAutoSubscriber[F, K, V]] =
-      RedisAutoSubscriber.create(base(codec))
+      Dispatcher[F].flatMap(d => stream(codec, d))
+
+    def stream[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], d: Dispatcher[F]): Resource[F, RedisAutoSubscriber[F, K, V]] =
+      RedisAutoSubscriber.create(base(codec), d)
   }
 }
