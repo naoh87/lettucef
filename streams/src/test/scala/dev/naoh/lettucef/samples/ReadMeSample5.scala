@@ -17,14 +17,16 @@ object ReadMeSample5 extends IOApp.Simple {
       async = conn.async()
     } yield for {
       start <- IO(System.nanoTime())
-      elapsed = (any: Any) => IO((System.nanoTime() - start).nanos.toMillis).flatTap(ms => IO.println("%4d ms > %s".format(ms, any)))
+      elapsed = (any: Any) =>
+        IO((System.nanoTime() - start).nanos)
+          .flatTap(ms => IO.println("%4d ms > %s".format(ms.toMillis, any)))
       _ <- async.set("Ix", "0")
       _ <- async.incr("Ix").replicateA_(100000)
+      aget <- async.get("Ix") <* async.incr("Ix")
       _ <- conn2.sync().get("Ix").flatTap(elapsed)
       //  679 ms > Some(6426)   Executions run out of order between different connections
-      aget <- async.get("Ix")
       _ <- sync.get("Ix").flatTap(elapsed)
-      // 3498 ms > Some(100000) Executions run in order on the same connection
+      // 3498 ms > Some(100001) Executions run in order on the same connection
       _ <- aget.flatTap(elapsed)
       // 3499 ms > Some(100000)
     } yield ()
