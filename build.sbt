@@ -47,7 +47,7 @@ val commonSettings = Seq(
   crossScalaVersions := Seq(scala213, scala310),
   Test / fork := true,
   libraryDependencies ++= Seq(
-    "io.lettuce" % "lettuce-core" % "6.1.5.RELEASE",
+    "io.lettuce" % "lettuce-core" % "6.1.6.RELEASE",
     "org.typelevel" %% "cats-effect" % "3.3.4",
     "org.scalatest" %% "scalatest" % "3.2.10" % "test",
   ),
