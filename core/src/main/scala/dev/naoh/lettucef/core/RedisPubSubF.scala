@@ -2,7 +2,6 @@ package dev.naoh.lettucef.core
 
 import cats.effect.Async
 import cats.effect.Resource
-import cats.effect.std.Dispatcher
 import cats.syntax.functor._
 import dev.naoh.lettucef.api.models.pubsub.PushedMessage
 import dev.naoh.lettucef.core.util.JavaFutureUtil
@@ -40,27 +39,20 @@ class RedisPubSubF[F[_], K, V](
 
 object RedisPubSubF {
 
-  def makeListener[F[_], K, V](
-    f: PushedMessage[K, V] => F[Unit],
-    dispatcher: Dispatcher[F]
+  def makeListener[K, V](
+    f: PushedMessage[K, V] => Unit
   ): RedisPubSubListener[K, V] =
     new RedisPubSubListener[K, V] {
-      override def message(channel: K, message: V): Unit =
-        dispatcher.unsafeRunSync(f(PushedMessage.Message(channel, message)))
+      override def message(channel: K, message: V): Unit = f(PushedMessage.Message(channel, message))
 
-      override def subscribed(channel: K, count: Long): Unit =
-        dispatcher.unsafeRunSync(f(PushedMessage.Subscribed(channel, count)))
+      override def subscribed(channel: K, count: Long): Unit = f(PushedMessage.Subscribed(channel, count))
 
-      override def unsubscribed(channel: K, count: Long): Unit =
-        dispatcher.unsafeRunSync(f(PushedMessage.Unsubscribed(channel, count)))
+      override def unsubscribed(channel: K, count: Long): Unit = f(PushedMessage.Unsubscribed(channel, count))
 
-      override def message(pattern: K, channel: K, message: V): Unit =
-        dispatcher.unsafeRunSync(f(PushedMessage.PMessage(pattern, channel, message)))
+      override def message(pattern: K, channel: K, message: V): Unit = f(PushedMessage.PMessage(pattern, channel, message))
 
-      override def psubscribed(pattern: K, count: Long): Unit =
-        dispatcher.unsafeRunSync(f(PushedMessage.PSubscribed(pattern, count)))
+      override def psubscribed(pattern: K, count: Long): Unit = f(PushedMessage.PSubscribed(pattern, count))
 
-      override def punsubscribed(pattern: K, count: Long): Unit =
-        dispatcher.unsafeRunSync(f(PushedMessage.PUnsubscribed(pattern, count)))
+      override def punsubscribed(pattern: K, count: Long): Unit = f(PushedMessage.PUnsubscribed(pattern, count))
     }
 }

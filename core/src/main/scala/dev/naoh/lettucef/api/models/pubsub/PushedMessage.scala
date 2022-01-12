@@ -1,6 +1,6 @@
 package dev.naoh.lettucef.api.models.pubsub
 
-trait PushedMessage[+K, +V]
+sealed trait PushedMessage[+K, +V]
 
 object PushedMessage {
   case class Message[K, V](channel: K, message: V) extends PushedMessage[K, V]

@@ -26,8 +26,7 @@ def run: IO[Unit] = {
   } yield for {
     _ <- sync.set("key", "value")
     v <- sync.get("key")
-  } yield
-    println(v) // Some(value)
+  } yield println(v) // Some(value)
 }.use(identity)
 ```
 
@@ -44,11 +43,13 @@ def run: IO[Unit] = {
     sync = conn.sync()
     async = conn.async()
   } yield for {
-    start <- IO(System.nanoTime())
-    elapsed = (any: Any) => IO((System.nanoTime() - start).nanos.toMillis).flatTap(ms => IO.println("%4d ms > %s".format(ms, any)))
+    start <- IO(System.currentTimeMillis())
+    elapsed = (any: Any) =>
+      IO.println("%4d ms > %s".format(System.currentTimeMillis() - start, any))
     _ <- async.set("Ix", "0")
     _ <- async.incr("Ix").replicateA_(100000)
-    aget <- async.get("Ix") <* async.incr("Ix")
+    aget <- async.get("Ix")
+    _ <- async.incr("Ix")
     _ <- conn2.sync().get("Ix").flatTap(elapsed)
     //  679 ms > Some(6426)   Executions run out of order between different connections
     _ <- sync.get("Ix").flatTap(elapsed)
@@ -70,16 +71,10 @@ import dev.naoh.lettucef.api.LettuceF
 
 def run: IO[Unit] = {
   for {
-    d <- Dispatcher[IO]
     client <- LettuceF.cluster[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
     pub <- client.connect(StringCodec.UTF8).map(_.sync())
     sub <- client.connectPubSub(StringCodec.UTF8)
-    _ <- sub.setListener(RedisPubSubF.makeListener(IO.println, d))
-    // Subscribed(Topic,1)
-    // Message(Topic,0)
-    // Message(Topic,1)
-    // Message(Topic,2)
-    // Unsubscribed(Topic,0)
+    _ <- sub.setListener(RedisPubSubF.makeListener(println))
   } yield for {
     _ <- sub.subscribe("Topic")
     _ <- IO.sleep(100.milli)
@@ -89,6 +84,11 @@ def run: IO[Unit] = {
     _ <- IO.sleep(100.milli)
   } yield ()
 }.use(identity)
+// Subscribed(Topic,1)
+// Message(Topic,0)
+// Message(Topic,1)
+// Message(Topic,2)
+// Unsubscribed(Topic,0)
 ```
 
 ## Stream Extension
@@ -107,25 +107,38 @@ def run: IO[Unit] = {
   val N = 3
   for {
     client <- LettuceF.cluster[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
-    sub <- client.connectPubSub.stream(StringCodec.UTF8)
     pub <- client.connect(StringCodec.UTF8).map(_.sync())
+    sub <- client.connectPubSub.stream(StringCodec.UTF8)
+    _ <- sub.setListener(RedisPubSubF.makeListener(printSubscription))
     _ <- sub.subscribe("A").evalMap(m => pub.publish("B", m.message)).compile.drain.background
     _ <- sub.subscribe("B").evalMap(m => pub.publish("C", m.message)).compile.drain.background
     _ <- sub.subscribe("A", "B", "C").debug().take(N * 3).compile.drain.uncancelable.background
-    // Message(A,0)
-    // Message(A,1)
-    // Message(B,0)
-    // Message(A,2)
-    // Message(B,1)
-    // Message(C,0)
-    // Message(B,2)
-    // Message(C,1)
-    // Message(C,2)
   } yield for {
     _ <- sub.awaitSubscribed("A", "B", "C")
     _ <- List.range(0, N).map(i => pub.publish("A", i.toHexString)).sequence
   } yield ()
 }.use(identity)
+
+val printSubscription: PushedMessage[String, String] => Unit = {
+  case m: Subscribed[_] => println(s"> $m")
+  case m: Unsubscribed[_] => println(s"> $m")
+  case _ => ()
+}
+// > Subscribed(A,1)
+// > Subscribed(C,2)
+// > Subscribed(B,3)
+// Message(A,0)
+// Message(A,1)
+// Message(A,2)
+// Message(B,0)
+// Message(C,0)
+// Message(B,1)
+// Message(B,2)
+// Message(C,1)
+// Message(C,2)
+// > Unsubscribed(C,2)
+// > Unsubscribed(B,1)
+// > Unsubscribed(A,0)
 ```
 
 ### Scan
@@ -141,16 +154,15 @@ def run: IO[Unit] = {
   } yield for {
     _ <- conn.sync().del("Set")
     _ <- List.range(0, 100).map(_.toHexString).grouped(10)
-      .map(args => conn.sync().sadd("Set", args: _*))
-      .toList.sequence
-  } yield {
-    conn.stream()
-      .sscan("Set", ScanArgs.Builder.limit(20))
-      .chunks
-      .map(_.size)
-      .debug()
-  }
-}.use(Stream.force(_).compile.drain)
+            .map(args => conn.sync().sadd("Set", args: _*))
+            .toList.sequence
+    ret <- conn.stream()
+            .sscan("Set", ScanArgs.Builder.limit(20))
+            .chunks.map(_.size)
+            .compile.toList
+  } yield println(ret)
+  // List(23, 23, 20, 21, 13)
+}.use(identity)
 ```
 
 # Motivation

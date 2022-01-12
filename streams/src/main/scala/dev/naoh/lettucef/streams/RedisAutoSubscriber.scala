@@ -22,7 +22,7 @@ import scala.reflect.ClassTag
 
 class RedisAutoSubscriber[F[_] : Async, K, V](
   underlying: RedisPubSubF[F, K, V],
-  dispatcher: Dispatcher[F],
+  val dispatcher: Dispatcher[F],
   eState: SignallingRef[F, State[K]],
   pState: SignallingRef[F, State[K]],
 ) {
@@ -51,6 +51,15 @@ class RedisAutoSubscriber[F[_] : Async, K, V](
 
   def awaitPSubscribed(channels: K*): F[Unit] =
     SubscribeStreamHelper.await(channels.toSet, pState)
+
+  def addListener(listener: RedisPubSubListener[K, V]): F[Unit] =
+    underlying.addListener(listener)
+
+  def removeListener(listener: RedisPubSubListener[K, V]): F[Unit] =
+    underlying.removeListener(listener)
+
+  def setListener(listener: RedisPubSubListener[K, V]): Resource[F, F[Unit]] =
+    underlying.setListener(listener)
 
   private def startPush[O](make: Channel[F, O] => RedisPubSubListener[K, V]): Resource[F, Stream[F, O]] =
     for {
@@ -103,8 +112,6 @@ class RedisAutoSubscriber[F[_] : Async, K, V](
 
   private def emitPUnsubscribe(ch: Seq[K]): F[Unit] = underlying.punsubscribe(ch: _*)
 
-  private def setListener(listener: RedisPubSubListener[K, V]): Resource[F, F[Unit]] =
-    Resource.make(underlying.addListener(listener).as(underlying.removeListener(listener)))(identity)
 }
 
 object RedisAutoSubscriber {

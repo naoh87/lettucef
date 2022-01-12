@@ -37,6 +37,11 @@ lazy val streams = (project in file("streams"))
   )
   .dependsOn(core)
 
+lazy val benchmark = (project in file("benchmark"))
+  .settings(name := "benchmark")
+  .dependsOn(streams)
+  .settings()
+
 val commonSettings = Seq(
   scalaVersion := scala213,
   crossScalaVersions := Seq(scala213, scala310),

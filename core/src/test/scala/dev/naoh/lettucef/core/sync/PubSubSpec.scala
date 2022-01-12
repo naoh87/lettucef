@@ -25,7 +25,7 @@ class PubSubSpec extends AnyFreeSpec with Matchers {
       sub <- pubsubR
       d <- Dispatcher[IO]
       q <- Resource.eval(Queue.unbounded[IO, PushedMessage[RedisKey, RedisValue]])
-      _ <- sub.setListener(RedisPubSubF.makeListener(q.offer, d))
+      _ <- sub.setListener(RedisPubSubF.makeListener(m => d.unsafeRunSync(q.offer(m))))
     } yield for {
       _ <- sub.subscribe(key)
       _ <- q.take.map(_ shouldBe Subscribed(key, 1))
