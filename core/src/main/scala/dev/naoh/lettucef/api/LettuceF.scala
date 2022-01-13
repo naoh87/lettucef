@@ -28,7 +28,7 @@ object LettuceF {
           .flatTap(_.getPartition))(
         _.shutdownAsync(shutdownConfig))
 
-  def basic[F[_] : Async](
+  def client[F[_] : Async](
     client: => RedisClient,
     shutdownConfig: ShutdownConfig = ShutdownConfig.default
   ): Resource[F, RedisClientF[F]] =

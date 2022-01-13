@@ -22,11 +22,13 @@ final class RedisSyncCommandsF[F[_], K, V](
     with sync.KeyCommands[F, K, V]
     with sync.ListCommands[F, K, V]
     with sync.ScriptingCommands[F, K, V]
+    with sync.EvalScriptingCommands[F, K, V]
     with sync.ServerCommands[F, K, V]
     with sync.SetCommands[F, K, V]
     with sync.SortedSetCommands[F, K, V]
     with sync.StreamCommands[F, K, V]
-    with sync.StringCommands[F, K, V] {
+    with sync.StringCommands[F, K, V]
+    with sync.TransactionCommands[F, K, V] {
   implicit protected val _async: Async[F] = F
   implicit protected val _valueTag: ClassTag[V] = V
   implicit protected val _keyTag: ClassTag[K] = K
@@ -45,12 +47,14 @@ final class RedisAsyncCommandsF[F[_], K, V](
     with async.HLLCommands[F, K, V]
     with async.KeyCommands[F, K, V]
     with async.ListCommands[F, K, V]
-//    with async.ScriptingCommands[F, K, V]
+    with async.ScriptingCommands[F, K, V]
+    with async.EvalScriptingCommands[F, K, V]
     with async.ServerCommands[F, K, V]
     with async.SetCommands[F, K, V]
     with async.SortedSetCommands[F, K, V]
     with async.StreamCommands[F, K, V]
-    with async.StringCommands[F, K, V] {
+    with async.StringCommands[F, K, V]
+    with async.TransactionCommands[F, K, V] {
   implicit protected val _async: Async[F] = F
   implicit protected val _valueTag: ClassTag[V] = V
   implicit protected val _keyTag: ClassTag[K] = K

@@ -10,7 +10,7 @@ import dev.naoh.lettucef.core.RedisClientF.ConnectionResource2
 import dev.naoh.lettucef.core.RedisClusterClientF.ConnectionResource1
 import dev.naoh.lettucef.core.RedisPubSubF
 import dev.naoh.lettucef.api.models.pubsub.PushedMessage
-import dev.naoh.lettucef.streams.RedisAutoSubscriber.NullListener
+import dev.naoh.lettucef.streams.RedisAutoSubscriber.VoidListener
 import dev.naoh.lettucef.streams.RedisAutoSubscriber.State
 import fs2._
 import fs2.concurrent.Channel
@@ -74,7 +74,7 @@ class RedisAutoSubscriber[F[_] : Async, K, V](
     } yield this
 
   private def stateHandler(): RedisPubSubListener[K, V] =
-    new NullListener[K, V] {
+    new VoidListener[K, V] {
       override def subscribed(channel: K, count: Long): Unit =
         dispatcher.unsafeRunSync(
           eState.modify(State.subscribed(channel)).flatMap {
@@ -132,7 +132,7 @@ object RedisAutoSubscriber {
     target: Set[K],
     ch: Channel[F, PushedMessage.Message[K, V]],
     d: Dispatcher[F]
-  ): RedisPubSubListener[K, V] = new NullListener[K, V] {
+  ): RedisPubSubListener[K, V] = new VoidListener[K, V] {
     override def message(channel: K, message: V): Unit =
       if (target.contains(channel)) {
         d.unsafeRunSync(ch.send(PushedMessage.Message(channel, message)))
@@ -143,7 +143,7 @@ object RedisAutoSubscriber {
     target: Set[K],
     ch: Channel[F, PushedMessage.PMessage[K, V]],
     d: Dispatcher[F]
-  ): RedisPubSubListener[K, V] = new NullListener[K, V] {
+  ): RedisPubSubListener[K, V] = new VoidListener[K, V] {
     override def message(pattern: K, channel: K, message: V): Unit = {
       if (target.contains(pattern)) {
         d.unsafeRunSync(ch.send(PushedMessage.PMessage(pattern, channel, message)))
@@ -225,7 +225,7 @@ object RedisAutoSubscriber {
     }
   }
 
-  trait NullListener[K, V] extends RedisPubSubListener[K, V] {
+  trait VoidListener[K, V] extends RedisPubSubListener[K, V] {
     override def message(channel: K, message: V): Unit = ()
 
     override def message(pattern: K, channel: K, message: V): Unit = ()
@@ -275,7 +275,7 @@ object SubscribeStreamHelper {
 }
 
 trait AutoSubscriberApiOps {
-  implicit class ConnectionResource2Extension[F[_] : Async](val base: ConnectionResource2[F, RedisURI, RedisPubSubF]) {
+  implicit class AutoSubscriberOps2[F[_] : Async](val base: ConnectionResource2[F, RedisURI, RedisPubSubF]) {
     def stream[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: RedisURI): Resource[F, RedisAutoSubscriber[F, K, V]] =
       Dispatcher[F].flatMap(d => stream(codec, uri, d))
 
@@ -283,7 +283,7 @@ trait AutoSubscriberApiOps {
       RedisAutoSubscriber.create(base(codec, uri), d)
   }
 
-  implicit class ConnectionResource1Extension[F[_] : Async](val base: ConnectionResource1[F, RedisPubSubF]) {
+  implicit class AutoSubscriberOps1[F[_] : Async](val base: ConnectionResource1[F, RedisPubSubF]) {
     def stream[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V]): Resource[F, RedisAutoSubscriber[F, K, V]] =
       Dispatcher[F].flatMap(d => stream(codec, d))
 

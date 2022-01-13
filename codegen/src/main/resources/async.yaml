@@ -755,3 +755,17 @@
   - fun: RedisFuture<String> scriptLoad(byte[] script);
   imports:
   - io.lettuce.core.FlushMode
+
+
+- underlying: RedisTransactionalAsyncCommands[K, V]
+  output: TransactionCommands
+  methods:
+  - fun: RedisFuture<String> discard();
+  - fun: RedisFuture<TransactionResult> exec();
+    output:
+      tpe: Boolean
+      j2s: "!_.wasDiscarded()"
+  - fun: RedisFuture<String> multi();
+  - fun: RedisFuture<String> watch(K... keys);
+  - fun: RedisFuture<String> unwatch();
+  imports: []

@@ -55,10 +55,8 @@ object LettuceF {
     }
   }
 
-  val setget: IO[Unit] = {
-    val sync = conn.sync()
-    BenchTask.parallelTask(sync.set("X", "0") >> sync.get("X"), 200) //2 * 200 * 50 = 20000
-  }
+  val setget: IO[Unit] =
+    BenchTask.parallelTask(conn.sync().set("X", "0") >> conn.sync().get("X"), 200) //2 * 200 * 50 = 20000
 
   def tearDown(): Unit =
     clientF.shutdownAsync(0, 1, TimeUnit.SECONDS).unsafeRunSync()(IORuntime.global)

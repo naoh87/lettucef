@@ -73,11 +73,13 @@ class RedisConnectionF[F[_] : Async, K: ClassTag, V: ClassTag](
   underlying: StatefulRedisConnection[K, V],
   codec: RedisCodec[K, V]
 ) {
-  def sync(): RedisSyncCommandsF[F, K, V] =
-    new RedisSyncCommandsF[F, K, V](underlying.async(), codec)
+  private[this] val _sync = new RedisSyncCommandsF[F, K, V](underlying.async(), codec)
 
-  def async(): RedisAsyncCommandsF[F, K, V] =
-    new RedisAsyncCommandsF[F, K, V](underlying.async(), codec)
+  def sync(): RedisSyncCommandsF[F, K, V] = _sync
+
+  private[this] val _async = new RedisAsyncCommandsF[F, K, V](underlying.async(), codec)
+
+  def async(): RedisAsyncCommandsF[F, K, V] = _async
 
   def closeAsync(): F[Unit] =
     JavaFutureUtil.toSync(underlying.closeAsync()).void

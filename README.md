@@ -71,7 +71,7 @@ def run: IO[Unit] = {
 
 This api is also just wrap lettuce api. It's bothering to control right consistency.
 
-I **recommend** to use stream extension if you want to just receive messages with subscribe or psubscribe.
+I **recommend** to use stream extension if you want to just receive messages from subscribe / psubscribe.
 
 ```scala
 import dev.naoh.lettucef.api.LettuceF
@@ -201,7 +201,7 @@ def run: IO[Unit] = {
     - [x] SortedSets
     - [x] Streams
     - [x] Strings
-    - [ ] Transactions
+    - [x] Transactions
 
 
 # Benchmark
