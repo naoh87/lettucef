@@ -2,6 +2,13 @@
 
 Scala FP Redis client wrapper for [Lettuce](https://github.com/lettuce-io/lettuce-core) with cats-effect 3
 
+# Motivation
+
+[Lettuce](https://github.com/lettuce-io/lettuce-core) is incredible performance Java Redis client, but some api is not
+compatible with scala mind.
+
+This library hide the matters when you use Lettuce.
+
 # Getting Started
 
 ## Core
@@ -165,16 +172,10 @@ def run: IO[Unit] = {
 }.use(identity)
 ```
 
-# Motivation
 
-[Lettuce](https://github.com/lettuce-io/lettuce-core) is incredible performance Java Redis client, but some api is not
-compatible with scala mind.
+# Features
 
-This library hide the matters when you use Lettuce.
-
-# Missions
-
-- [x] Support scala 2.13.x and 3.xx
+- [x] Support Scala 2.13 and 3.x
 - [x] Convert RedisFuture I/F with Async of cats-effect 3
 - [x] Convert Java collection types to scala collection
 - [x] New type-safe Lua scripting I/F
@@ -201,3 +202,14 @@ This library hide the matters when you use Lettuce.
     - [x] Streams
     - [x] Strings
     - [ ] Transactions
+
+
+# Benchmark
+Simple benchmark on laptop
+```
+Benchmark               Mode  Cnt  Score   Error  Units
+LettuceF.parallel20k      ss   10  1.959 ± 0.135   s/op
+LettuceF.pipeline50k      ss   10  2.546 ± 0.157   s/op
+Redis4Cats.parallel20k    ss   10  2.081 ± 0.525   s/op
+Redis4Cats.pipeline50k    Fail to complete
+```

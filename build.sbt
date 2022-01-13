@@ -1,4 +1,4 @@
-val scala213 = "2.13.7"
+val scala213 = "2.13.8"
 val scala310 = "3.1.0"
 
 
@@ -37,10 +37,19 @@ lazy val streams = (project in file("streams"))
   )
   .dependsOn(core)
 
+import pl.project13.scala.sbt.JmhPlugin
 lazy val benchmark = (project in file("benchmark"))
   .settings(name := "benchmark")
+  .enablePlugins(JmhPlugin)
   .dependsOn(streams)
-  .settings()
+  .settings(
+    scalaVersion := scala213,
+    Test / fork := true,
+    run / fork := true,
+    libraryDependencies ++= Seq(
+      "dev.profunktor" %% "redis4cats-effects" % "1.0.0"
+    )
+  )
 
 val commonSettings = Seq(
   scalaVersion := scala213,
