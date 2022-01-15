@@ -12,11 +12,11 @@ import cats.syntax.functor._
 import cats.syntax.traverse._
 import dev.naoh.lettucef.api.extras.ResourcePool
 import dev.naoh.lettucef.api.extras.ResourcePool.PoolLifecycleViolation
-import dev.naoh.lettucef.extras.ResourcePoolFactory.State._
+import dev.naoh.lettucef.extras.GenResourcePool.State._
 import scala.collection.immutable.Queue
 
 
-object ResourcePoolFactory {
+object GenResourcePool {
   def create[F[_], A](config: ResourcePool, source: Resource[F, A])(implicit F: Concurrent[F]): Resource[F, Resource[F, A]] = {
     def peak(): F[Either[Throwable, Peaked[F, A]]] =
       for {
@@ -24,6 +24,24 @@ object ResourcePoolFactory {
         c <- source.use(a => da.complete(Right(a)) >> F.never.void).handleErrorWith(e => da.complete(Left(e)).void).start
         ea <- da.get
       } yield ea.map(Peaked(_, c.cancel))
+
+    def take(state: Ref[F, State[F, A]]): F[Peaked[F, A]] =
+      for {
+        pop <- state.modify(_.take1)
+        p <- pop match {
+          case Right(p) => F.pure(p)
+          case Left(true) => peak().flatMap {
+            case Right(p) => F.pure(p)
+            case Left(value) =>
+              state.update(_.deactivate1) >> F.raiseError[Peaked[F, A]](value)
+          }
+          case _ =>
+            F.raiseError[Peaked[F, A]](PoolLifecycleViolation)
+        }
+      } yield p
+
+    def pushBack(state: Ref[F, State[F, A]], p: Peaked[F, A]): F[Unit] =
+      state.modify(_.push1(p, config.maxIdle)).flatMap(_.sequence.void)
 
     Resource
       .make((Deferred[F, Unit], Ref.of(State.empty[F, A])).tupled) {
@@ -33,26 +51,9 @@ object ResourcePoolFactory {
             state.get.flatMap(_.queue.q.map(_.release).sequence.void)
       }
       .map {
-        case (_, state) =>
-          Resource.make {
-            for {
-              pop <- state.modify(_.take1)
-              p <- pop match {
-                case Right(p) => F.pure(p)
-                case Left(true) => peak().flatMap {
-                  case Right(p) => F.pure(p)
-                  case Left(value) =>
-                    state.update(_.deactivate1) >> F.raiseError[Peaked[F, A]](value)
-                }
-                case Left(false) =>
-                  F.raiseError[Peaked[F, A]](PoolLifecycleViolation)
-              }
-            } yield p
-          } { p =>
-            state.modify(_.push1(p, config.maxIdle))
-              .flatMap(_.sequence.void)
-          }.map(_.a)
+        case (_, state) => Resource.make(take(state))(pushBack(state, _)).map(_.a)
       }
+      .evalTap(res => List.fill(config.minIdle.min(config.maxIdle))(res.use(_ => F.unit)).sequence)
   }
 
   final case class State[F[_], A](

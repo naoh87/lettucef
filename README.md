@@ -161,12 +161,12 @@ def run: IO[Unit] = {
   } yield for {
     _ <- conn.sync().del("Set")
     _ <- List.range(0, 100).map(_.toHexString).grouped(10)
-            .map(args => conn.sync().sadd("Set", args: _*))
-            .toList.sequence
+      .map(args => conn.sync().sadd("Set", args: _*))
+      .toList.sequence
     ret <- conn.stream()
-            .sscan("Set", ScanArgs.Builder.limit(20))
-            .chunks.map(_.size)
-            .compile.toList
+      .sscan("Set", ScanArgs.Builder.limit(20))
+      .chunks.map(_.size)
+      .compile.toList
   } yield println(ret)
   // List(23, 23, 20, 21, 13)
 }.use(identity)
@@ -183,6 +183,7 @@ libraryDependencies += "dev.naoh" %% "lettucef-extras" % version
 It is useful to execute blocking command
 
 https://lettuce.io/core/release/reference/#_connection_pooling
+
 ```scala
 import dev.naoh.lettucef.api.LettuceF
 import dev.naoh.lettucef.api.extras.ResourcePool
@@ -196,8 +197,8 @@ def run: IO[Unit] = {
     client <- LettuceF.cluster[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
     pub <- client.connect(StringCodec.UTF8).flatMap(printResource.as)
     pool <- client.connect(StringCodec.UTF8)
-            .flatMap(printResource.as)
-            .pipe(ResourcePool(maxIdle = 2).make(_))
+      .flatMap(printResource.as)
+      .pipe(ResourcePool(maxIdle = 2).make(_))
   } yield for {
     _ <- pub.sync().unlink("hoge")
     _ <- List.range(0, 3).map(i => pub.sync().rpush("hoge", i.toString)).sequence
@@ -216,6 +217,7 @@ def run: IO[Unit] = {
 // 4 <
 // 3 <
 ```
+
 # Features
 
 - [x] Support Scala 2.13 and 3.x
@@ -246,9 +248,10 @@ def run: IO[Unit] = {
     - [x] Strings
     - [x] Transactions
 
-
 # Benchmark
+
 Simple benchmark on laptop
+
 ```
 Benchmark               Mode  Cnt  Score   Error  Units
 LettuceF.parallel20k      ss   10  1.959 ± 0.135   s/op

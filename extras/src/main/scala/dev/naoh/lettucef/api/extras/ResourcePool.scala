@@ -2,11 +2,11 @@ package dev.naoh.lettucef.api.extras
 
 import cats.effect.Resource
 import cats.effect.kernel.Concurrent
-import dev.naoh.lettucef.extras.ResourcePoolFactory
+import dev.naoh.lettucef.extras.GenResourcePool
 
-case class ResourcePool(maxIdle: Int) {
+case class ResourcePool(maxIdle: Int, minIdle: Int) {
   def make[F[_] : Concurrent, A](source: Resource[F, A]): Resource[F, Resource[F, A]] =
-    ResourcePoolFactory.create(this, source)
+    GenResourcePool.create(this, source)
 }
 
 object ResourcePool {
