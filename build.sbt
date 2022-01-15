@@ -21,15 +21,17 @@ lazy val root = (project in file("."))
     crossScalaVersions := Nil,
     publishArtifact := false
   )
-  .aggregate(core, streams)
+  .aggregate(core, streams, extras)
 
 lazy val core = (project in file("core"))
   .settings(name := "lettucef-core")
   .settings(commonSettings)
+  .settings(publishSetting)
 
 lazy val streams = (project in file("streams"))
   .settings(name := "lettucef-streams")
   .settings(commonSettings)
+  .settings(publishSetting)
   .settings(
     libraryDependencies ++= Seq(
       "co.fs2" %% "fs2-core" % "3.2.4",
@@ -37,7 +39,27 @@ lazy val streams = (project in file("streams"))
   )
   .dependsOn(core)
 
+lazy val extras = (project in file("extras"))
+  .settings(name := "lettucef-extras")
+  .settings(publishSetting)
+  .settings(
+    Test / fork := true,
+    libraryDependencies ++= Seq(
+      "org.typelevel" %% "cats-effect" % "3.3.4",
+    )
+  )
+
+lazy val examples =
+  (project in file("examples"))
+    .settings(
+      name := "examples",
+      scalaVersion := scala213,
+      run / fork := true
+    )
+    .dependsOn(streams, extras)
+
 import pl.project13.scala.sbt.JmhPlugin
+
 lazy val benchmark = (project in file("benchmark"))
   .settings(name := "benchmark")
   .enablePlugins(JmhPlugin)
@@ -52,14 +74,17 @@ lazy val benchmark = (project in file("benchmark"))
   )
 
 val commonSettings = Seq(
-  scalaVersion := scala213,
-  crossScalaVersions := Seq(scala213, scala310),
   Test / fork := true,
   libraryDependencies ++= Seq(
     "io.lettuce" % "lettuce-core" % "6.1.6.RELEASE",
     "org.typelevel" %% "cats-effect" % "3.3.4",
     "org.scalatest" %% "scalatest" % "3.2.10" % "test",
   ),
+)
+
+val publishSetting = Seq(
+  scalaVersion := scala213,
+  crossScalaVersions := Seq(scala213, scala310),
   publishMavenStyle := true,
   Test / publishArtifact := false,
   publishTo := sonatypePublishTo.value

@@ -1,10 +1,10 @@
-package dev.naoh.lettucef.samples
+package com.example
 
 import cats.effect.IO
 import cats.effect.IOApp
 import cats.effect.Resource
-import dev.naoh.lettucef.api.LettuceF
 import cats.syntax.apply._
+import dev.naoh.lettucef.api.LettuceF
 import io.lettuce.core.RedisClient
 import io.lettuce.core.RedisURI
 import io.lettuce.core.codec.StringCodec
