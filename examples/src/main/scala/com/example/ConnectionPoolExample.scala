@@ -12,7 +12,7 @@ import io.lettuce.core.cluster.RedisClusterClient
 import io.lettuce.core.codec.StringCodec
 import scala.util.chaining.scalaUtilChainingOps
 
-object ReadMeSample7 extends IOApp.Simple {
+object ConnectionPoolExample extends IOApp.Simple {
   val count = new AtomicInteger(0)
   val printResource: Resource[IO, Int] =
     Resource.make(IO(count.getAndIncrement()).flatTap(n => IO.println(s"$n >")))(n => IO.println(s"$n <"))

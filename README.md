@@ -119,9 +119,8 @@ def run: IO[Unit] = {
     _ <- sub.setListener(RedisPubSubF.makeListener(printSubscription))
     _ <- sub.subscribe("A").evalMap(m => pub.publish("B", m.message)).compile.drain.background
     _ <- sub.subscribe("B").evalMap(m => pub.publish("C", m.message)).compile.drain.background
-    _ <- sub.subscribe("A", "B", "C").debug().take(N * 3).compile.drain.uncancelable.background
+    _ <- sub.subscribeAwait("A", "B", "C").flatMap(_.debug().take(N * 3).compile.drain.uncancelable.background)
   } yield for {
-    _ <- sub.awaitSubscribed("A", "B", "C")
     _ <- List.range(0, N).map(i => pub.publish("A", i.toHexString)).sequence
   } yield ()
 }.use(identity)

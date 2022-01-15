@@ -7,6 +7,11 @@ sealed trait RedisData[+V] {
 
   def decodeAs[A](f: PartialFunction[RedisData[V], Option[A]]): Option[A] =
     f.lift(this).flatten
+
+  def asList: List[RedisData[V]] = this match {
+    case RedisData.RedisArray(arr) => arr
+    case _ => List.empty
+  }
 }
 
 object RedisData {
