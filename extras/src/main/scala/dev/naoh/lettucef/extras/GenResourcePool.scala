@@ -44,14 +44,14 @@ object GenResourcePool {
       state.modify(_.push1(p, config.maxIdle)).flatMap(_.sequence.void)
 
     Resource
-      .make((Deferred[F, Unit], Ref.of(State.empty[F, A])).tupled) {
-        case (ks, state) =>
+      .make(Ref.of(State.empty[F, A])) { state =>
+        Deferred[F, Unit].flatMap(ks =>
           state.modify(_.setFinalizer(ks.complete(()).void)).flatMap(_.sequence) >>
             ks.get >>
-            state.get.flatMap(_.queue.q.map(_.release).sequence.void)
+            state.get.flatMap(_.release().sequence.void))
       }
-      .map {
-        case (_, state) => Resource.make(take(state))(pushBack(state, _)).map(_.a)
+      .map { state =>
+        Resource.make(take(state))(pushBack(state, _)).map(_.a)
       }
       .evalTap(res => List.fill(config.minIdle.min(config.maxIdle))(res.use(_ => F.unit)).sequence)
   }
@@ -62,12 +62,14 @@ object GenResourcePool {
     finalizer: Option[F[Unit]]
   ) {
     def take1: (State[F, A], Either[Boolean, Peaked[F, A]]) =
-      queue.dequeueOption match {
-        case Some((ba, tail)) => (State(active + 1, tail, finalizer), Right(ba))
-        case None if finalizer.isEmpty =>
-          (copy(active = active + 1), Left(true))
-        case None =>
-          (this, Left(false))
+      if (finalizer.isEmpty) {
+        queue.dequeueOption match {
+          case Some((ba, tail)) => (State(active + 1, tail, finalizer), Right(ba))
+          case None =>
+            (copy(active = active + 1), Left(true))
+        }
+      } else {
+        (this, Left(false))
       }
 
     def push1(b: Peaked[F, A], maxQueue: Int): (State[F, A], List[F[Unit]]) = {
@@ -87,6 +89,8 @@ object GenResourcePool {
 
     def setFinalizer(fu: F[Unit]): (State[F, A], List[F[Unit]]) =
       (copy(finalizer = Some(fu)), if (active == 0) List(fu) else Nil)
+
+    def release(): List[F[Unit]] = queue.q.toList.map(_.release)
   }
 
   object State {
