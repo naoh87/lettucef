@@ -13,21 +13,20 @@ import io.lettuce.core.cluster.RedisClusterClient
 import io.lettuce.core.cluster.api.StatefulRedisClusterConnection
 import io.lettuce.core.cluster.models.partitions.Partitions
 import io.lettuce.core.codec.RedisCodec
-import scala.reflect.ClassTag
 import scala.util.chaining._
 
 class RedisClusterClientF[F[_]](underlying: RedisClusterClient)(implicit F: Async[F]) {
 
   val connect: ConnectionResource1[F, RedisClusterConnectionF] =
     new ConnectionResource1[F, RedisClusterConnectionF] {
-      override protected def allocate[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V]): F[(RedisClusterConnectionF[F, K, V], F[Unit])] =
+      override protected def allocate[K, V](codec: RedisCodec[K, V]): F[(RedisClusterConnectionF[F, K, V], F[Unit])] =
         JavaFutureUtil.toSync(underlying.connectAsync(codec))
           .map(new RedisClusterConnectionF(_, codec).pipe(c => c -> c.closeAsync()))
     }
 
   val connectPubSub: ConnectionResource1[F, RedisPubSubF] =
     new ConnectionResource1[F, RedisPubSubF] {
-      override protected def allocate[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V]): F[(RedisPubSubF[F, K, V], F[Unit])] =
+      override protected def allocate[K, V](codec: RedisCodec[K, V]): F[(RedisPubSubF[F, K, V], F[Unit])] =
         JavaFutureUtil.toSync(underlying.connectPubSubAsync(codec))
           .map(new RedisPubSubF(_).pipe(c => c -> c.closeAsync()))
     }
@@ -44,18 +43,18 @@ class RedisClusterClientF[F[_]](underlying: RedisClusterClient)(implicit F: Asyn
 
 object RedisClusterClientF {
   abstract class ConnectionResource1[F[_] : Functor, R[_[_], _, _]] {
-    protected def allocate[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V]): F[(R[F, K, V], F[Unit])]
+    protected def allocate[K, V](codec: RedisCodec[K, V]): F[(R[F, K, V], F[Unit])]
 
-    def apply[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V]): Resource[F, R[F, K, V]] =
+    def apply[K, V](codec: RedisCodec[K, V]): Resource[F, R[F, K, V]] =
       Resource.make(allocate(codec))(_._2).map(_._1)
 
-    def unsafe[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V]): F[R[F, K, V]] =
+    def unsafe[K, V](codec: RedisCodec[K, V]): F[R[F, K, V]] =
       allocate(codec).map(_._1)
   }
 
 }
 
-class RedisClusterConnectionF[F[_] : Async, K: ClassTag, V: ClassTag](
+class RedisClusterConnectionF[F[_] : Async, K, V](
   underlying: StatefulRedisClusterConnection[K, V],
   codec: RedisCodec[K, V]
 ) {

@@ -2,17 +2,14 @@ package dev.naoh.lettucef.core
 
 import cats.effect.kernel.Async
 import dev.naoh.lettucef.core.commands.CommandsDeps
-import dev.naoh.lettucef.core.sync
-import dev.naoh.lettucef.core.async
 import dev.naoh.lettucef.core.util.ManualDispatchHelper
 import io.lettuce.core.cluster.api.async.RedisAdvancedClusterAsyncCommands
 import io.lettuce.core.codec.RedisCodec
-import scala.reflect.ClassTag
 
 final class RedisClusterSyncCommandsF[F[_], K, V](
   protected val underlying: RedisAdvancedClusterAsyncCommands[K, V],
   codec: RedisCodec[K, V]
-)(implicit F: Async[F], V: ClassTag[V], K: ClassTag[K])
+)(implicit F: Async[F])
   extends CommandsDeps[F, K, V]
     with sync.AclCommands[F, K, V]
     with sync.BaseCommands[F, K, V]
@@ -30,15 +27,13 @@ final class RedisClusterSyncCommandsF[F[_], K, V](
     with sync.StreamCommands[F, K, V]
     with sync.StringCommands[F, K, V] {
   implicit protected val _async: Async[F] = F
-  implicit protected val _valueTag: ClassTag[V] = V
-  implicit protected val _keyTag: ClassTag[K] = K
   protected val dispatchHelper: ManualDispatchHelper[K, V] = new ManualDispatchHelper(codec)
 }
 
 final class RedisClusterAsyncCommandsF[F[_], K, V](
   protected val underlying: RedisAdvancedClusterAsyncCommands[K, V],
   codec: RedisCodec[K, V]
-)(implicit F: Async[F], V: ClassTag[V], K: ClassTag[K])
+)(implicit F: Async[F])
   extends CommandsDeps[F, K, V]
     with async.AclCommands[F, K, V]
     with async.BaseCommands[F, K, V]
@@ -56,7 +51,5 @@ final class RedisClusterAsyncCommandsF[F[_], K, V](
     with async.StreamCommands[F, K, V]
     with async.StringCommands[F, K, V] {
   implicit protected val _async: Async[F] = F
-  implicit protected val _valueTag: ClassTag[V] = V
-  implicit protected val _keyTag: ClassTag[K] = K
   protected val dispatchHelper: ManualDispatchHelper[K, V] = new ManualDispatchHelper(codec)
 }

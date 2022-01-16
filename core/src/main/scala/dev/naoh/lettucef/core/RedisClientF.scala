@@ -16,35 +16,34 @@ import io.lettuce.core.codec.RedisCodec
 import io.lettuce.core.masterreplica.MasterReplica
 import io.lettuce.core.masterreplica.StatefulRedisMasterReplicaConnection
 import scala.jdk.CollectionConverters._
-import scala.reflect.ClassTag
 import scala.util.chaining._
 
 
 class RedisClientF[F[_]](underlying: RedisClient)(implicit F: Async[F]) {
   val connect: ConnectionResource2[F, RedisURI, RedisConnectionF] =
     new ConnectionResource2[F, RedisURI, RedisConnectionF] {
-      override def allocate[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: RedisURI): F[(RedisConnectionF[F, K, V], F[Unit])] =
+      override def allocate[K, V](codec: RedisCodec[K, V], uri: RedisURI): F[(RedisConnectionF[F, K, V], F[Unit])] =
         JavaFutureUtil.toSync(underlying.connectAsync(codec, uri))
           .map(new RedisConnectionF(_, codec).pipe(c => c -> c.closeAsync()))
     }
 
   val connectPubSub: ConnectionResource2[F, RedisURI, RedisPubSubF] =
     new ConnectionResource2[F, RedisURI, RedisPubSubF] {
-      override def allocate[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: RedisURI): F[(RedisPubSubF[F, K, V], F[Unit])] =
+      override def allocate[K, V](codec: RedisCodec[K, V], uri: RedisURI): F[(RedisPubSubF[F, K, V], F[Unit])] =
         JavaFutureUtil.toSync(underlying.connectPubSubAsync(codec, uri))
           .map(new RedisPubSubF(_).pipe(c => c -> c.closeAsync()))
     }
 
   val connectSentinel: ConnectionResource2[F, RedisURI, RedisSentinelCommandsF] =
     new ConnectionResource2[F, RedisURI, RedisSentinelCommandsF] {
-      override def allocate[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: RedisURI): F[(RedisSentinelCommandsF[F, K, V], F[Unit])] =
+      override def allocate[K, V](codec: RedisCodec[K, V], uri: RedisURI): F[(RedisSentinelCommandsF[F, K, V], F[Unit])] =
         JavaFutureUtil.toSync(underlying.connectSentinelAsync(codec, uri))
           .map(new RedisSentinelCommandsF(_, codec).pipe(c => c -> c.closeAsync()))
     }
 
   val connectMasterReplica: ConnectionResource2[F, Seq[RedisURI], MasterReplicaRedisConnectionF] =
     new ConnectionResource2[F, Seq[RedisURI], MasterReplicaRedisConnectionF] {
-      override def allocate[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: Seq[RedisURI]): F[(MasterReplicaRedisConnectionF[F, K, V], F[Unit])] =
+      override def allocate[K, V](codec: RedisCodec[K, V], uri: Seq[RedisURI]): F[(MasterReplicaRedisConnectionF[F, K, V], F[Unit])] =
         JavaFutureUtil.toSync(MasterReplica.connectAsync(underlying, codec, uri.asJava))
           .map(new MasterReplicaRedisConnectionF(_, codec).pipe(c => c -> c.closeAsync()))
     }
@@ -59,17 +58,17 @@ class RedisClientF[F[_]](underlying: RedisClient)(implicit F: Async[F]) {
 object RedisClientF {
 
   abstract class ConnectionResource2[F[_] : Functor, A, R[_[_], _, _]] {
-    def allocate[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: A): F[(R[F, K, V], F[Unit])]
+    def allocate[K, V](codec: RedisCodec[K, V], uri: A): F[(R[F, K, V], F[Unit])]
 
-    def apply[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: A): Resource[F, R[F, K, V]] =
+    def apply[K, V](codec: RedisCodec[K, V], uri: A): Resource[F, R[F, K, V]] =
       Resource.make(allocate(codec, uri))(_._2).map(_._1)
 
-    def unsafe[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: A): F[R[F, K, V]] =
+    def unsafe[K, V](codec: RedisCodec[K, V], uri: A): F[R[F, K, V]] =
       allocate(codec, uri).map(_._1)
   }
 }
 
-class RedisConnectionF[F[_] : Async, K: ClassTag, V: ClassTag](
+class RedisConnectionF[F[_] : Async, K, V](
   underlying: StatefulRedisConnection[K, V],
   codec: RedisCodec[K, V]
 ) {
@@ -85,7 +84,7 @@ class RedisConnectionF[F[_] : Async, K: ClassTag, V: ClassTag](
     JavaFutureUtil.toSync(underlying.closeAsync()).void
 }
 
-class MasterReplicaRedisConnectionF[F[_] : Async, K: ClassTag, V: ClassTag](
+class MasterReplicaRedisConnectionF[F[_] : Async, K, V](
   underlying: StatefulRedisMasterReplicaConnection[K, V],
   codec: RedisCodec[K, V]
 ) extends RedisConnectionF[F, K, V](underlying, codec) {

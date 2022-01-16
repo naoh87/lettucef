@@ -1,8 +1,5 @@
 package dev.naoh.lettucef.api.models
 
-import scala.jdk.CollectionConverters._
-import scala.reflect.ClassTag
-
 sealed trait RedisData[+V] {
 
   def decodeAs[A](f: PartialFunction[RedisData[V], Option[A]]): Option[A] =

@@ -18,7 +18,6 @@ import fs2.concurrent.SignallingRef
 import io.lettuce.core.RedisURI
 import io.lettuce.core.codec.RedisCodec
 import io.lettuce.core.pubsub.RedisPubSubListener
-import scala.reflect.ClassTag
 
 class ManagedPubSubF[F[_] : Async, K, V](
   underlying: RedisPubSubF[F, K, V],
@@ -268,18 +267,18 @@ object ManagedPubSubF {
 
 trait AutoSubscriberApiOps {
   implicit class ManagedPubSubOps2[F[_] : Async](val base: ConnectionResource2[F, RedisURI, RedisPubSubF]) {
-    def stream[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: RedisURI): Resource[F, ManagedPubSubF[F, K, V]] =
+    def stream[K, V](codec: RedisCodec[K, V], uri: RedisURI): Resource[F, ManagedPubSubF[F, K, V]] =
       Dispatcher[F].flatMap(d => stream(codec, uri, d))
 
-    def stream[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: RedisURI, d: Dispatcher[F]): Resource[F, ManagedPubSubF[F, K, V]] =
+    def stream[K, V](codec: RedisCodec[K, V], uri: RedisURI, d: Dispatcher[F]): Resource[F, ManagedPubSubF[F, K, V]] =
       ManagedPubSubF.create(base(codec, uri), d)
   }
 
   implicit class ManagedPubSubOps1[F[_] : Async](val base: ConnectionResource1[F, RedisPubSubF]) {
-    def stream[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V]): Resource[F, ManagedPubSubF[F, K, V]] =
+    def stream[K, V](codec: RedisCodec[K, V]): Resource[F, ManagedPubSubF[F, K, V]] =
       Dispatcher[F].flatMap(d => stream(codec, d))
 
-    def stream[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], d: Dispatcher[F]): Resource[F, ManagedPubSubF[F, K, V]] =
+    def stream[K, V](codec: RedisCodec[K, V], d: Dispatcher[F]): Resource[F, ManagedPubSubF[F, K, V]] =
       ManagedPubSubF.create(base(codec), d)
   }
 }
