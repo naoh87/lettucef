@@ -92,7 +92,8 @@ object Async {
   case class FunDef(
     fun: Method,
     opt: Option[List[String]],
-    output: Option[CustomOutput]
+    output: Option[CustomOutput],
+    dispatch: Option[Dispatch]
   ) {
     val options: Seq[String] = opt.toList.flatten
 
@@ -107,16 +108,20 @@ object Async {
         this
       }
 
+
+    private def convertOut(tpe: TypeExpr): TypeExpr =
+      dispatch.map(_.replace(tpe))
+        .orElse(output.map(_.replace(tpe)))
+        .getOrElse(tpe.toScala(Nil, options.contains("nullable")))
+
+    lazy val scalaDef =
+      fun.mapOutput(convertOut).mapArgs(_.toScala)
+
     def printSync(p: FunctionalPrinter): FunctionalPrinter =
       if (isOutputTarget && !fun.existArgs(_.existName(skipArgType))) {
-        def convertOut(tpe: TypeExpr): TypeExpr =
-          output.map(_.replace(tpe)).getOrElse(tpe.toScala(Nil, options.contains("nullable")))
-
-        val scalaDef =
-          fun.mapOutput(convertOut).mapArgs(_.toScala)
         p.add(scalaDef.toSync.scalaDef + " =")
           .indented(
-            _.add(fun.syncCall(scalaDef.args, scalaDef.output, output.map(_.j2s))))
+            _.add(fun.syncCall(scalaDef.args, scalaDef.output, dispatch, output.map(_.j2s))))
           .newline
       } else {
         println(s"- skipped ${fun.scalaDef}")
@@ -125,20 +130,32 @@ object Async {
 
     def printAsync(p: FunctionalPrinter): FunctionalPrinter =
       if (isOutputTarget && !fun.existArgs(_.existName(skipArgType))) {
-        def convertOut(tpe: TypeExpr): TypeExpr =
-          output.map(_.replace(tpe)).getOrElse(tpe.toScala(Nil, options.contains("nullable")))
 
-        val scalaDef =
-          fun.mapOutput(convertOut).mapArgs(_.toScala)
         p.add(scalaDef.toAsync.scalaDef + " =")
           .indented(
-            _.add(fun.asyncCall(scalaDef.args, scalaDef.output, output.map(_.j2s))))
+            _.add(fun.asyncCall(scalaDef.args, scalaDef.output, dispatch, output.map(_.j2s))))
           .newline
       } else {
         println(s"- skipped ${fun.scalaDef}")
         p
       }
+  }
 
+  case class Dispatch(
+    cType: String,
+    args: Option[List[String]],
+    parse: String,
+    output: TypeExpr,
+    postfix: Option[String]
+  ) {
+    def replace(rf: Method.TypeExpr): Method.TypeExpr =
+      rf.copy(generics = output :: Nil)
+
+    def call: String = s"CommandType.$cType, dispatchHelper.createRedisDataOutput()" + args.map(_.mkString(", dispatchHelper.createArgs().", ".", "")).getOrElse("")
+
+    def meth: String = "dispatch"
+
+    def pfix: String = postfix.getOrElse("")
   }
 
   case class CustomOutput(

@@ -33,7 +33,9 @@ object MethodParser {
 
   val tpeExpr: P[TypeExpr] = P.recursive[TypeExpr] {
     recurse =>
-      val generics = rep(recurse).between(P.char('<'), P.char('>')).map(_.toList) | P.unit.as(List.empty)
+      val java = rep(recurse).between(P.char('<'), P.char('>'))
+      val scala = rep(recurse).between(P.char('['), P.char(']'))
+      val generics = (java | scala).map(_.toList) | P.unit.as(List.empty)
       val covar = P.string("? extends ").as(Option("_")).orElse(P.pure(None))
       (covar.with1 ~tpeName ~ generics).map {
         case ((covar, name), gen) => TypeExpr(name, gen, covar)

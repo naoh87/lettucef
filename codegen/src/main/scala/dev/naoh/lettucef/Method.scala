@@ -4,55 +4,50 @@ import io.circe.Decoder
 import Method.Argument
 import Method.Identifier
 import Method.TypeExpr
+import dev.naoh.lettucef.Async.Dispatch
 import scala.util.chaining._
 
 case class Method(name: String, args: List[Argument], output: TypeExpr, checkNull: Boolean = false) extends ToScalaCode {
   def scalaDef: String =
     s"def ${Identifier.expr(name)}(${args.map(_.scalaDef).mkString(", ")}): ${output.scalaDef}"
 
-  def syncCall(expr: Seq[Argument], to: TypeExpr, customPostFix: Option[String]): String = {
+  def syncCall(expr: Seq[Argument], to: TypeExpr, dispatch: Option[Dispatch], customPostFix: Option[String]): String = {
     assert(expr.size == args.size)
-    val call = args.zip(expr).map(ae => ae._1.call(ae._2)).mkString(", ")
-    val postFix =
-      customPostFix.map {
-        case "" => ""
-        case fun => s".map($fun)"
-      }.getOrElse {
-        val mapF = javaToScalaF(output.p1, to.p1) match {
-          case Some(fun) => s".map($fun)"
-          case None => ""
-        }
-        if (checkNull) {
-          s".map(Option(_)$mapF)"
-        } else {
-          mapF
-        }
-      }
-    s"JF.toSync(underlying.${Identifier.expr(name)}($call))$postFix"
+    val call = dispatch.map(_.call) getOrElse args.zip(expr).map(ae => ae._1.call(ae._2)).mkString(", ")
+    val postFix = pfix(to, dispatch, customPostFix)
+
+    val action = dispatch.map(_.meth).getOrElse(Identifier.expr(name))
+    s"JF.toSync(underlying.$action($call))$postFix"
   }
 
-  def asyncCall(expr: Seq[Argument], to: TypeExpr, customPostFix: Option[String]): String = {
+  private def pfix(to: TypeExpr, dispatch: Option[Dispatch], customPostFix: Option[String]) = {
+    dispatch.map(_.pfix).orElse(customPostFix).map {
+      case "" => ""
+      case fun => s".map($fun)"
+    }.getOrElse {
+      val mapF = javaToScalaF(output.p1, to.p1) match {
+        case Some(fun) => s".map($fun)"
+        case None => ""
+      }
+      if (checkNull) {
+        s".map(Option(_)$mapF)"
+      } else {
+        mapF
+      }
+    }
+  }
+
+  def asyncCall(expr: Seq[Argument], to: TypeExpr, dispatch: Option[Dispatch], customPostFix: Option[String]): String = {
     assert(expr.size == args.size)
-    val call = args.zip(expr).map(ae => ae._1.call(ae._2)).mkString(", ")
+    val call = dispatch.map(_.call) getOrElse args.zip(expr).map(ae => ae._1.call(ae._2)).mkString(", ")
     val postFix =
-      customPostFix.map {
-        case "" => ""
-        case fun => s".map($fun)"
-      }.getOrElse {
-        val mapF = javaToScalaF(output.p1, to.p1) match {
-          case Some(fun) => s".map($fun)"
-          case None => ""
-        }
-        if (checkNull) {
-          s".map(Option(_)$mapF)"
-        } else {
-          mapF
-        }
-      }.pipe {
+      pfix(to, dispatch, customPostFix).pipe {
         case "" => ""
         case expr => s".map(_$expr)"
       }
-    s"JF.toAsync(underlying.${Identifier.expr(name)}($call))$postFix"
+
+    val action = dispatch.map(_.meth).getOrElse(Identifier.expr(name))
+    s"JF.toAsync(underlying.$action($call))$postFix"
   }
 
   private def javaToScalaF(from: TypeExpr, to: TypeExpr): Option[String] = {
