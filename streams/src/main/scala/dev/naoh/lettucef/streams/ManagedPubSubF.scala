@@ -10,8 +10,8 @@ import dev.naoh.lettucef.core.RedisClientF.ConnectionResource2
 import dev.naoh.lettucef.core.RedisClusterClientF.ConnectionResource1
 import dev.naoh.lettucef.core.RedisPubSubF
 import dev.naoh.lettucef.api.models.pubsub.PushedMessage
-import dev.naoh.lettucef.streams.RedisAutoSubscriber.VoidListener
-import dev.naoh.lettucef.streams.RedisAutoSubscriber.State
+import dev.naoh.lettucef.streams.ManagedPubSubF.VoidListener
+import dev.naoh.lettucef.streams.ManagedPubSubF.State
 import fs2._
 import fs2.concurrent.Channel
 import fs2.concurrent.SignallingRef
@@ -20,7 +20,7 @@ import io.lettuce.core.codec.RedisCodec
 import io.lettuce.core.pubsub.RedisPubSubListener
 import scala.reflect.ClassTag
 
-class RedisAutoSubscriber[F[_] : Async, K, V](
+class ManagedPubSubF[F[_] : Async, K, V](
   underlying: RedisPubSubF[F, K, V],
   val dispatcher: Dispatcher[F],
   eState: SignallingRef[F, State[K]],
@@ -28,9 +28,9 @@ class RedisAutoSubscriber[F[_] : Async, K, V](
 ) {
   def subscribeAwait(channels: K*): Resource[F, Stream[F, PushedMessage.Message[K, V]]] = {
     val target = channels.toSet
-    SubscribeStreamHelper.resource(
+    ManagedPubSubF.stream(
       target, eState, emitSubscribe, emitUnsubscribe,
-      startPush(RedisAutoSubscriber.messageSender[F, K, V](target, _, dispatcher)))
+      startPush(ManagedPubSubF.messageSender[F, K, V](target, _, dispatcher)))
   }
 
   def subscribe(channel: K*): Stream[F, PushedMessage.Message[K, V]] =
@@ -38,19 +38,13 @@ class RedisAutoSubscriber[F[_] : Async, K, V](
 
   def psubscribeAwait(patterns: K*): Resource[F, Stream[F, PushedMessage.PMessage[K, V]]] = {
     val target = patterns.toSet
-    SubscribeStreamHelper.resource(
+    ManagedPubSubF.stream(
       target, pState, emitPSubscribe, emitPUnsubscribe,
-      startPush(RedisAutoSubscriber.pmessageSender[F, K, V](target, _, dispatcher)))
+      startPush(ManagedPubSubF.pmessageSender[F, K, V](target, _, dispatcher)))
   }
 
   def psubscribe(channel: K*): Stream[F, PushedMessage.PMessage[K, V]] =
     Stream.resource(psubscribeAwait(channel: _*)).flatten
-
-  def awaitSubscribed(channels: K*): F[Unit] =
-    SubscribeStreamHelper.await(channels.toSet, eState)
-
-  def awaitPSubscribed(channels: K*): F[Unit] =
-    SubscribeStreamHelper.await(channels.toSet, pState)
 
   def addListener(listener: RedisPubSubListener[K, V]): F[Unit] =
     underlying.addListener(listener)
@@ -67,7 +61,7 @@ class RedisAutoSubscriber[F[_] : Async, K, V](
       remove <- setListener(make(ch))
     } yield ch.stream.onFinalize(remove)
 
-  private def init(): Resource[F, RedisAutoSubscriber[F, K, V]] =
+  private def init(): Resource[F, ManagedPubSubF[F, K, V]] =
     for {
       l <- Resource.eval(Async[F].delay(stateHandler()))
       _ <- setListener(l)
@@ -114,16 +108,16 @@ class RedisAutoSubscriber[F[_] : Async, K, V](
 
 }
 
-object RedisAutoSubscriber {
+object ManagedPubSubF {
   def create[F[_] : Async, K, V](
     underlying: Resource[F, RedisPubSubF[F, K, V]],
     d: Dispatcher[F]
-  ): Resource[F, RedisAutoSubscriber[F, K, V]] = {
+  ): Resource[F, ManagedPubSubF[F, K, V]] = {
     for {
       u <- underlying
       s1 <- Resource.eval(SignallingRef.of(State.zero[K]))
       s2 <- Resource.eval(SignallingRef.of(State.zero[K]))
-      as <- new RedisAutoSubscriber[F, K, V](u, d, s1, s2).init()
+      as <- new ManagedPubSubF[F, K, V](u, d, s1, s2).init()
     } yield as
   }
 
@@ -150,6 +144,37 @@ object RedisAutoSubscriber {
       }
     }
   }
+
+  private def stream[F[_] : Async, K, O](
+    target: Set[K],
+    state: SignallingRef[F, State[K]],
+    up: Seq[K] => F[Unit],
+    down: Seq[K] => F[Unit],
+    startPush: Resource[F, Stream[F, O]]
+  ): Resource[F, Stream[F, O]] = {
+    def update1(
+      f: State[K] => (State[K], Seq[K]),
+      g: Seq[K] => F[Unit]
+    ): F[Unit] =
+      state.modify(f).flatMap {
+        case ks if ks.isEmpty => Async[F].unit
+        case ks => g(ks)
+      }
+
+    for {
+      done <- Resource.eval(Async[F].memoize(update1(State.unsubscribe1(target), down).void))
+      _ <- Resource.make(update1(State.subscribe1(target), up) >> await(target, state))(_ => done)
+      s <- startPush
+    } yield s.onFinalize(done)
+  }
+
+  private def await[F[_] : Concurrent, K](
+    target: Set[K],
+    state: SignallingRef[F, State[K]]
+  ): F[Unit] =
+    state.discrete
+      .takeWhile(current => !target.forall(k => current.get(k).exists(_._1 == State.Subscribed)))
+      .compile.drain
 
   type State[K] = Map[K, (Int, Int)]
 
@@ -241,53 +266,20 @@ object RedisAutoSubscriber {
 
 }
 
-object SubscribeStreamHelper {
-  def resource[F[_] : Async, K, O](
-    target: Set[K],
-    state: SignallingRef[F, State[K]],
-    up: Seq[K] => F[Unit],
-    down: Seq[K] => F[Unit],
-    startPush: Resource[F, Stream[F, O]]
-  ): Resource[F, Stream[F, O]] = {
-    def update1(
-      f: State[K] => (State[K], Seq[K]),
-      g: Seq[K] => F[Unit]
-    ): F[Unit] =
-      state.modify(f).flatMap {
-        case ks if ks.isEmpty => Async[F].unit
-        case ks => g(ks)
-      }
-
-    for {
-      done <- Resource.eval(Async[F].memoize(update1(State.unsubscribe1(target), down).void))
-      _ <- Resource.make(update1(State.subscribe1(target), up) >> await(target, state))(_ => done)
-      s <- startPush
-    } yield s.onFinalize(done)
-  }
-
-  def await[F[_] : Concurrent, K](
-    target: Set[K],
-    state: SignallingRef[F, State[K]]
-  ): F[Unit] =
-    state.discrete
-      .takeWhile(current => !target.forall(k => current.get(k).exists(_._1 == State.Subscribed)))
-      .compile.drain
-}
-
 trait AutoSubscriberApiOps {
-  implicit class AutoSubscriberOps2[F[_] : Async](val base: ConnectionResource2[F, RedisURI, RedisPubSubF]) {
-    def stream[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: RedisURI): Resource[F, RedisAutoSubscriber[F, K, V]] =
+  implicit class ManagedPubSubOps2[F[_] : Async](val base: ConnectionResource2[F, RedisURI, RedisPubSubF]) {
+    def stream[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: RedisURI): Resource[F, ManagedPubSubF[F, K, V]] =
       Dispatcher[F].flatMap(d => stream(codec, uri, d))
 
-    def stream[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: RedisURI, d: Dispatcher[F]): Resource[F, RedisAutoSubscriber[F, K, V]] =
-      RedisAutoSubscriber.create(base(codec, uri), d)
+    def stream[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], uri: RedisURI, d: Dispatcher[F]): Resource[F, ManagedPubSubF[F, K, V]] =
+      ManagedPubSubF.create(base(codec, uri), d)
   }
 
-  implicit class AutoSubscriberOps1[F[_] : Async](val base: ConnectionResource1[F, RedisPubSubF]) {
-    def stream[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V]): Resource[F, RedisAutoSubscriber[F, K, V]] =
+  implicit class ManagedPubSubOps1[F[_] : Async](val base: ConnectionResource1[F, RedisPubSubF]) {
+    def stream[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V]): Resource[F, ManagedPubSubF[F, K, V]] =
       Dispatcher[F].flatMap(d => stream(codec, d))
 
-    def stream[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], d: Dispatcher[F]): Resource[F, RedisAutoSubscriber[F, K, V]] =
-      RedisAutoSubscriber.create(base(codec), d)
+    def stream[K: ClassTag, V: ClassTag](codec: RedisCodec[K, V], d: Dispatcher[F]): Resource[F, ManagedPubSubF[F, K, V]] =
+      ManagedPubSubF.create(base(codec), d)
   }
 }
