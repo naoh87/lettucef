@@ -90,8 +90,33 @@
   - fun: RedisFuture<Boolean> xgroupDestroy(K key, K group);
   - fun: RedisFuture<String> xgroupSetid(StreamOffset<K> streamOffset, K group);
   - fun: RedisFuture<List<Object>> xinfoStream(K key);
+    dispatch:
+      cType: XINFO
+      args:
+        - add(CommandKeyword.STREAM)
+        - addKey(key)
+      parse: RedisData[V]
+      output: List[RedisData[V]]
+      postfix: _.asList
   - fun: RedisFuture<List<Object>> xinfoGroups(K key);
+    dispatch:
+      cType: XINFO
+      args:
+        - add(CommandKeyword.GROUPS)
+        - addKey(key)
+      parse: RedisData[V]
+      output: List[RedisData[V]]
+      postfix: _.asList
   - fun: RedisFuture<List<Object>> xinfoConsumers(K key, K group);
+    dispatch:
+      cType: XINFO
+      args:
+        - add(CommandKeyword.CONSUMERS)
+        - addKey(key)
+        - addKey(group)
+      parse: RedisData[V]
+      output: List[RedisData[V]]
+      postfix: _.asList
   - fun: RedisFuture<Long> xlen(K key);
   - fun: RedisFuture<PendingMessages> xpending(K key, K group);
   - fun: RedisFuture<List<PendingMessage>> xpending(K key, K group, Range<String> range, Limit limit);
@@ -187,6 +212,11 @@
   - fun: RedisFuture<Long> pubsubNumpat();
   - fun: RedisFuture<V> echo(V msg);
   - fun: RedisFuture<List<Object>> role();
+    dispatch:
+      cType: ROLE
+      parse: RedisData[V]
+      output: List[RedisData[V]]
+      postfix: _.asList
   - fun: RedisFuture<String> ping();
   - fun: RedisFuture<String> readOnly();
   - fun: RedisFuture<String> readWrite();
@@ -220,6 +250,13 @@
   - fun: RedisFuture<String> clusterSaveconfig();
   - fun: RedisFuture<String> clusterSetConfigEpoch(long configEpoch);
   - fun: RedisFuture<List<Object>> clusterSlots();
+    dispatch:
+      cType: CLUSTER
+      args:
+      - add(CommandKeyword.SLOTS)
+      parse: RedisData[V]
+      output: List[RedisData[V]]
+      postfix: _.asList
   - fun: RedisFuture<String> asking();
   - fun: RedisFuture<String> clusterReplicate(String nodeId);
   - fun: RedisFuture<String> clusterFailover(boolean force);
@@ -356,8 +393,21 @@
   - fun: RedisFuture<String> clientTracking(TrackingArgs args);
   - fun: RedisFuture<Long> clientUnblock(long id, UnblockType type);
   - fun: RedisFuture<List<Object>> command();
+    dispatch:
+      cType: COMMAND
+      parse: RedisData[V]
+      output: List[RedisData[V]]
+      postfix: _.asList
   - fun: RedisFuture<Long> commandCount();
   - fun: RedisFuture<List<Object>> commandInfo(String... commands);
+    dispatch:
+      cType: COMMAND
+      args:
+        - add(CommandType.INFO)
+        - tap(a => commands.foreach(a.add))
+      parse: RedisData[V]
+      output: List[RedisData[V]]
+      postfix: _.asList
   - fun: RedisFuture<List<Object>> commandInfo(CommandType... commands);
     opt: [ ignore ]
   - fun: RedisFuture<Map<String, String>> configGet(String parameter);
@@ -387,7 +437,22 @@
   - fun: RedisFuture<String> slaveof(String host, int port);
   - fun: RedisFuture<String> slaveofNoOne();
   - fun: RedisFuture<List<Object>> slowlogGet();
+    dispatch:
+      cType: SLOWLOG
+      args:
+        - add(CommandType.GET)
+      parse: RedisData[V]
+      output: List[RedisData[V]]
+      postfix: _.asList
   - fun: RedisFuture<List<Object>> slowlogGet(int count);
+    dispatch:
+      cType: SLOWLOG
+      args:
+        - add(CommandType.GET)
+        - add(count)
+      parse: RedisData[V]
+      output: List[RedisData[V]]
+      postfix: _.asList
   - fun: RedisFuture<Long> slowlogLen();
   - fun: RedisFuture<String> slowlogReset();
   - fun: RedisFuture<List<V>> time();
@@ -399,6 +464,7 @@
   - io.lettuce.core.UnblockType
   - io.lettuce.core.protocol.CommandType
   - dev.naoh.lettucef.api.models._
+  - scala.util.chaining._
 
 - underlying: RedisSetAsyncCommands[K, V]
   output: SetCommands
@@ -491,7 +557,7 @@
   - fun: RedisFuture<Long> zlexcount(K key, Range<? extends V> range);
   - fun: RedisFuture<List<Double>> zmscore(K key, V... members);
     output:
-      tpe: Seq<Option<Double>>
+      tpe: Seq[Option[Double]]
       j2s: _.asScala.toSeq.map(Option(_).map(Double2double))
   - fun: RedisFuture<ScoredValue<V>> zpopmin(K key);
   - fun: RedisFuture<List<ScoredValue<V>>> zpopmin(K key, long count);
@@ -697,10 +763,33 @@
   - fun: RedisFuture<String> aclGenpass();
   - fun: RedisFuture<String> aclGenpass(int bits);
   - fun: RedisFuture<List<Object>> aclGetuser(String username);
+    dispatch:
+      cType: ACL
+      args:
+      - add(CommandKeyword.GETUSER)
+      - add(username)
+      parse: RedisData[V]
+      output: List[RedisData[V]]
+      postfix: _.asList
   - fun: RedisFuture<List<String>> aclList();
   - fun: RedisFuture<String> aclLoad();
   - fun: RedisFuture<List<Map<String, Object>>> aclLog();
+    dispatch:
+      cType: ACL
+      args:
+      - add(CommandKeyword.LOG)
+      parse: RedisData[V]
+      output: List[RedisData[V]]
+      postfix: _.asList
   - fun: RedisFuture<List<Map<String, Object>>> aclLog(int count);
+    dispatch:
+      cType: ACL
+      args:
+      - add(CommandKeyword.LOG)
+      - add(count)
+      parse: RedisData[V]
+      output: List[RedisData[V]]
+      postfix: _.asList
   - fun: RedisFuture<String> aclLogReset();
   - fun: RedisFuture<String> aclSave();
   - fun: RedisFuture<String> aclSetuser(String username, AclSetuserArgs setuserArgs);

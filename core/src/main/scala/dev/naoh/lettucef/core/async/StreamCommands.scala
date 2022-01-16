@@ -18,12 +18,14 @@ import io.lettuce.core.XReadArgs
 import io.lettuce.core.XReadArgs.StreamOffset
 import io.lettuce.core.XTrimArgs
 import io.lettuce.core.api.async._
+import io.lettuce.core.protocol.CommandKeyword
+import io.lettuce.core.protocol.CommandType
 import scala.jdk.CollectionConverters._
 
 
 trait StreamCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
 
-  protected val underlying: RedisStreamAsyncCommands[K, V]
+  protected val underlying: RedisStreamAsyncCommands[K, V] with BaseRedisAsyncCommands[K, V]
   
   def xack(key: K, group: K, messageIds: String*): F[F[Long]] =
     JF.toAsync(underlying.xack(key, group, messageIds: _*)).map(_.map(Long2long))
@@ -64,14 +66,14 @@ trait StreamCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
   def xgroupSetid(streamOffset: StreamOffset[K], group: K): F[F[String]] =
     JF.toAsync(underlying.xgroupSetid(streamOffset, group))
   
-  def xinfoStream(key: K): F[F[Seq[RedisData[V]]]] =
-    JF.toAsync(underlying.xinfoStream(key)).map(_.map(_.asScala.toSeq.map(RedisData.from[V])))
+  def xinfoStream(key: K): F[F[List[RedisData[V]]]] =
+    JF.toAsync(underlying.dispatch(CommandType.XINFO, dispatchHelper.createRedisDataOutput(), dispatchHelper.createArgs().add(CommandKeyword.STREAM).addKey(key))).map(_.map(_.asList))
   
-  def xinfoGroups(key: K): F[F[Seq[RedisData[V]]]] =
-    JF.toAsync(underlying.xinfoGroups(key)).map(_.map(_.asScala.toSeq.map(RedisData.from[V])))
+  def xinfoGroups(key: K): F[F[List[RedisData[V]]]] =
+    JF.toAsync(underlying.dispatch(CommandType.XINFO, dispatchHelper.createRedisDataOutput(), dispatchHelper.createArgs().add(CommandKeyword.GROUPS).addKey(key))).map(_.map(_.asList))
   
-  def xinfoConsumers(key: K, group: K): F[F[Seq[RedisData[V]]]] =
-    JF.toAsync(underlying.xinfoConsumers(key, group)).map(_.map(_.asScala.toSeq.map(RedisData.from[V])))
+  def xinfoConsumers(key: K, group: K): F[F[List[RedisData[V]]]] =
+    JF.toAsync(underlying.dispatch(CommandType.XINFO, dispatchHelper.createRedisDataOutput(), dispatchHelper.createArgs().add(CommandKeyword.CONSUMERS).addKey(key).addKey(group))).map(_.map(_.asList))
   
   def xlen(key: K): F[F[Long]] =
     JF.toAsync(underlying.xlen(key)).map(_.map(Long2long))

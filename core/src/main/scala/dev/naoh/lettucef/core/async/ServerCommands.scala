@@ -12,13 +12,15 @@ import io.lettuce.core.KillArgs
 import io.lettuce.core.TrackingArgs
 import io.lettuce.core.UnblockType
 import io.lettuce.core.api.async._
+import io.lettuce.core.protocol.CommandKeyword
 import io.lettuce.core.protocol.CommandType
 import scala.jdk.CollectionConverters._
+import scala.util.chaining._
 
 
 trait ServerCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
 
-  protected val underlying: RedisServerAsyncCommands[K, V]
+  protected val underlying: RedisServerAsyncCommands[K, V] with BaseRedisAsyncCommands[K, V]
   
   def bgrewriteaof(): F[F[String]] =
     JF.toAsync(underlying.bgrewriteaof())
@@ -59,14 +61,14 @@ trait ServerCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
   def clientUnblock(id: Long, tpe: UnblockType): F[F[Long]] =
     JF.toAsync(underlying.clientUnblock(id, tpe)).map(_.map(Long2long))
   
-  def command(): F[F[Seq[RedisData[V]]]] =
-    JF.toAsync(underlying.command()).map(_.map(_.asScala.toSeq.map(RedisData.from[V])))
+  def command(): F[F[List[RedisData[V]]]] =
+    JF.toAsync(underlying.dispatch(CommandType.COMMAND, dispatchHelper.createRedisDataOutput())).map(_.map(_.asList))
   
   def commandCount(): F[F[Long]] =
     JF.toAsync(underlying.commandCount()).map(_.map(Long2long))
   
-  def commandInfo(commands: String*): F[F[Seq[RedisData[V]]]] =
-    JF.toAsync(underlying.commandInfo(commands: _*)).map(_.map(_.asScala.toSeq.map(RedisData.from[V])))
+  def commandInfo(commands: String*): F[F[List[RedisData[V]]]] =
+    JF.toAsync(underlying.dispatch(CommandType.COMMAND, dispatchHelper.createRedisDataOutput(), dispatchHelper.createArgs().add(CommandType.INFO).tap(a => commands.foreach(a.add)))).map(_.map(_.asList))
   
   def configGet(parameter: String): F[F[Map[String, String]]] =
     JF.toAsync(underlying.configGet(parameter)).map(_.map(_.asScala.toMap))
@@ -134,11 +136,11 @@ trait ServerCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
   def slaveofNoOne(): F[F[String]] =
     JF.toAsync(underlying.slaveofNoOne())
   
-  def slowlogGet(): F[F[Seq[RedisData[V]]]] =
-    JF.toAsync(underlying.slowlogGet()).map(_.map(_.asScala.toSeq.map(RedisData.from[V])))
+  def slowlogGet(): F[F[List[RedisData[V]]]] =
+    JF.toAsync(underlying.dispatch(CommandType.SLOWLOG, dispatchHelper.createRedisDataOutput(), dispatchHelper.createArgs().add(CommandType.GET))).map(_.map(_.asList))
   
-  def slowlogGet(count: Int): F[F[Seq[RedisData[V]]]] =
-    JF.toAsync(underlying.slowlogGet(count)).map(_.map(_.asScala.toSeq.map(RedisData.from[V])))
+  def slowlogGet(count: Int): F[F[List[RedisData[V]]]] =
+    JF.toAsync(underlying.dispatch(CommandType.SLOWLOG, dispatchHelper.createRedisDataOutput(), dispatchHelper.createArgs().add(CommandType.GET).add(count))).map(_.map(_.asList))
   
   def slowlogLen(): F[F[Long]] =
     JF.toAsync(underlying.slowlogLen()).map(_.map(Long2long))

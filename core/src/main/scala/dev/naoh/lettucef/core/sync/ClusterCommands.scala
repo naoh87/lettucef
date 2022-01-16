@@ -8,12 +8,14 @@ import dev.naoh.lettucef.core.util.LettuceValueConverter
 import dev.naoh.lettucef.core.util.{JavaFutureUtil => JF}
 import io.lettuce.core.api.async._
 import io.lettuce.core.cluster.api.async.RedisClusterAsyncCommands
+import io.lettuce.core.protocol.CommandKeyword
+import io.lettuce.core.protocol.CommandType
 import scala.jdk.CollectionConverters._
 
 
 trait ClusterCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
 
-  protected val underlying: RedisClusterAsyncCommands[K, V]
+  protected val underlying: RedisClusterAsyncCommands[K, V] with BaseRedisAsyncCommands[K, V]
   
   def auth(password: CharSequence): F[String] =
     JF.toSync(underlying.auth(password))
@@ -78,8 +80,8 @@ trait ClusterCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
   def clusterSetConfigEpoch(configEpoch: Long): F[String] =
     JF.toSync(underlying.clusterSetConfigEpoch(configEpoch))
   
-  def clusterSlots(): F[Seq[RedisData[V]]] =
-    JF.toSync(underlying.clusterSlots()).map(_.asScala.toSeq.map(RedisData.from[V]))
+  def clusterSlots(): F[List[RedisData[V]]] =
+    JF.toSync(underlying.dispatch(CommandType.CLUSTER, dispatchHelper.createRedisDataOutput(), dispatchHelper.createArgs().add(CommandKeyword.SLOTS))).map(_.asList)
   
   def asking(): F[String] =
     JF.toSync(underlying.asking())

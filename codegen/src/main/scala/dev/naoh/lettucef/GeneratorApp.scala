@@ -78,9 +78,19 @@ case class Async(
   imports: List[String],
 ) {
 
+  def refineUnderlying: String = {
+    val dispatchHolder = "BaseRedisAsyncCommands[K, V]"
+    if (methods.exists(_.dispatch.isDefined) && !underlying.contains(dispatchHolder)) {
+      s"$underlying with $dispatchHolder"
+    } else {
+      underlying
+    }
+  }
+
   def refine(): Async =
     copy(
-      imports = (imports ++ Async.constantImports).distinct.sortBy {
+      underlying = refineUnderlying,
+      imports = (imports ++ Async.constantImports ++ methods.flatMap(_.imports)).distinct.sortBy {
         case name if name.startsWith("java.") => (0, name)
         case name if name.startsWith("scala.") => (2, name)
         case name => (1, name)
@@ -95,6 +105,8 @@ object Async {
     output: Option[CustomOutput],
     dispatch: Option[Dispatch]
   ) {
+    def imports: List[String] = dispatch.toList.flatMap(_.imports)
+
     val options: Seq[String] = opt.toList.flatten
 
     val skipArgType = Set("Object", "Date", "ValueStreamingChannel", "KeyStreamingChannel", "KeyValueStreamingChannel", "ScoredValueStreamingChannel")
@@ -114,7 +126,7 @@ object Async {
         .orElse(output.map(_.replace(tpe)))
         .getOrElse(tpe.toScala(Nil, options.contains("nullable")))
 
-    lazy val scalaDef =
+    private lazy val scalaDef =
       fun.mapOutput(convertOut).mapArgs(_.toScala)
 
     def printSync(p: FunctionalPrinter): FunctionalPrinter =
@@ -156,6 +168,11 @@ object Async {
     def meth: String = "dispatch"
 
     def pfix: String = postfix.getOrElse("")
+
+    def imports: List[String] =
+      List(
+        "io.lettuce.core.protocol.CommandKeyword",
+        "io.lettuce.core.protocol.CommandType")
   }
 
   case class CustomOutput(

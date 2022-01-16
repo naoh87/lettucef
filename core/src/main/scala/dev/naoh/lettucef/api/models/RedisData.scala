@@ -33,17 +33,4 @@ object RedisData {
 
   case object RedisNull extends RedisData[Nothing]
 
-  def from[V: ClassTag](j: Any): RedisData[V] =
-    j match {
-      case null => RedisNull
-      case v: V => RedisBulk(v)
-      case v: Long => RedisInteger(v)
-      case v: String => RedisString(v)
-      case a: java.util.List[_] =>
-        val b = List.newBuilder[RedisData[V]]
-        a.asScala.foreach(e => b.addOne(from[V](e)))
-        RedisArray(b.result())
-      case v: Double => RedisDouble(v)
-      case v: Boolean => RedisBoolean(v)
-    }
 }

@@ -9,13 +9,14 @@ import dev.naoh.lettucef.core.util.{JavaFutureUtil => JF}
 import io.lettuce.core.AclCategory
 import io.lettuce.core.AclSetuserArgs
 import io.lettuce.core.api.async._
+import io.lettuce.core.protocol.CommandKeyword
 import io.lettuce.core.protocol.CommandType
 import scala.jdk.CollectionConverters._
 
 
 trait AclCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
 
-  protected val underlying: RedisAclAsyncCommands[K, V]
+  protected val underlying: RedisAclAsyncCommands[K, V] with BaseRedisAsyncCommands[K, V]
   
   def aclCat(): F[F[Set[AclCategory]]] =
     JF.toAsync(underlying.aclCat()).map(_.map(_.asScala.toSet))
@@ -32,8 +33,8 @@ trait AclCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
   def aclGenpass(bits: Int): F[F[String]] =
     JF.toAsync(underlying.aclGenpass(bits))
   
-  def aclGetuser(username: String): F[F[Seq[RedisData[V]]]] =
-    JF.toAsync(underlying.aclGetuser(username)).map(_.map(_.asScala.toSeq.map(RedisData.from[V])))
+  def aclGetuser(username: String): F[F[List[RedisData[V]]]] =
+    JF.toAsync(underlying.dispatch(CommandType.ACL, dispatchHelper.createRedisDataOutput(), dispatchHelper.createArgs().add(CommandKeyword.GETUSER).add(username))).map(_.map(_.asList))
   
   def aclList(): F[F[Seq[String]]] =
     JF.toAsync(underlying.aclList()).map(_.map(_.asScala.toSeq))
@@ -41,11 +42,11 @@ trait AclCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
   def aclLoad(): F[F[String]] =
     JF.toAsync(underlying.aclLoad())
   
-  def aclLog(): F[F[Seq[Map[String, RedisData[V]]]]] =
-    JF.toAsync(underlying.aclLog()).map(_.map(_.asScala.toSeq.map(_.asScala.view.mapValues(RedisData.from[V]).toMap)))
+  def aclLog(): F[F[List[RedisData[V]]]] =
+    JF.toAsync(underlying.dispatch(CommandType.ACL, dispatchHelper.createRedisDataOutput(), dispatchHelper.createArgs().add(CommandKeyword.LOG))).map(_.map(_.asList))
   
-  def aclLog(count: Int): F[F[Seq[Map[String, RedisData[V]]]]] =
-    JF.toAsync(underlying.aclLog(count)).map(_.map(_.asScala.toSeq.map(_.asScala.view.mapValues(RedisData.from[V]).toMap)))
+  def aclLog(count: Int): F[F[List[RedisData[V]]]] =
+    JF.toAsync(underlying.dispatch(CommandType.ACL, dispatchHelper.createRedisDataOutput(), dispatchHelper.createArgs().add(CommandKeyword.LOG).add(count))).map(_.map(_.asList))
   
   def aclLogReset(): F[F[String]] =
     JF.toAsync(underlying.aclLogReset())
