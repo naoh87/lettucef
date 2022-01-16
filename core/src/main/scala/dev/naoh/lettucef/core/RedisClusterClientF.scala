@@ -57,7 +57,7 @@ object RedisClusterClientF {
 class RedisClusterConnectionF[F[_] : Async, K, V](
   underlying: StatefulRedisClusterConnection[K, V],
   codec: RedisCodec[K, V]
-) {
+) extends CommonConnectionF[F, K, V] {
 
   private[this] val _sync = new RedisClusterSyncCommandsF[F, K, V](underlying.async(), codec)
 

@@ -1,7 +1,6 @@
 package dev.naoh.lettucef.streams
 
-import dev.naoh.lettucef.core.RedisClusterConnectionF
-import dev.naoh.lettucef.core.RedisConnectionF
+import dev.naoh.lettucef.core.CommonConnectionF
 import dev.naoh.lettucef.streams.commands.ScanStreamCommands
 
 final class RedisStreamCommandsF[F[_], K, V](
@@ -9,11 +8,7 @@ final class RedisStreamCommandsF[F[_], K, V](
 ) extends ScanStreamCommands[F, K, V]
 
 trait StreamCommandApiOps {
-  implicit class RedisClusterStreamOps[F[_], K, V](conn: RedisClusterConnectionF[F, K, V]) {
-    def stream(): RedisStreamCommandsF[F, K, V] = new RedisStreamCommandsF(conn.sync())
-  }
-
-  implicit class RedisClientStreamOps[F[_], K, V](conn: RedisConnectionF[F, K, V]) {
+  implicit class RedisStreamCommandsOps[F[_], K, V](conn: CommonConnectionF[F, K, V]) {
     def stream(): RedisStreamCommandsF[F, K, V] = new RedisStreamCommandsF(conn.sync())
   }
 }

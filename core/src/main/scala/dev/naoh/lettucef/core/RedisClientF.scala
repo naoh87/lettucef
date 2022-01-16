@@ -71,7 +71,7 @@ object RedisClientF {
 class RedisConnectionF[F[_] : Async, K, V](
   underlying: StatefulRedisConnection[K, V],
   codec: RedisCodec[K, V]
-) {
+) extends CommonConnectionF[F, K, V] {
   private[this] val _sync = new RedisSyncCommandsF[F, K, V](underlying.async(), codec)
 
   def sync(): RedisSyncCommandsF[F, K, V] = _sync

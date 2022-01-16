@@ -21,7 +21,7 @@ import io.lettuce.core.pubsub.RedisPubSubListener
 
 class ManagedPubSubF[F[_] : Async, K, V](
   underlying: RedisPubSubF[F, K, V],
-  val dispatcher: Dispatcher[F],
+  dispatcher: Dispatcher[F],
   eState: SignallingRef[F, State[K]],
   pState: SignallingRef[F, State[K]],
 ) {
@@ -265,7 +265,7 @@ object ManagedPubSubF {
 
 }
 
-trait AutoSubscriberApiOps {
+trait ManagedPubSubExtensionOps {
   implicit class ManagedPubSubOps2[F[_] : Async](val base: ConnectionResource2[F, RedisURI, RedisPubSubF]) {
     def stream[K, V](codec: RedisCodec[K, V], uri: RedisURI): Resource[F, ManagedPubSubF[F, K, V]] =
       Dispatcher[F].flatMap(d => stream(codec, uri, d))
