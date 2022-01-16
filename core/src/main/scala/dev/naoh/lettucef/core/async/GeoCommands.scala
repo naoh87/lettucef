@@ -1,6 +1,8 @@
 // Code generated. DO NOT EDIT
 package dev.naoh.lettucef.core.async
 
+import dev.naoh.lettucef.api.commands.GeoCommandsF
+import dev.naoh.lettucef.api.Commands
 import cats.syntax.functor._
 import dev.naoh.lettucef.api.models.geo._
 import dev.naoh.lettucef.core.commands.CommandsDeps
@@ -16,7 +18,7 @@ import io.lettuce.core.api.async._
 import scala.jdk.CollectionConverters._
 
 
-trait GeoCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
+trait GeoCommands[F[_], K, V] extends CommandsDeps[F, K, V] with GeoCommandsF[Commands.Compose[F, F]#R, K, V] {
 
   protected val underlying: RedisGeoAsyncCommands[K, V]
   

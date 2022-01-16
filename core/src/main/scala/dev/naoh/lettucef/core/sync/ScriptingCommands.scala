@@ -1,6 +1,7 @@
 // Code generated. DO NOT EDIT
 package dev.naoh.lettucef.core.sync
 
+import dev.naoh.lettucef.api.commands.ScriptingCommandsF
 import cats.syntax.functor._
 import dev.naoh.lettucef.core.commands.CommandsDeps
 import dev.naoh.lettucef.core.util.LettuceValueConverter
@@ -10,7 +11,7 @@ import io.lettuce.core.api.async._
 import scala.jdk.CollectionConverters._
 
 
-trait ScriptingCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
+trait ScriptingCommands[F[_], K, V] extends CommandsDeps[F, K, V] with ScriptingCommandsF[F, K, V] {
 
   protected val underlying: RedisScriptingAsyncCommands[K, V]
   

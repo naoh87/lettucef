@@ -1,6 +1,7 @@
 // Code generated. DO NOT EDIT
 package dev.naoh.lettucef.core.sync
 
+import dev.naoh.lettucef.api.commands.ClusterCommandsF
 import cats.syntax.functor._
 import dev.naoh.lettucef.api.models._
 import dev.naoh.lettucef.core.commands.CommandsDeps
@@ -13,7 +14,7 @@ import io.lettuce.core.protocol.CommandType
 import scala.jdk.CollectionConverters._
 
 
-trait ClusterCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
+trait ClusterCommands[F[_], K, V] extends CommandsDeps[F, K, V] with ClusterCommandsF[F, K, V] {
 
   protected val underlying: RedisClusterAsyncCommands[K, V] with BaseRedisAsyncCommands[K, V]
   

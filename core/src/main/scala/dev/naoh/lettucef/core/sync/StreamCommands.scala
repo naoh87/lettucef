@@ -1,6 +1,7 @@
 // Code generated. DO NOT EDIT
 package dev.naoh.lettucef.core.sync
 
+import dev.naoh.lettucef.api.commands.StreamCommandsF
 import cats.syntax.functor._
 import dev.naoh.lettucef.api.models._
 import dev.naoh.lettucef.api.models.stream._
@@ -23,7 +24,7 @@ import io.lettuce.core.protocol.CommandType
 import scala.jdk.CollectionConverters._
 
 
-trait StreamCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
+trait StreamCommands[F[_], K, V] extends CommandsDeps[F, K, V] with StreamCommandsF[F, K, V] {
 
   protected val underlying: RedisStreamAsyncCommands[K, V] with BaseRedisAsyncCommands[K, V]
   

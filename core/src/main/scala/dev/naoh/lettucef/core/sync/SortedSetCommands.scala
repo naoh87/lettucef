@@ -1,6 +1,7 @@
 // Code generated. DO NOT EDIT
 package dev.naoh.lettucef.core.sync
 
+import dev.naoh.lettucef.api.commands.SortedSetCommandsF
 import cats.syntax.functor._
 import dev.naoh.lettucef.api.models._
 import dev.naoh.lettucef.core.commands.CommandsDeps
@@ -16,7 +17,7 @@ import io.lettuce.core.api.async._
 import scala.jdk.CollectionConverters._
 
 
-trait SortedSetCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
+trait SortedSetCommands[F[_], K, V] extends CommandsDeps[F, K, V] with SortedSetCommandsF[F, K, V] {
 
   protected val underlying: RedisSortedSetAsyncCommands[K, V]
   

@@ -1,6 +1,7 @@
 // Code generated. DO NOT EDIT
 package dev.naoh.lettucef.core.sync
 
+import dev.naoh.lettucef.api.commands.AclCommandsF
 import cats.syntax.functor._
 import dev.naoh.lettucef.api.models._
 import dev.naoh.lettucef.core.commands.CommandsDeps
@@ -14,7 +15,7 @@ import io.lettuce.core.protocol.CommandType
 import scala.jdk.CollectionConverters._
 
 
-trait AclCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
+trait AclCommands[F[_], K, V] extends CommandsDeps[F, K, V] with AclCommandsF[F, K, V] {
 
   protected val underlying: RedisAclAsyncCommands[K, V] with BaseRedisAsyncCommands[K, V]
   

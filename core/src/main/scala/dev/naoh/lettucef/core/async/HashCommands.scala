@@ -1,6 +1,8 @@
 // Code generated. DO NOT EDIT
 package dev.naoh.lettucef.core.async
 
+import dev.naoh.lettucef.api.commands.HashCommandsF
+import dev.naoh.lettucef.api.Commands
 import cats.syntax.functor._
 import dev.naoh.lettucef.api.models._
 import dev.naoh.lettucef.core.commands.CommandsDeps
@@ -12,7 +14,7 @@ import io.lettuce.core.api.async._
 import scala.jdk.CollectionConverters._
 
 
-trait HashCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
+trait HashCommands[F[_], K, V] extends CommandsDeps[F, K, V] with HashCommandsF[Commands.Compose[F, F]#R, K, V] {
 
   protected val underlying: RedisHashAsyncCommands[K, V]
   

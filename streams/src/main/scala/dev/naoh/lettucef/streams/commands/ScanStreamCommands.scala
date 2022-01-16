@@ -1,9 +1,6 @@
 package dev.naoh.lettucef.streams.commands
 
-import dev.naoh.lettucef.core.sync.HashCommands
-import dev.naoh.lettucef.core.sync.KeyCommands
-import dev.naoh.lettucef.core.sync.SetCommands
-import dev.naoh.lettucef.core.sync.SortedSetCommands
+import dev.naoh.lettucef.api.commands._
 import dev.naoh.lettucef.api.models.DataScanCursor
 import fs2._
 import io.lettuce.core.ScanArgs
@@ -38,7 +35,7 @@ trait ScanStreamCommands[F[_], K, V] {
 }
 
 object ScanStreamCommands {
-  type Underlying[F[_], K, V] = KeyCommands[F, K, V] with SetCommands[F, K, V] with HashCommands[F, K, V] with SortedSetCommands[F, K, V]
+  type Underlying[F[_], K, V] = KeyCommandsF[F, K, V] with SetCommandsF[F, K, V] with HashCommandsF[F, K, V] with SortedSetCommandsF[F, K, V]
 
   def makeScanStream[F[_], A](init: F[DataScanCursor[A]], next: ScanCursor => F[DataScanCursor[A]]): Stream[F, A] = {
     def go(cursor: DataScanCursor[A]): Pull[F, A, Unit] =

@@ -1,6 +1,8 @@
 // Code generated. DO NOT EDIT
 package dev.naoh.lettucef.core.async
 
+import dev.naoh.lettucef.api.commands.ServerCommandsF
+import dev.naoh.lettucef.api.Commands
 import java.util.Date
 import cats.syntax.functor._
 import dev.naoh.lettucef.api.models._
@@ -18,7 +20,7 @@ import scala.jdk.CollectionConverters._
 import scala.util.chaining._
 
 
-trait ServerCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
+trait ServerCommands[F[_], K, V] extends CommandsDeps[F, K, V] with ServerCommandsF[Commands.Compose[F, F]#R, K, V] {
 
   protected val underlying: RedisServerAsyncCommands[K, V] with BaseRedisAsyncCommands[K, V]
   

@@ -1,6 +1,8 @@
 // Code generated. DO NOT EDIT
 package dev.naoh.lettucef.core.async
 
+import dev.naoh.lettucef.api.commands.KeyCommandsF
+import dev.naoh.lettucef.api.Commands
 import java.time.Duration
 import java.time.Instant
 import cats.syntax.functor._
@@ -18,7 +20,7 @@ import io.lettuce.core.api.async._
 import scala.jdk.CollectionConverters._
 
 
-trait KeyCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
+trait KeyCommands[F[_], K, V] extends CommandsDeps[F, K, V] with KeyCommandsF[Commands.Compose[F, F]#R, K, V] {
 
   protected val underlying: RedisKeyAsyncCommands[K, V]
   

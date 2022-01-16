@@ -1,5 +1,7 @@
 package dev.naoh.lettucef.core.async
 
+import dev.naoh.lettucef.api.Commands
+import dev.naoh.lettucef.api.commands.EvalScriptingCommandsF
 import dev.naoh.lettucef.core.commands.CommandsDeps
 import dev.naoh.lettucef.api.models.RedisData
 import dev.naoh.lettucef.core.util.ManualDispatchHelper
@@ -9,7 +11,7 @@ import io.lettuce.core.api.async.RedisScriptingAsyncCommands
 import io.lettuce.core.protocol.CommandType
 import scala.jdk.CollectionConverters._
 
-trait EvalScriptingCommands[F[_], K, V] extends CommandsDeps[F, K, V] {
+trait EvalScriptingCommands[F[_], K, V] extends CommandsDeps[F, K, V] with EvalScriptingCommandsF[Commands.Compose[F, F]#R, K, V] {
 
   protected val underlying: BaseRedisAsyncCommands[K, V] with RedisScriptingAsyncCommands[K, V]
 

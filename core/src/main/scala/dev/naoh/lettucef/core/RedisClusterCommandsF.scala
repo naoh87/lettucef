@@ -1,7 +1,7 @@
 package dev.naoh.lettucef.core
 
 import cats.effect.kernel.Async
-import dev.naoh.lettucef.core.commands.CommandsDeps
+import dev.naoh.lettucef.api.Commands
 import dev.naoh.lettucef.core.util.ManualDispatchHelper
 import io.lettuce.core.cluster.api.async.RedisAdvancedClusterAsyncCommands
 import io.lettuce.core.codec.RedisCodec
@@ -10,7 +10,7 @@ final class RedisClusterSyncCommandsF[F[_], K, V](
   protected val underlying: RedisAdvancedClusterAsyncCommands[K, V],
   codec: RedisCodec[K, V]
 )(implicit F: Async[F])
-  extends CommandsDeps[F, K, V]
+  extends Commands.ClusterSync[F, K, V]
     with sync.AclCommands[F, K, V]
     with sync.BaseCommands[F, K, V]
     with sync.ClusterCommands[F, K, V]
@@ -34,7 +34,7 @@ final class RedisClusterAsyncCommandsF[F[_], K, V](
   protected val underlying: RedisAdvancedClusterAsyncCommands[K, V],
   codec: RedisCodec[K, V]
 )(implicit F: Async[F])
-  extends CommandsDeps[F, K, V]
+  extends Commands.ClusterAsync[F, K, V]
     with async.AclCommands[F, K, V]
     with async.BaseCommands[F, K, V]
     with async.ClusterCommands[F, K, V]

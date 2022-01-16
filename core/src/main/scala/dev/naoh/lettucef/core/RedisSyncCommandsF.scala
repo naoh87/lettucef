@@ -1,6 +1,7 @@
 package dev.naoh.lettucef.core
 
 import cats.effect.kernel.Async
+import dev.naoh.lettucef.api.Commands
 import dev.naoh.lettucef.core.commands.CommandsDeps
 import dev.naoh.lettucef.core.util.ManualDispatchHelper
 import io.lettuce.core.api.async.RedisAsyncCommands
@@ -10,7 +11,8 @@ final class RedisSyncCommandsF[F[_], K, V](
   protected val underlying: RedisAsyncCommands[K, V],
   codec: RedisCodec[K, V]
 )(implicit F: Async[F])
-  extends CommandsDeps[F, K, V]
+  extends Commands.BareSync[F, K, V]
+    with CommandsDeps[F, K, V]
     with sync.AclCommands[F, K, V]
     with sync.BaseCommands[F, K, V]
     with sync.GeoCommands[F, K, V]
@@ -34,7 +36,8 @@ final class RedisAsyncCommandsF[F[_], K, V](
   protected val underlying: RedisAsyncCommands[K, V],
   codec: RedisCodec[K, V]
 )(implicit F: Async[F])
-  extends CommandsDeps[F, K, V]
+  extends Commands.BareAsync[F, K, V]
+    with CommandsDeps[F, K, V]
     with async.AclCommands[F, K, V]
     with async.BaseCommands[F, K, V]
     with async.GeoCommands[F, K, V]

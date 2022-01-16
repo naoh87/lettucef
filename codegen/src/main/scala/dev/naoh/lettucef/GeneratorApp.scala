@@ -3,6 +3,7 @@ package dev.naoh.lettucef
 import java.io.FileWriter
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.nio.file.StandardOpenOption
 import cats.effect.ExitCode
 import cats.effect.IO
 import cats.effect.IOApp
@@ -32,9 +33,10 @@ object GeneratorApp extends IOApp {
         .add("// Code generated. DO NOT EDIT")
         .add("package dev.naoh.lettucef.core.sync")
         .newline
+        .add(s"import dev.naoh.lettucef.api.commands.${config.output}F")
         .add(config.imports.map(expr => s"import $expr"): _*)
         .newline.newline
-        .add(s"trait ${config.output}[F[_], K, V] extends CommandsDeps[F, K, V] {")
+        .add(s"trait ${config.output}[F[_], K, V] extends CommandsDeps[F, K, V] with ${config.output}F[F, K, V] {")
         .newline
         .indented(_
           .add(s"protected val underlying: ${config.underlying}").newline
@@ -48,9 +50,11 @@ object GeneratorApp extends IOApp {
         .add("// Code generated. DO NOT EDIT")
         .add("package dev.naoh.lettucef.core.async")
         .newline
+        .add(s"import dev.naoh.lettucef.api.commands.${config.output}F")
+        .add(s"import dev.naoh.lettucef.api.Commands")
         .add(config.imports.map(expr => s"import $expr"): _*)
         .newline.newline
-        .add(s"trait ${config.output}[F[_], K, V] extends CommandsDeps[F, K, V] {")
+        .add(s"trait ${config.output}[F[_], K, V] extends CommandsDeps[F, K, V] with ${config.output}F[Commands.Compose[F, F]#R, K, V] {")
         .newline
         .indented(_
           .add(s"protected val underlying: ${config.underlying}").newline
@@ -59,7 +63,21 @@ object GeneratorApp extends IOApp {
         .newline
         .pipe(print(asyncDir, _))
 
-      sync >> async
+      val cmdsDir = Paths.get(s"../core/src/main/scala/dev/naoh/lettucef/api/commands/${config.output}F.scala").toAbsolutePath
+      val cmds = FunctionalPrinter()
+        .add("// Code generated. DO NOT EDIT")
+        .add("package dev.naoh.lettucef.api.commands")
+        .newline
+        .add(config.imports.map(expr => s"import $expr"): _*)
+        .newline.newline
+        .add(s"trait ${config.output}F[F[_], K, V] {")
+        .newline
+        .indented(_.print(config.methods)((p, m) => m.printScalaDef(p)))
+        .add("}")
+        .newline
+        .pipe(print(cmdsDir, _))
+
+      sync >> async >> cmds
     }.sequence >> IO.delay {
       ExitCode.Success
     }
@@ -126,8 +144,15 @@ object Async {
         .orElse(output.map(_.replace(tpe)))
         .getOrElse(tpe.toScala(Nil, options.contains("nullable")))
 
-    private lazy val scalaDef =
+    private lazy val scalaDef: Method =
       fun.mapOutput(convertOut).mapArgs(_.toScala)
+
+    def printScalaDef(p: FunctionalPrinter): FunctionalPrinter =
+      if (isOutputTarget && !fun.existArgs(_.existName(skipArgType))) {
+        p.add(scalaDef.toSync.scalaDef).newline
+      } else {
+        p
+      }
 
     def printSync(p: FunctionalPrinter): FunctionalPrinter =
       if (isOutputTarget && !fun.existArgs(_.existName(skipArgType))) {
@@ -142,7 +167,6 @@ object Async {
 
     def printAsync(p: FunctionalPrinter): FunctionalPrinter =
       if (isOutputTarget && !fun.existArgs(_.existName(skipArgType))) {
-
         p.add(scalaDef.toAsync.scalaDef + " =")
           .indented(
             _.add(fun.asyncCall(scalaDef.args, scalaDef.output, dispatch, output.map(_.j2s))))
