@@ -6,9 +6,9 @@ import cats.effect.std.Dispatcher
 import cats.effect.std.Queue
 import cats.syntax.traverse._
 import dev.naoh.lettucef.core.RedisPubSubF
-import dev.naoh.lettucef.api.models.pubsub.PushedMessage
-import dev.naoh.lettucef.api.models.pubsub.PushedMessage.Unsubscribed
-import dev.naoh.lettucef.api.models.pubsub.PushedMessage._
+import dev.naoh.lettucef.api.models.pubsub.RedisPushed
+import dev.naoh.lettucef.api.models.pubsub.RedisPushed.Unsubscribed
+import dev.naoh.lettucef.api.models.pubsub.RedisPushed._
 import dev.naoh.lettucef.core.sync.RedisTest.RedisKey
 import dev.naoh.lettucef.core.sync.RedisTest.RedisValue
 import org.scalatest.freespec.AnyFreeSpec
@@ -24,7 +24,7 @@ class PubSubSpec extends AnyFreeSpec with Matchers {
       pub <- asyncR
       sub <- pubsubR
       d <- Dispatcher[IO]
-      q <- Resource.eval(Queue.unbounded[IO, PushedMessage[RedisKey, RedisValue]])
+      q <- Resource.eval(Queue.unbounded[IO, RedisPushed[RedisKey, RedisValue]])
       _ <- sub.setListener(RedisPubSubF.makeListener(m => d.unsafeRunSync(q.offer(m))))
     } yield for {
       _ <- sub.subscribe(key)

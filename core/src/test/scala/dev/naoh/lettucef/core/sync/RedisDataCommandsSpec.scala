@@ -7,9 +7,9 @@ import cats.effect.std.Queue
 import cats.syntax.traverse._
 import dev.naoh.lettucef.api.models.RedisData
 import dev.naoh.lettucef.api.models.RedisData.RedisArray
-import dev.naoh.lettucef.api.models.pubsub.PushedMessage
-import dev.naoh.lettucef.api.models.pubsub.PushedMessage.Unsubscribed
-import dev.naoh.lettucef.api.models.pubsub.PushedMessage._
+import dev.naoh.lettucef.api.models.pubsub.RedisPushed
+import dev.naoh.lettucef.api.models.pubsub.RedisPushed.Unsubscribed
+import dev.naoh.lettucef.api.models.pubsub.RedisPushed._
 import dev.naoh.lettucef.core.RedisPubSubF
 import dev.naoh.lettucef.core.sync.RedisTest.RedisKey
 import dev.naoh.lettucef.core.sync.RedisTest.RedisValue

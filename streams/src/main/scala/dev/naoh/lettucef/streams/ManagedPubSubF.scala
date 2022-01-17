@@ -9,7 +9,7 @@ import cats.syntax.functor._
 import dev.naoh.lettucef.core.RedisClientF.ConnectionResource2
 import dev.naoh.lettucef.core.RedisClusterClientF.ConnectionResource1
 import dev.naoh.lettucef.core.RedisPubSubF
-import dev.naoh.lettucef.api.models.pubsub.PushedMessage
+import dev.naoh.lettucef.api.models.pubsub.RedisPushed
 import dev.naoh.lettucef.streams.ManagedPubSubF.VoidListener
 import dev.naoh.lettucef.streams.ManagedPubSubF.State
 import fs2._
@@ -25,24 +25,24 @@ class ManagedPubSubF[F[_] : Async, K, V](
   eState: SignallingRef[F, State[K]],
   pState: SignallingRef[F, State[K]],
 ) {
-  def subscribeAwait(channels: K*): Resource[F, Stream[F, PushedMessage.Message[K, V]]] = {
+  def subscribeAwait(channels: K*): Resource[F, Stream[F, RedisPushed.Message[K, V]]] = {
     val target = channels.toSet
     ManagedPubSubF.stream(
       target, eState, emitSubscribe, emitUnsubscribe,
       startPush(ManagedPubSubF.messageSender[F, K, V](target, _, dispatcher)))
   }
 
-  def subscribe(channel: K*): Stream[F, PushedMessage.Message[K, V]] =
+  def subscribe(channel: K*): Stream[F, RedisPushed.Message[K, V]] =
     Stream.resource(subscribeAwait(channel: _*)).flatten
 
-  def psubscribeAwait(patterns: K*): Resource[F, Stream[F, PushedMessage.PMessage[K, V]]] = {
+  def psubscribeAwait(patterns: K*): Resource[F, Stream[F, RedisPushed.PMessage[K, V]]] = {
     val target = patterns.toSet
     ManagedPubSubF.stream(
       target, pState, emitPSubscribe, emitPUnsubscribe,
       startPush(ManagedPubSubF.pmessageSender[F, K, V](target, _, dispatcher)))
   }
 
-  def psubscribe(channel: K*): Stream[F, PushedMessage.PMessage[K, V]] =
+  def psubscribe(channel: K*): Stream[F, RedisPushed.PMessage[K, V]] =
     Stream.resource(psubscribeAwait(channel: _*)).flatten
 
   def addListener(listener: RedisPubSubListener[K, V]): F[Unit] =
@@ -123,23 +123,23 @@ object ManagedPubSubF {
 
   private def messageSender[F[_], K, V](
     target: Set[K],
-    ch: Channel[F, PushedMessage.Message[K, V]],
+    ch: Channel[F, RedisPushed.Message[K, V]],
     d: Dispatcher[F]
   ): RedisPubSubListener[K, V] = new VoidListener[K, V] {
     override def message(channel: K, message: V): Unit =
       if (target.contains(channel)) {
-        d.unsafeRunSync(ch.send(PushedMessage.Message(channel, message)))
+        d.unsafeRunSync(ch.send(RedisPushed.Message(channel, message)))
       }
   }
 
   private def pmessageSender[F[_], K, V](
     target: Set[K],
-    ch: Channel[F, PushedMessage.PMessage[K, V]],
+    ch: Channel[F, RedisPushed.PMessage[K, V]],
     d: Dispatcher[F]
   ): RedisPubSubListener[K, V] = new VoidListener[K, V] {
     override def message(pattern: K, channel: K, message: V): Unit = {
       if (target.contains(pattern)) {
-        d.unsafeRunSync(ch.send(PushedMessage.PMessage(pattern, channel, message)))
+        d.unsafeRunSync(ch.send(RedisPushed.PMessage(pattern, channel, message)))
       }
     }
   }

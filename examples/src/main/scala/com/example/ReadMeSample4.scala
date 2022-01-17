@@ -4,9 +4,9 @@ import cats.effect.IO
 import cats.effect.IOApp
 import cats.implicits.toTraverseOps
 import dev.naoh.lettucef.api.LettuceF
-import dev.naoh.lettucef.api.models.pubsub.PushedMessage
-import dev.naoh.lettucef.api.models.pubsub.PushedMessage.Subscribed
-import dev.naoh.lettucef.api.models.pubsub.PushedMessage.Unsubscribed
+import dev.naoh.lettucef.api.models.pubsub.RedisPushed
+import dev.naoh.lettucef.api.models.pubsub.RedisPushed.Subscribed
+import dev.naoh.lettucef.api.models.pubsub.RedisPushed.Unsubscribed
 import dev.naoh.lettucef.api.streams._
 import dev.naoh.lettucef.core.RedisPubSubF
 import io.lettuce.core.cluster.RedisClusterClient
@@ -29,7 +29,7 @@ object ReadMeSample4 extends IOApp.Simple {
     } yield ()
   }.use(identity)
 
-  val printSubscription: PushedMessage[String, String] => Unit = {
+  val printSubscription: RedisPushed[String, String] => Unit = {
     case m: Subscribed[_] => println(s"> $m")
     case m: Unsubscribed[_] => println(s"> $m")
     case _ => ()
