@@ -25,24 +25,6 @@ object GenResourcePool {
         ea <- da.get
       } yield ea.map(Peaked(_, c.cancel))
 
-    def take(state: Ref[F, State[F, A]]): F[Peaked[F, A]] =
-      for {
-        pop <- state.modify(_.take1)
-        p <- pop match {
-          case Right(p) => F.pure(p)
-          case Left(true) => peak().flatMap {
-            case Right(p) => F.pure(p)
-            case Left(value) =>
-              state.update(_.deactivate1) >> F.raiseError[Peaked[F, A]](value)
-          }
-          case _ =>
-            F.raiseError[Peaked[F, A]](PoolLifecycleViolation)
-        }
-      } yield p
-
-    def pushBack(state: Ref[F, State[F, A]], p: Peaked[F, A]): F[Unit] =
-      state.modify(_.push1(p, config.maxIdle)).flatMap(_.sequence.void)
-
     Resource
       .make(Ref.of(State.empty[F, A])) { state =>
         Deferred[F, Unit].flatMap(ks =>
@@ -51,7 +33,20 @@ object GenResourcePool {
             state.get.flatMap(_.release().sequence.void))
       }
       .map { state =>
-        Resource.make(take(state))(pushBack(state, _)).map(_.a)
+        Resource.make {
+          state.modify(_.take1).flatMap {
+            case Right(p) => F.pure(p)
+            case Left(true) => peak().flatMap {
+              case Right(p) => F.pure(p)
+              case Left(err) =>
+                state.modify(_.deactivate1).flatMap(_.sequence) >> F.raiseError[Peaked[F, A]](err)
+            }
+            case _ =>
+              F.raiseError[Peaked[F, A]](PoolLifecycleViolation)
+          }
+        } { p =>
+          state.modify(_.push1(p, config.maxIdle)).flatMap(_.sequence.void)
+        }.map(_.a)
       }
       .evalTap(res => List.fill(config.minIdle.min(config.maxIdle))(res.use(_ => F.unit)).sequence)
   }
@@ -74,18 +69,21 @@ object GenResourcePool {
 
     def push1(b: Peaked[F, A], maxQueue: Int): (State[F, A], List[F[Unit]]) = {
       if (finalizer.isDefined) { //for guard leak usage
-        (deactivate1, b.release :: (if (active > 1) Nil else finalizer.toList))
+        (copy(active = active - 1), b.release :: (if (active > 1) Nil else finalizer.toList))
       } else {
         if (queue.size < maxQueue) {
           (State(active - 1, queue.appended(b), finalizer), Nil)
         } else {
-          (deactivate1, b.release :: Nil)
+          (copy(active = active - 1), b.release :: Nil)
         }
       }
     }
 
-    def deactivate1: State[F, A] =
-      copy(active = active - 1)
+    def deactivate1: (State[F, A], Option[F[Unit]]) =
+      (
+        copy(active = active - 1),
+        if (active > 1) None else finalizer
+      )
 
     def setFinalizer(fu: F[Unit]): (State[F, A], List[F[Unit]]) =
       (copy(finalizer = Some(fu)), if (active == 0) List(fu) else Nil)
