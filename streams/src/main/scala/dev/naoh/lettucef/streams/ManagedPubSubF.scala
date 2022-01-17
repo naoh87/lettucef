@@ -185,32 +185,30 @@ object ManagedPubSubF {
     val Unsubscribing = 3
 
 
-    private val up = (Subscribing, 1)
-
     def subscribe1[K](ch: Set[K]): State[K] => (State[K], Seq[K]) = { now =>
-      var toUp = List.empty[K]
+      var up = List.empty[K]
       var next = now
       ch.foreach { k =>
-        next = now.get(k) match {
+        next = next.get(k) match {
           case Some((s, c)) =>
             next.updated(k, (s, c + 1))
           case None =>
-            toUp = k :: toUp
-            next.updated(k, up)
+            up = k :: up
+            next.updated(k, (Subscribing, 1))
         }
       }
-      (next, toUp)
+      (next, up)
     }
 
     def unsubscribe1[K](ch: Set[K]): State[K] => (State[K], Seq[K]) = { now =>
-      var toDown = List.empty[K]
+      var down = List.empty[K]
       var next = now
       ch.foreach { k =>
-        next = now.get(k) match {
+        next = next.get(k) match {
           case Some(v) =>
             v match {
               case (Subscribed, 1) =>
-                toDown = k :: toDown
+                down = k :: down
                 next.updated(k, (Unsubscribing, 0))
               case (s, n) =>
                 next.updated(k, (s, n - 1))
@@ -219,7 +217,7 @@ object ManagedPubSubF {
             sys.error("unexpected state in unsubscribe1")
         }
       }
-      (next, toDown)
+      (next, down)
     }
 
     def subscribed[K](ch: K): State[K] => (State[K], Boolean) = { now =>
