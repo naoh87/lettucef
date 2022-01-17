@@ -128,16 +128,16 @@ trait KeyCommands[F[_], K, V] extends CommandsDeps[F, K, V] with KeyCommandsF[F,
   def `type`(key: K): F[String] =
     JF.toSync(underlying.`type`(key))
   
-  def scan(): F[DataScanCursor[K]] =
-    JF.toSync(underlying.scan()).map(cur => DataScanCursor.from(cur))
+  def scan(): F[RedisScanCursor[K]] =
+    JF.toSync(underlying.scan()).map(cur => RedisScanCursor.from(cur))
   
-  def scan(scanArgs: ScanArgs): F[DataScanCursor[K]] =
-    JF.toSync(underlying.scan(scanArgs)).map(cur => DataScanCursor.from(cur))
+  def scan(scanArgs: ScanArgs): F[RedisScanCursor[K]] =
+    JF.toSync(underlying.scan(scanArgs)).map(cur => RedisScanCursor.from(cur))
   
-  def scan(scanCursor: ScanCursor, scanArgs: ScanArgs): F[DataScanCursor[K]] =
-    JF.toSync(underlying.scan(scanCursor, scanArgs)).map(cur => DataScanCursor.from(cur))
+  def scan(scanCursor: ScanCursor, scanArgs: ScanArgs): F[RedisScanCursor[K]] =
+    JF.toSync(underlying.scan(scanCursor, scanArgs)).map(cur => RedisScanCursor.from(cur))
   
-  def scan(scanCursor: ScanCursor): F[DataScanCursor[K]] =
-    JF.toSync(underlying.scan(scanCursor)).map(cur => DataScanCursor.from(cur))
+  def scan(scanCursor: ScanCursor): F[RedisScanCursor[K]] =
+    JF.toSync(underlying.scan(scanCursor)).map(cur => RedisScanCursor.from(cur))
   
 }

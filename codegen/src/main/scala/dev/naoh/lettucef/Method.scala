@@ -116,7 +116,7 @@ case class Method(name: String, args: List[Argument], output: TypeExpr, checkNul
                 }
             }
           case "ValueScanCursor" | "MapScanCursor" | "KeyScanCursor" | "ScoredValueScanCursor" =>
-            Some("cur => DataScanCursor.from(cur)")
+            Some("cur => RedisScanCursor.from(cur)")
           case _ =>
             println(s"unregistered j2s ${from.scalaDef} => ${to.scalaDef}")
             None
@@ -210,11 +210,11 @@ object Method {
               tpe
             }
           case "ValueScanCursor" | "KeyScanCursor" =>
-            TypeExpr.create("DataScanCursor", p1 :: Nil)
+            TypeExpr.create("RedisScanCursor", p1 :: Nil)
           case "MapScanCursor" =>
-            TypeExpr.create("DataScanCursor", TypeExpr.tuple(generics) :: Nil)
+            TypeExpr.create("RedisScanCursor", TypeExpr.tuple(generics) :: Nil)
           case "ScoredValueScanCursor" =>
-            TypeExpr.create("DataScanCursor", TypeExpr.tuple(TypeExpr.one("Double") :: p1 :: Nil) :: Nil)
+            TypeExpr.create("RedisScanCursor", TypeExpr.tuple(TypeExpr.one("Double") :: p1 :: Nil) :: Nil)
           case "RedisFuture" =>
             copy(generics = p1.toScala(name :: parent, checkNull) :: Nil)
           case _ => copy(generics = generics.map(_.toScala(name :: parent)))

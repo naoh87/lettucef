@@ -69,16 +69,16 @@ trait SetCommands[F[_], K, V] extends CommandsDeps[F, K, V] with SetCommandsF[Co
   def sunionstore(destination: K, keys: K*): F[F[Long]] =
     JF.toAsync(underlying.sunionstore(destination, keys: _*)).map(_.map(Long2long))
   
-  def sscan(key: K): F[F[DataScanCursor[V]]] =
-    JF.toAsync(underlying.sscan(key)).map(_.map(cur => DataScanCursor.from(cur)))
+  def sscan(key: K): F[F[RedisScanCursor[V]]] =
+    JF.toAsync(underlying.sscan(key)).map(_.map(cur => RedisScanCursor.from(cur)))
   
-  def sscan(key: K, scanArgs: ScanArgs): F[F[DataScanCursor[V]]] =
-    JF.toAsync(underlying.sscan(key, scanArgs)).map(_.map(cur => DataScanCursor.from(cur)))
+  def sscan(key: K, scanArgs: ScanArgs): F[F[RedisScanCursor[V]]] =
+    JF.toAsync(underlying.sscan(key, scanArgs)).map(_.map(cur => RedisScanCursor.from(cur)))
   
-  def sscan(key: K, scanCursor: ScanCursor, scanArgs: ScanArgs): F[F[DataScanCursor[V]]] =
-    JF.toAsync(underlying.sscan(key, scanCursor, scanArgs)).map(_.map(cur => DataScanCursor.from(cur)))
+  def sscan(key: K, scanCursor: ScanCursor, scanArgs: ScanArgs): F[F[RedisScanCursor[V]]] =
+    JF.toAsync(underlying.sscan(key, scanCursor, scanArgs)).map(_.map(cur => RedisScanCursor.from(cur)))
   
-  def sscan(key: K, scanCursor: ScanCursor): F[F[DataScanCursor[V]]] =
-    JF.toAsync(underlying.sscan(key, scanCursor)).map(_.map(cur => DataScanCursor.from(cur)))
+  def sscan(key: K, scanCursor: ScanCursor): F[F[RedisScanCursor[V]]] =
+    JF.toAsync(underlying.sscan(key, scanCursor)).map(_.map(cur => RedisScanCursor.from(cur)))
   
 }

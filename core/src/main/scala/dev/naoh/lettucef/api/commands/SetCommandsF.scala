@@ -48,12 +48,12 @@ trait SetCommandsF[F[_], K, V] {
   
   def sunionstore(destination: K, keys: K*): F[Long]
   
-  def sscan(key: K): F[DataScanCursor[V]]
+  def sscan(key: K): F[RedisScanCursor[V]]
   
-  def sscan(key: K, scanArgs: ScanArgs): F[DataScanCursor[V]]
+  def sscan(key: K, scanArgs: ScanArgs): F[RedisScanCursor[V]]
   
-  def sscan(key: K, scanCursor: ScanCursor, scanArgs: ScanArgs): F[DataScanCursor[V]]
+  def sscan(key: K, scanCursor: ScanCursor, scanArgs: ScanArgs): F[RedisScanCursor[V]]
   
-  def sscan(key: K, scanCursor: ScanCursor): F[DataScanCursor[V]]
+  def sscan(key: K, scanCursor: ScanCursor): F[RedisScanCursor[V]]
   
 }

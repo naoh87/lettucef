@@ -42,13 +42,13 @@ trait HashCommandsF[F[_], K, V] {
   
   def hrandfieldWithvalues(key: K, count: Long): F[Seq[(K, Option[V])]]
   
-  def hscan(key: K): F[DataScanCursor[(K, V)]]
+  def hscan(key: K): F[RedisScanCursor[(K, V)]]
   
-  def hscan(key: K, scanArgs: ScanArgs): F[DataScanCursor[(K, V)]]
+  def hscan(key: K, scanArgs: ScanArgs): F[RedisScanCursor[(K, V)]]
   
-  def hscan(key: K, scanCursor: ScanCursor, scanArgs: ScanArgs): F[DataScanCursor[(K, V)]]
+  def hscan(key: K, scanCursor: ScanCursor, scanArgs: ScanArgs): F[RedisScanCursor[(K, V)]]
   
-  def hscan(key: K, scanCursor: ScanCursor): F[DataScanCursor[(K, V)]]
+  def hscan(key: K, scanCursor: ScanCursor): F[RedisScanCursor[(K, V)]]
   
   def hset(key: K, field: K, value: V): F[Boolean]
   

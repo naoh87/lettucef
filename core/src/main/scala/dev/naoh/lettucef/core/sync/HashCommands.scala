@@ -59,17 +59,17 @@ trait HashCommands[F[_], K, V] extends CommandsDeps[F, K, V] with HashCommandsF[
   def hrandfieldWithvalues(key: K, count: Long): F[Seq[(K, Option[V])]] =
     JF.toSync(underlying.hrandfieldWithvalues(key, count)).map(_.asScala.toSeq.map(kv => LettuceValueConverter.fromKeyValue(kv)))
   
-  def hscan(key: K): F[DataScanCursor[(K, V)]] =
-    JF.toSync(underlying.hscan(key)).map(cur => DataScanCursor.from(cur))
+  def hscan(key: K): F[RedisScanCursor[(K, V)]] =
+    JF.toSync(underlying.hscan(key)).map(cur => RedisScanCursor.from(cur))
   
-  def hscan(key: K, scanArgs: ScanArgs): F[DataScanCursor[(K, V)]] =
-    JF.toSync(underlying.hscan(key, scanArgs)).map(cur => DataScanCursor.from(cur))
+  def hscan(key: K, scanArgs: ScanArgs): F[RedisScanCursor[(K, V)]] =
+    JF.toSync(underlying.hscan(key, scanArgs)).map(cur => RedisScanCursor.from(cur))
   
-  def hscan(key: K, scanCursor: ScanCursor, scanArgs: ScanArgs): F[DataScanCursor[(K, V)]] =
-    JF.toSync(underlying.hscan(key, scanCursor, scanArgs)).map(cur => DataScanCursor.from(cur))
+  def hscan(key: K, scanCursor: ScanCursor, scanArgs: ScanArgs): F[RedisScanCursor[(K, V)]] =
+    JF.toSync(underlying.hscan(key, scanCursor, scanArgs)).map(cur => RedisScanCursor.from(cur))
   
-  def hscan(key: K, scanCursor: ScanCursor): F[DataScanCursor[(K, V)]] =
-    JF.toSync(underlying.hscan(key, scanCursor)).map(cur => DataScanCursor.from(cur))
+  def hscan(key: K, scanCursor: ScanCursor): F[RedisScanCursor[(K, V)]] =
+    JF.toSync(underlying.hscan(key, scanCursor)).map(cur => RedisScanCursor.from(cur))
   
   def hset(key: K, field: K, value: V): F[Boolean] =
     JF.toSync(underlying.hset(key, field, value)).map(Boolean2boolean)

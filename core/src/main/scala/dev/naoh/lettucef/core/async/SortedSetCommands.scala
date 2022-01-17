@@ -196,17 +196,17 @@ trait SortedSetCommands[F[_], K, V] extends CommandsDeps[F, K, V] with SortedSet
   def zrevrank(key: K, member: V): F[F[Option[Long]]] =
     JF.toAsync(underlying.zrevrank(key, member)).map(_.map(Option(_).map(Long2long)))
   
-  def zscan(key: K): F[F[DataScanCursor[(Double, V)]]] =
-    JF.toAsync(underlying.zscan(key)).map(_.map(cur => DataScanCursor.from(cur)))
+  def zscan(key: K): F[F[RedisScanCursor[(Double, V)]]] =
+    JF.toAsync(underlying.zscan(key)).map(_.map(cur => RedisScanCursor.from(cur)))
   
-  def zscan(key: K, scanArgs: ScanArgs): F[F[DataScanCursor[(Double, V)]]] =
-    JF.toAsync(underlying.zscan(key, scanArgs)).map(_.map(cur => DataScanCursor.from(cur)))
+  def zscan(key: K, scanArgs: ScanArgs): F[F[RedisScanCursor[(Double, V)]]] =
+    JF.toAsync(underlying.zscan(key, scanArgs)).map(_.map(cur => RedisScanCursor.from(cur)))
   
-  def zscan(key: K, scanCursor: ScanCursor, scanArgs: ScanArgs): F[F[DataScanCursor[(Double, V)]]] =
-    JF.toAsync(underlying.zscan(key, scanCursor, scanArgs)).map(_.map(cur => DataScanCursor.from(cur)))
+  def zscan(key: K, scanCursor: ScanCursor, scanArgs: ScanArgs): F[F[RedisScanCursor[(Double, V)]]] =
+    JF.toAsync(underlying.zscan(key, scanCursor, scanArgs)).map(_.map(cur => RedisScanCursor.from(cur)))
   
-  def zscan(key: K, scanCursor: ScanCursor): F[F[DataScanCursor[(Double, V)]]] =
-    JF.toAsync(underlying.zscan(key, scanCursor)).map(_.map(cur => DataScanCursor.from(cur)))
+  def zscan(key: K, scanCursor: ScanCursor): F[F[RedisScanCursor[(Double, V)]]] =
+    JF.toAsync(underlying.zscan(key, scanCursor)).map(_.map(cur => RedisScanCursor.from(cur)))
   
   def zscore(key: K, member: V): F[F[Option[Double]]] =
     JF.toAsync(underlying.zscore(key, member)).map(_.map(Option(_).map(Double2double)))

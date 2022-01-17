@@ -134,13 +134,13 @@ trait SortedSetCommandsF[F[_], K, V] {
   
   def zrevrank(key: K, member: V): F[Option[Long]]
   
-  def zscan(key: K): F[DataScanCursor[(Double, V)]]
+  def zscan(key: K): F[RedisScanCursor[(Double, V)]]
   
-  def zscan(key: K, scanArgs: ScanArgs): F[DataScanCursor[(Double, V)]]
+  def zscan(key: K, scanArgs: ScanArgs): F[RedisScanCursor[(Double, V)]]
   
-  def zscan(key: K, scanCursor: ScanCursor, scanArgs: ScanArgs): F[DataScanCursor[(Double, V)]]
+  def zscan(key: K, scanCursor: ScanCursor, scanArgs: ScanArgs): F[RedisScanCursor[(Double, V)]]
   
-  def zscan(key: K, scanCursor: ScanCursor): F[DataScanCursor[(Double, V)]]
+  def zscan(key: K, scanCursor: ScanCursor): F[RedisScanCursor[(Double, V)]]
   
   def zscore(key: K, member: V): F[Option[Double]]
   

@@ -1,7 +1,7 @@
 package dev.naoh.lettucef.streams.commands
 
 import dev.naoh.lettucef.api.commands._
-import dev.naoh.lettucef.api.models.DataScanCursor
+import dev.naoh.lettucef.api.models.RedisScanCursor
 import fs2._
 import io.lettuce.core.ScanArgs
 import io.lettuce.core.ScanCursor
@@ -37,8 +37,8 @@ trait ScanStreamCommands[F[_], K, V] {
 object ScanStreamCommands {
   type Underlying[F[_], K, V] = KeyCommandsF[F, K, V] with SetCommandsF[F, K, V] with HashCommandsF[F, K, V] with SortedSetCommandsF[F, K, V]
 
-  def makeScanStream[F[_], A](init: F[DataScanCursor[A]], next: ScanCursor => F[DataScanCursor[A]]): Stream[F, A] = {
-    def go(cursor: DataScanCursor[A]): Pull[F, A, Unit] =
+  def makeScanStream[F[_], A](init: F[RedisScanCursor[A]], next: ScanCursor => F[RedisScanCursor[A]]): Stream[F, A] = {
+    def go(cursor: RedisScanCursor[A]): Pull[F, A, Unit] =
       if (cursor.isFinished) {
         Pull.output(Chunk.vector(cursor.elements))
       } else {

@@ -90,12 +90,12 @@ trait KeyCommandsF[F[_], K, V] {
   
   def `type`(key: K): F[String]
   
-  def scan(): F[DataScanCursor[K]]
+  def scan(): F[RedisScanCursor[K]]
   
-  def scan(scanArgs: ScanArgs): F[DataScanCursor[K]]
+  def scan(scanArgs: ScanArgs): F[RedisScanCursor[K]]
   
-  def scan(scanCursor: ScanCursor, scanArgs: ScanArgs): F[DataScanCursor[K]]
+  def scan(scanCursor: ScanCursor, scanArgs: ScanArgs): F[RedisScanCursor[K]]
   
-  def scan(scanCursor: ScanCursor): F[DataScanCursor[K]]
+  def scan(scanCursor: ScanCursor): F[RedisScanCursor[K]]
   
 }
