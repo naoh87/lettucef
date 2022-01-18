@@ -14,6 +14,8 @@ ThisBuild / versionScheme := Some("semver-spec")
 ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
 ThisBuild / sonatypeRepository := "https://s01.oss.sonatype.org/service/local"
 ThisBuild / developers := List(dev("naoh87", "naoh", "naoh87@gmail.coma"))
+ThisBuild / semanticdbEnabled := true
+ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
 lazy val root = (project in file("."))
   .settings(
@@ -25,13 +27,15 @@ lazy val root = (project in file("."))
 
 lazy val core = (project in file("core"))
   .settings(name := "lettucef-core")
-  .settings(commonSettings)
+  .settings(core_dependency)
   .settings(publishSetting)
+  .settings(common_settings)
 
 lazy val streams = (project in file("streams"))
   .settings(name := "lettucef-streams")
-  .settings(commonSettings)
+  .settings(core_dependency)
   .settings(publishSetting)
+  .settings(common_settings)
   .settings(
     libraryDependencies ++= Seq(
       "co.fs2" %% "fs2-core" % "3.2.4",
@@ -42,8 +46,8 @@ lazy val streams = (project in file("streams"))
 lazy val extras = (project in file("extras"))
   .settings(name := "lettucef-extras")
   .settings(publishSetting)
+  .settings(common_settings)
   .settings(
-    Test / fork := true,
     libraryDependencies ++= Seq(
       "org.typelevel" %% "cats-effect" % "3.3.4",
     )
@@ -73,13 +77,23 @@ lazy val benchmark = (project in file("benchmark"))
     )
   )
 
-val commonSettings = Seq(
-  Test / fork := true,
+val core_dependency = Seq(
   libraryDependencies ++= Seq(
     "io.lettuce" % "lettuce-core" % "6.1.6.RELEASE",
     "org.typelevel" %% "cats-effect" % "3.3.4",
     "org.scalatest" %% "scalatest" % "3.2.10" % "test",
   ),
+)
+
+val common_settings = Seq(
+  Test / fork := true,
+  run / fork := true,
+  scalafixOnCompile := scalaVersion.value == scala213,
+  Compile / scalacOptions ++= (if (scalaVersion.value == scala213) Seq(
+    "-Ywarn-unused"
+  ) else Seq(
+
+  ))
 )
 
 val publishSetting = Seq(

@@ -6,7 +6,6 @@ import cats.effect.Resource
 import cats.effect.kernel.Concurrent
 import cats.effect.syntax.all._
 import cats.syntax.applicativeError._
-import cats.syntax.apply._
 import cats.syntax.flatMap._
 import cats.syntax.functor._
 import cats.syntax.traverse._
