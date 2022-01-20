@@ -21,6 +21,7 @@ releaseCrossBuild := true // true if you cross-build the project for multiple Sc
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,
+  releaseStepCommandAndRemaining("codegen/run"),
   runClean,
   releaseStepCommandAndRemaining("+compile"),
   releaseStepCommandAndRemaining("+test"),
@@ -37,6 +38,7 @@ releaseProcess := Seq[ReleaseStep](
 lazy val root = (project in file("."))
   .settings(
     name := "LettuceF",
+    scalaVersion := scala213,
     crossScalaVersions := Nil,
     publishArtifact := false
   )
