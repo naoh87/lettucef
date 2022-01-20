@@ -29,7 +29,7 @@ releaseProcess := Seq[ReleaseStep](
   commitReleaseVersion,
   tagRelease,
   releaseStepCommandAndRemaining("+publishSigned"),
-  releaseStepCommand("sonatypeRelease"),
+  releaseStepCommand("sonatypePublishToBundle"),
   setNextVersion,
   commitNextVersion,
 //  pushChanges
@@ -120,7 +120,7 @@ val publishSetting = Seq(
   crossScalaVersions := Seq(scala213, scala310),
   publishMavenStyle := true,
   Test / publishArtifact := false,
-  publishTo := sonatypePublishTo.value
+  publishTo := sonatypePublishToBundle.value
 )
 
 val circeVersion = "0.14.1"
