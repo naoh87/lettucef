@@ -37,6 +37,24 @@ def run: IO[Unit] = {
 }.use(identity)
 ```
 
+### Lua
+
+```scala
+def run: IO[Unit] = {
+    for {
+      client <- LettuceF.client[IO](RedisClient.create())
+      cmd <- client.connect(StringCodec.UTF8, RedisURI.create("redis://127.0.0.1")).map(_.sync())
+    } yield for {
+      _ <- cmd.eval("""return 1;""", Nil, Nil).flatTap(IO.println)
+      // RedisInteger(1)
+      _ <- cmd.eval("""return redis.call('set',KEYS[1],ARGV[1])""", "foo" :: Nil, "bar" :: Nil).flatTap(IO.println)
+      // RedisBulk(OK)
+      _ <- cmd.eval("""return {1, {err="ERR"}, "B"};""", Nil, Nil).flatTap(IO.println)
+      // RedisArray(RedisInteger(1), RedisError(ERR), RedisBulk(B))
+    } yield ()
+}.use(identity)
+```
+
 ### Pipelining
 
 ```scala

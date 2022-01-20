@@ -17,6 +17,8 @@ object ScriptExample extends IOApp.Simple {
       // RedisInteger(1)
       _ <- cmd.eval("""return false;""", Nil, Nil).flatTap(IO.println)
       // RedisNull
+      _ <- cmd.eval("""return redis.call('set',KEYS[1],ARGV[1])""", "foo" :: Nil, "bar" :: Nil).flatTap(IO.println)
+      // RedisBulk(OK)
       _ <- cmd.eval("""return 1;""", Nil, Nil).flatTap(IO.println)
       // RedisInteger(1)
       _ <- cmd.eval("""return -2;""", Nil, Nil).flatTap(IO.println)
