@@ -1,13 +1,19 @@
 // Code generated. DO NOT EDIT
 package dev.naoh.lettucef.api.commands
 
+import cats.syntax.functor._
 import dev.naoh.lettucef.api.models.geo._
+import dev.naoh.lettucef.core.commands.CommandsDeps
+import dev.naoh.lettucef.core.util.LettuceValueConverter
+import dev.naoh.lettucef.core.util.{JavaFutureUtil => JF}
 import io.lettuce.core.GeoAddArgs
 import io.lettuce.core.GeoArgs
 import io.lettuce.core.GeoCoordinates
 import io.lettuce.core.GeoRadiusStoreArgs
 import io.lettuce.core.GeoSearch
 import io.lettuce.core.GeoValue
+import io.lettuce.core.api.async._
+import scala.jdk.CollectionConverters._
 
 
 trait GeoCommandsF[F[_], K, V] {

@@ -5,6 +5,7 @@ import dev.naoh.lettucef.api.commands.ScriptingCommandsF
 import dev.naoh.lettucef.api.Commands
 import cats.syntax.functor._
 import dev.naoh.lettucef.core.commands.CommandsDeps
+import dev.naoh.lettucef.core.util.LettuceValueConverter
 import dev.naoh.lettucef.core.util.{JavaFutureUtil => JF}
 import io.lettuce.core.FlushMode
 import io.lettuce.core.api.async._

@@ -6,8 +6,10 @@ import dev.naoh.lettucef.api.Commands
 import cats.syntax.functor._
 import dev.naoh.lettucef.api.models._
 import dev.naoh.lettucef.core.commands.CommandsDeps
+import dev.naoh.lettucef.core.util.LettuceValueConverter
 import dev.naoh.lettucef.core.util.{JavaFutureUtil => JF}
 import io.lettuce.core.api.async._
+import io.lettuce.core.protocol.CommandKeyword
 import io.lettuce.core.protocol.CommandType
 import scala.jdk.CollectionConverters._
 

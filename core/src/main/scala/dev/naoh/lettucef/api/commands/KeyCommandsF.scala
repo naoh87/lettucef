@@ -3,13 +3,19 @@ package dev.naoh.lettucef.api.commands
 
 import java.time.Duration
 import java.time.Instant
+import cats.syntax.functor._
 import dev.naoh.lettucef.api.models._
+import dev.naoh.lettucef.core.commands.CommandsDeps
+import dev.naoh.lettucef.core.util.LettuceValueConverter
+import dev.naoh.lettucef.core.util.{JavaFutureUtil => JF}
 import io.lettuce.core.CopyArgs
 import io.lettuce.core.MigrateArgs
 import io.lettuce.core.RestoreArgs
 import io.lettuce.core.ScanArgs
 import io.lettuce.core.ScanCursor
 import io.lettuce.core.SortArgs
+import io.lettuce.core.api.async._
+import scala.jdk.CollectionConverters._
 
 
 trait KeyCommandsF[F[_], K, V] {

@@ -5,7 +5,6 @@ val scala310 = "3.1.0"
 def dev(ghUser: String, name: String, email: String): Developer =
   Developer(ghUser, name, email, url(s"https://github.com/$ghUser"))
 
-ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 ThisBuild / organization := "dev.naoh"
 ThisBuild / homepage := Some(url("https://github.com/naoh87/lettucef"))
@@ -16,6 +15,24 @@ ThisBuild / sonatypeRepository := "https://s01.oss.sonatype.org/service/local"
 ThisBuild / developers := List(dev("naoh87", "naoh", "naoh87@gmail.coma"))
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
+
+import ReleaseTransformations._
+releaseCrossBuild := true // true if you cross-build the project for multiple Scala versions
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  releaseStepCommandAndRemaining("+compile"),
+  releaseStepCommandAndRemaining("+test"),
+  setReleaseVersion,
+  commitReleaseVersion,
+//  tagRelease,
+//  releaseStepCommandAndRemaining("+publishSigned"),
+//  releaseStepCommand("sonatypeBundleRelease"),
+  setNextVersion,
+  commitNextVersion,
+//  pushChanges
+)
 
 lazy val root = (project in file("."))
   .settings(

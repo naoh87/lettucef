@@ -5,6 +5,7 @@ import dev.naoh.lettucef.api.commands.SetCommandsF
 import cats.syntax.functor._
 import dev.naoh.lettucef.api.models._
 import dev.naoh.lettucef.core.commands.CommandsDeps
+import dev.naoh.lettucef.core.util.LettuceValueConverter
 import dev.naoh.lettucef.core.util.{JavaFutureUtil => JF}
 import io.lettuce.core.ScanArgs
 import io.lettuce.core.ScanCursor

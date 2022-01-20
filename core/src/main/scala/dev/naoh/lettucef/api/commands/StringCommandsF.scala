@@ -1,11 +1,17 @@
 // Code generated. DO NOT EDIT
 package dev.naoh.lettucef.api.commands
 
+import cats.syntax.functor._
+import dev.naoh.lettucef.core.commands.CommandsDeps
+import dev.naoh.lettucef.core.util.LettuceValueConverter
+import dev.naoh.lettucef.core.util.{JavaFutureUtil => JF}
 import io.lettuce.core.BitFieldArgs
 import io.lettuce.core.GetExArgs
 import io.lettuce.core.SetArgs
 import io.lettuce.core.StrAlgoArgs
 import io.lettuce.core.StringMatchResult
+import io.lettuce.core.api.async._
+import scala.jdk.CollectionConverters._
 
 
 trait StringCommandsF[F[_], K, V] {
