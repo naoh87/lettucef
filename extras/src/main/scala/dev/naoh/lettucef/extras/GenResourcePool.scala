@@ -44,7 +44,10 @@ object GenResourcePool {
               F.raiseError[Peaked[F, A]](PoolLifecycleViolation)
           }
         } { p =>
-          state.modify(_.push1(p, config.maxIdle)).flatMap(_.sequence.void)
+          state.modify(_.push1(p, config.maxIdle)).flatMap {
+            case None => F.unit
+            case Some(release) => release >> state.modify(_.deactivate1).flatMap(_.sequence).void
+          }
         }.map(_.a)
       }
       .evalTap(res => List.fill(config.minIdle.min(config.maxIdle))(res.use(_ => F.unit)).sequence)
@@ -66,15 +69,13 @@ object GenResourcePool {
         (this, Left(false))
       }
 
-    def push1(b: Peaked[F, A], maxQueue: Int): (State[F, A], List[F[Unit]]) = {
+    def push1(b: Peaked[F, A], maxQueue: Int): (State[F, A], Option[F[Unit]]) = {
       if (finalizer.isDefined) { //for guard leak usage
-        (copy(active = active - 1, queue.appended(b)), if (active > 1) Nil else finalizer.toList)
+        (this, Some(b.release))
+      } else if (queue.size < maxQueue) {
+        (State(active - 1, queue.appended(b), finalizer), None)
       } else {
-        if (queue.size < maxQueue) {
-          (State(active - 1, queue.appended(b), finalizer), Nil)
-        } else {
-          (copy(active = active - 1), b.release :: Nil)
-        }
+        (this, Some(b.release))
       }
     }
 
@@ -84,8 +85,8 @@ object GenResourcePool {
         if (active > 1) None else finalizer
       )
 
-    def setFinalizer(fu: F[Unit]): (State[F, A], List[F[Unit]]) =
-      (copy(finalizer = Some(fu)), if (active == 0) List(fu) else Nil)
+    def setFinalizer(fu: F[Unit]): (State[F, A], Option[F[Unit]]) =
+      (copy(finalizer = Some(fu)), if (active == 0) Some(fu) else None)
 
     def release(): List[F[Unit]] = queue.q.toList.map(_.release)
   }
