@@ -69,15 +69,12 @@ object GenResourcePool {
         (this, Left(false))
       }
 
-    def push1(b: Peaked[F, A], maxQueue: Int): (State[F, A], Option[F[Unit]]) = {
-      if (finalizer.isDefined) { //for guard leak usage
-        (this, Some(b.release))
-      } else if (queue.size < maxQueue) {
+    def push1(b: Peaked[F, A], maxQueue: Int): (State[F, A], Option[F[Unit]]) =
+      if (queue.size < maxQueue) {
         (State(active - 1, queue.appended(b), finalizer), None)
       } else {
         (this, Some(b.release))
       }
-    }
 
     def deactivate1: (State[F, A], Option[F[Unit]]) =
       (
