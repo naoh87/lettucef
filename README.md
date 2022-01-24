@@ -16,7 +16,7 @@ This library hide the matters when you use Lettuce.
 Add to build.sbt
 
 ```scala
-libraryDependencies += "dev.naoh" %% "lettucef-core" % "0.1.2"
+libraryDependencies += "dev.naoh" %% "lettucef-core" % "0.1.3"
 ```
 
 ### Basic usage
