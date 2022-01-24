@@ -6,17 +6,13 @@ import cats.effect.kernel.Concurrent
 import cats.effect.std.Dispatcher
 import cats.syntax.flatMap._
 import cats.syntax.functor._
-import dev.naoh.lettucef.core.RedisClientF.ConnectionResource2
-import dev.naoh.lettucef.core.RedisClusterClientF.ConnectionResource1
-import dev.naoh.lettucef.core.RedisPubSubF
 import dev.naoh.lettucef.api.models.pubsub.RedisPushed
-import dev.naoh.lettucef.streams.ManagedPubSubF.VoidListener
+import dev.naoh.lettucef.core.RedisPubSubF
 import dev.naoh.lettucef.streams.ManagedPubSubF.State
+import dev.naoh.lettucef.streams.ManagedPubSubF.VoidListener
 import fs2._
 import fs2.concurrent.Channel
 import fs2.concurrent.SignallingRef
-import io.lettuce.core.RedisURI
-import io.lettuce.core.codec.RedisCodec
 import io.lettuce.core.pubsub.RedisPubSubListener
 
 class ManagedPubSubF[F[_] : Async, K, V](
@@ -264,19 +260,11 @@ object ManagedPubSubF {
 }
 
 trait ManagedPubSubExtensionOps {
-  implicit class ManagedPubSubOps2[F[_] : Async](val base: ConnectionResource2[F, RedisURI, RedisPubSubF]) {
-    def stream[K, V](codec: RedisCodec[K, V], uri: RedisURI): Resource[F, ManagedPubSubF[F, K, V]] =
-      Dispatcher[F].flatMap(d => stream(codec, uri, d))
+  implicit class ManagedPubSubOps[F[_] : Async, K, V](val base: Resource[F, RedisPubSubF[F, K, V]]) {
+    def stream(): Resource[F, ManagedPubSubF[F, K, V]] =
+      Dispatcher[F].flatMap(d => ManagedPubSubF.create(base, d))
 
-    def stream[K, V](codec: RedisCodec[K, V], uri: RedisURI, d: Dispatcher[F]): Resource[F, ManagedPubSubF[F, K, V]] =
-      ManagedPubSubF.create(base(codec, uri), d)
-  }
-
-  implicit class ManagedPubSubOps1[F[_] : Async](val base: ConnectionResource1[F, RedisPubSubF]) {
-    def stream[K, V](codec: RedisCodec[K, V]): Resource[F, ManagedPubSubF[F, K, V]] =
-      Dispatcher[F].flatMap(d => stream(codec, d))
-
-    def stream[K, V](codec: RedisCodec[K, V], d: Dispatcher[F]): Resource[F, ManagedPubSubF[F, K, V]] =
-      ManagedPubSubF.create(base(codec), d)
+    def stream(d: Dispatcher[F]): Resource[F, ManagedPubSubF[F, K, V]] =
+      ManagedPubSubF.create(base, d)
   }
 }
