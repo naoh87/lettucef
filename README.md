@@ -278,5 +278,7 @@ Benchmark               Mode  Cnt  Score   Error  Units
 LettuceF.parallel20k      ss   10  1.959 ± 0.135   s/op
 LettuceF.pipeline50k      ss   10  2.546 ± 0.157   s/op
 Redis4Cats.parallel20k    ss   10  2.081 ± 0.525   s/op
-Redis4Cats.pipeline50k    Fail to complete
+Redis4Cats.pipeline50k    Fail to complete run
+ScalaRedis.parallel20k    ss   10  2.671 ± 0.404   s/op
+ScalaRedis.pipeline50k    ss   10  5.860 ± 0.725   s/op
 ```
