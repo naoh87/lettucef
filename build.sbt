@@ -68,7 +68,7 @@ lazy val extras = (project in file("extras"))
   .settings(common_settings)
   .settings(
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-effect" % "3.3.4",
+      "org.typelevel" %% "cats-effect" % "3.3.5",
     )
   )
 
@@ -99,7 +99,7 @@ lazy val benchmark = (project in file("benchmark"))
 val core_dependency = Seq(
   libraryDependencies ++= Seq(
     "io.lettuce" % "lettuce-core" % "6.1.6.RELEASE",
-    "org.typelevel" %% "cats-effect" % "3.3.4",
+    "org.typelevel" %% "cats-effect" % "3.3.5",
     "org.scalatest" %% "scalatest" % "3.2.11" % "test",
     "net.debasishg" %% "redisclient" % "3.41",
   ),
