@@ -120,7 +120,8 @@ val publishSetting = Seq(
   scalaVersion := scala213,
   crossScalaVersions := Seq(scala213, scala310),
   publishMavenStyle := true,
-  Test / publishArtifact := false
+  Test / publishArtifact := false,
+  publishTo := sonatypePublishToBundle.value
 )
 
 val circeVersion = "0.14.1"
