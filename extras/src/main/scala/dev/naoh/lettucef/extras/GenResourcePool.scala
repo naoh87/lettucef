@@ -4,7 +4,6 @@ import cats.effect.Deferred
 import cats.effect.Ref
 import cats.effect.Resource
 import cats.effect.kernel.Concurrent
-import cats.effect.syntax.all._
 import cats.syntax.applicativeError._
 import cats.syntax.flatMap._
 import cats.syntax.functor._
@@ -17,13 +16,6 @@ import scala.collection.immutable.Queue
 
 object GenResourcePool {
   def create[F[_], A](config: ResourcePool, source: Resource[F, A])(implicit F: Concurrent[F]): Resource[F, Resource[F, A]] = {
-    def peak(): F[Either[Throwable, Peaked[F, A]]] =
-      for {
-        da <- Deferred[F, Either[Throwable, A]]
-        c <- source.use(a => da.complete(Right(a)) >> F.never.void).handleErrorWith(e => da.complete(Left(e)).void).start
-        ea <- da.get
-      } yield ea.map(Peaked(_, c.cancel))
-
     Resource
       .make(Ref.of(State.empty[F, A])) { state =>
         Deferred[F, Unit].flatMap(ks =>
@@ -35,11 +27,12 @@ object GenResourcePool {
         Resource.make {
           state.modify(_.take1).flatMap {
             case Right(p) => F.pure(p)
-            case Left(true) => peak().flatMap {
-              case Right(p) => F.pure(p)
-              case Left(err) =>
-                state.modify(_.deactivate1).flatMap(_.sequence) >> F.raiseError[Peaked[F, A]](err)
-            }
+            case Left(true) =>
+              source.allocated.map(a => Peaked(a._1, a._2)).attempt.flatMap {
+                case Right(p) => F.pure(p)
+                case Left(err) =>
+                  state.modify(_.deactivate1).flatMap(_.sequence) >> F.raiseError[Peaked[F, A]](err)
+              }
             case _ =>
               F.raiseError[Peaked[F, A]](PoolLifecycleViolation)
           }
