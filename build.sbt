@@ -92,16 +92,16 @@ lazy val benchmark = (project in file("benchmark"))
     Test / fork := true,
     run / fork := true,
     libraryDependencies ++= Seq(
-      "dev.profunktor" %% "redis4cats-effects" % "1.0.0"
+      "dev.profunktor" %% "redis4cats-effects" % "1.0.0",
+      "net.debasishg" %% "redisclient" % "3.41",
     )
   )
 
 val core_dependency = Seq(
   libraryDependencies ++= Seq(
     "io.lettuce" % "lettuce-core" % "6.1.6.RELEASE",
-    "org.typelevel" %% "cats-effect" % "3.3.5",
-    "org.scalatest" %% "scalatest" % "3.2.11" % "test",
-    "net.debasishg" %% "redisclient" % "3.41",
+    "org.typelevel" %% "cats-effect" % "3.3.4",
+    "org.scalatest" %% "scalatest" % "3.2.10" % "test",
   ),
 )
 
