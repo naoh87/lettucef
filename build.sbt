@@ -57,7 +57,7 @@ lazy val streams = (project in file("streams"))
   .settings(common_settings)
   .settings(
     libraryDependencies ++= Seq(
-      "co.fs2" %% "fs2-core" % "3.2.5",
+      "co.fs2" %% "fs2-core" % "3.2.6",
     ),
   )
   .dependsOn(core)
@@ -133,7 +133,7 @@ lazy val codegen = (project in file("codegen")).settings(
     "org.typelevel" %% "cats-effect" % "3.3.3",
     "org.typelevel" %% "cats-parse" % "0.3.6",
     "io.circe" %% "circe-yaml" % "0.14.1",
-    "co.fs2" %% "fs2-core" % "3.2.5",
+    "co.fs2" %% "fs2-core" % "3.2.6",
     "co.fs2" %% "fs2-io" % "3.2.4",
   ),
   libraryDependencies ++= Seq(
