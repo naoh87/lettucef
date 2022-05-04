@@ -1,5 +1,5 @@
 val scala213 = "2.13.8"
-val scala310 = "3.1.1"
+val scala310 = "3.1.2"
 
 
 def dev(ghUser: String, name: String, email: String): Developer =
