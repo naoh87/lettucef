@@ -14,7 +14,6 @@ object Commands {
       with KeyCommandsF[F, K, V]
       with ListCommandsF[F, K, V]
       with ScriptingCommandsF[F, K, V]
-      with EvalScriptingCommandsF[F, K, V]
       with ServerCommandsF[F, K, V]
       with SetCommandsF[F, K, V]
       with SortedSetCommandsF[F, K, V]

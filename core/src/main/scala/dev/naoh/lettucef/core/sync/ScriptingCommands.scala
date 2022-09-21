@@ -3,16 +3,33 @@ package dev.naoh.lettucef.core.sync
 
 import dev.naoh.lettucef.api.commands.ScriptingCommandsF
 import cats.syntax.functor._
+import dev.naoh.lettucef.api.models._
 import dev.naoh.lettucef.core.commands.CommandsDeps
 import dev.naoh.lettucef.core.util.{JavaFutureUtil => JF}
 import io.lettuce.core.FlushMode
 import io.lettuce.core.api.async._
+import io.lettuce.core.protocol.CommandType
 import scala.jdk.CollectionConverters._
 
 
 trait ScriptingCommands[F[_], K, V] extends CommandsDeps[F, K, V] with ScriptingCommandsF[F, K, V] {
 
-  protected val underlying: RedisScriptingAsyncCommands[K, V]
+  protected val underlying: RedisScriptingAsyncCommands[K, V] with BaseRedisAsyncCommands[K, V]
+  
+  def eval(script: String, keys: Seq[K], values: Seq[V]): F[RedisData[V]] =
+    JF.toSync(underlying.dispatch(CommandType.EVAL, dispatchHelper.createRedisDataOutput(), dispatchHelper.createArgs().add(script).add(keys.length).addKeys(keys.asJava).addValues(values.asJava)))
+  
+  def eval(script: Array[Byte], keys: Seq[K], values: Seq[V]): F[RedisData[V]] =
+    JF.toSync(underlying.dispatch(CommandType.EVAL, dispatchHelper.createRedisDataOutput(), dispatchHelper.createArgs().add(script).add(keys.length).addKeys(keys.asJava).addValues(values.asJava)))
+  
+  def evalReadOnly(script: Array[Byte], keys: Seq[K], values: Seq[V]): F[RedisData[V]] =
+    JF.toSync(underlying.dispatch(CommandType.EVAL_RO, dispatchHelper.createRedisDataOutput(), dispatchHelper.createArgs().add(script).add(keys.length).addKeys(keys.asJava).addValues(values.asJava)))
+  
+  def evalsha(digest: String, keys: Seq[K], values: Seq[V]): F[RedisData[V]] =
+    JF.toSync(underlying.dispatch(CommandType.EVALSHA, dispatchHelper.createRedisDataOutput(), dispatchHelper.createArgs().add(digest).add(keys.length).addKeys(keys.asJava).addValues(values.asJava)))
+  
+  def evalshaReadOnly(digest: String, keys: Seq[K], values: Seq[V]): F[RedisData[V]] =
+    JF.toSync(underlying.dispatch(CommandType.EVALSHA_RO, dispatchHelper.createRedisDataOutput(), dispatchHelper.createArgs().add(digest).add(keys.length).addKeys(keys.asJava).addValues(values.asJava)))
   
   def scriptExists(digests: String*): F[Seq[Boolean]] =
     JF.toSync(underlying.scriptExists(digests: _*)).map(_.asScala.toSeq.map(Boolean2boolean))

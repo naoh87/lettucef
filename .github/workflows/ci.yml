@@ -23,7 +23,7 @@ jobs:
         cache: 'sbt'
     - name: Run test
       run: |
-        sbt codegen/run scalafix
+        sbt codegen/run compile scalafix
         sbt +compile +test
         git add -A
         test 0 -eq $(git diff --staged | wc -l)

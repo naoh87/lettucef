@@ -887,14 +887,61 @@
 - underlying: RedisScriptingAsyncCommands[K, V]
   output: ScriptingCommands
   methods:
-# - fun: RedisFuture<T> eval(String script, ScriptOutputType type, K... keys);
-# - fun: RedisFuture<T> eval(byte[] script, ScriptOutputType type, K... keys);
-# - fun: RedisFuture<T> eval(String script, ScriptOutputType type, K[] keys, V... values);
-# - fun: RedisFuture<T> eval(byte[] script, ScriptOutputType type, K[] keys, V... values);
-# - fun: RedisFuture<T> evalReadOnly(byte[] script, ScriptOutputType type, K[] keys, V... values);
-# - fun: RedisFuture<T> evalsha(String digest, ScriptOutputType type, K... keys);
-# - fun: RedisFuture<T> evalsha(String digest, ScriptOutputType type, K[] keys, V... values);
-# - fun: RedisFuture<T> evalshaReadOnly(String digest, ScriptOutputType type, K[] keys, V... values);
+  - fun: RedisFuture<T> eval(String script, ScriptOutputType type, K[] keys, V... values);
+    dispatch:
+      cType: EVAL
+      args:
+      - add(script)
+      - add(keys.length)
+      - addKeys(keys.asJava)
+      - addValues(values.asJava)
+      parse: RedisData[V]
+      input: "String script, Seq[K] keys, Seq[V] values"
+      output: RedisData[V]
+  - fun: RedisFuture<T> eval(byte[] script, ScriptOutputType type, K[] keys, V... values);
+    dispatch:
+      cType: EVAL
+      args:
+      - add(script)
+      - add(keys.length)
+      - addKeys(keys.asJava)
+      - addValues(values.asJava)
+      parse: RedisData[V]
+      input: "byte[] script, Seq[K] keys, Seq[V] values"
+      output: RedisData[V]
+  - fun: RedisFuture<T> evalReadOnly(byte[] script, ScriptOutputType type, K[] keys, V... values);
+    dispatch:
+      cType: EVAL_RO
+      args:
+      - add(script)
+      - add(keys.length)
+      - addKeys(keys.asJava)
+      - addValues(values.asJava)
+      parse: RedisData[V]
+      input: "byte[] script, Seq[K] keys, Seq[V] values"
+      output: RedisData[V]
+  - fun: RedisFuture<T> evalsha(String digest, ScriptOutputType type, K[] keys, V... values);
+    dispatch:
+      cType: EVALSHA
+      args:
+      - add(digest)
+      - add(keys.length)
+      - addKeys(keys.asJava)
+      - addValues(values.asJava)
+      parse: RedisData[V]
+      input: "String digest, Seq[K] keys, Seq[V] values"
+      output: RedisData[V]
+  - fun: RedisFuture<T> evalshaReadOnly(String digest, ScriptOutputType type, K[] keys, V... values);
+    dispatch:
+      cType: EVALSHA_RO
+      args:
+      - add(digest)
+      - add(keys.length)
+      - addKeys(keys.asJava)
+      - addValues(values.asJava)
+      parse: RedisData[V]
+      input: "String digest, Seq[K] keys, Seq[V] values"
+      output: RedisData[V]
   - fun: RedisFuture<List<Boolean>> scriptExists(String... digests);
   - fun: RedisFuture<String> scriptFlush();
   - fun: RedisFuture<String> scriptFlush(FlushMode flushMode);
@@ -903,6 +950,7 @@
   - fun: RedisFuture<String> scriptLoad(byte[] script);
   imports:
   - io.lettuce.core.FlushMode
+  - dev.naoh.lettucef.api.models._
 
 
 - underlying: RedisTransactionalAsyncCommands[K, V]
