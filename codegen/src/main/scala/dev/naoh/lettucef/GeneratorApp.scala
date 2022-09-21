@@ -7,7 +7,10 @@ import java.nio.file.StandardOpenOption
 import cats.effect.ExitCode
 import cats.effect.IO
 import cats.effect.IOApp
+import dev.naoh.lettucef.Method.Argument
 import dev.naoh.lettucef.Method.TypeExpr
+import io.circe.Decoder
+import scala.util.chaining._
 
 object GeneratorApp extends IOApp {
 
@@ -144,8 +147,12 @@ object Async {
         .orElse(output.map(_.replace(tpe)))
         .getOrElse(tpe.toScala(Nil, options.contains("nullable")))
 
-    private lazy val scalaDef: Method =
-      fun.mapOutput(convertOut).mapArgs(_.toScala)
+    private lazy val scalaDef: Method = {
+      dispatch.flatMap(_.input).pipe {
+        case Some(value) => fun.copy(args = value)
+        case None => fun
+      }.mapOutput(convertOut).mapArgs(_.toScala)
+    }
 
     def printScalaDef(p: FunctionalPrinter): FunctionalPrinter =
       if (isOutputTarget && !fun.existArgs(_.existName(skipArgType))) {
@@ -182,6 +189,7 @@ object Async {
     args: Option[List[String]],
     parse: String,
     output: TypeExpr,
+    input: Option[List[Argument]],
     postfix: Option[String]
   ) {
     def replace(rf: Method.TypeExpr): Method.TypeExpr =
@@ -198,6 +206,18 @@ object Async {
         "io.lettuce.core.protocol.CommandKeyword",
         "io.lettuce.core.protocol.CommandType")
   }
+
+  object Dispatch {
+
+    implicit val decoder: Decoder[Dispatch] = {
+      import io.circe.generic.semiauto
+      implicit val args: Decoder[List[Argument]] = Decoder[String].emap { str =>
+        MethodParser.args.parse(s"($str)").left.map(_.toString).map(_._2)
+      }
+      semiauto.deriveDecoder[Dispatch]
+    }
+  }
+
 
   case class CustomOutput(
     tpe: Method.TypeExpr,

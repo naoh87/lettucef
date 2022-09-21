@@ -12,7 +12,7 @@ case class Method(name: String, args: List[Argument], output: TypeExpr, checkNul
     s"def ${Identifier.expr(name)}(${args.map(_.scalaDef).mkString(", ")}): ${output.scalaDef}"
 
   def syncCall(expr: Seq[Argument], to: TypeExpr, dispatch: Option[Dispatch], customPostFix: Option[String]): String = {
-    assert(expr.size == args.size)
+    assert(expr.size == args.size || dispatch.exists(_.input.isDefined))
     val call = dispatch.map(_.call) getOrElse args.zip(expr).map(ae => ae._1.call(ae._2)).mkString(", ")
     val postFix = pfix(to, dispatch, customPostFix)
 
@@ -38,7 +38,7 @@ case class Method(name: String, args: List[Argument], output: TypeExpr, checkNul
   }
 
   def asyncCall(expr: Seq[Argument], to: TypeExpr, dispatch: Option[Dispatch], customPostFix: Option[String]): String = {
-    assert(expr.size == args.size)
+    assert(expr.size == args.size || dispatch.exists(_.input.isDefined))
     val call = dispatch.map(_.call) getOrElse args.zip(expr).map(ae => ae._1.call(ae._2)).mkString(", ")
     val postFix =
       pfix(to, dispatch, customPostFix).pipe {
