@@ -57,7 +57,7 @@ lazy val streams = (project in file("streams"))
   .settings(common_settings)
   .settings(
     libraryDependencies ++= Seq(
-      "co.fs2" %% "fs2-core" % "3.2.7",
+      "co.fs2" %% "fs2-core" % "3.2.14",
     ),
   )
   .dependsOn(core)
@@ -68,7 +68,7 @@ lazy val extras = (project in file("extras"))
   .settings(common_settings)
   .settings(
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-effect" % "3.3.12",
+      "org.typelevel" %% "cats-effect" % "3.3.14",
     )
   )
 
@@ -99,8 +99,8 @@ lazy val benchmark = (project in file("benchmark"))
 
 val core_dependency = Seq(
   libraryDependencies ++= Seq(
-    "io.lettuce" % "lettuce-core" % "6.1.8.RELEASE",
-    "org.typelevel" %% "cats-effect" % "3.3.4",
+    "io.lettuce" % "lettuce-core" % "6.2.0.RELEASE",
+    "org.typelevel" %% "cats-effect" % "3.3.14",
     "org.scalatest" %% "scalatest" % "3.2.12" % "test",
   ),
 )
