@@ -16,6 +16,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - uses: shogo82148/actions-setup-redis@v1
+      with:
+        redis-version: '6.x'
+    - run: |
+        redis-cli --cluster create 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 --cluster-yes
+        redis-cli -p 7000 cluster info
+        test 1 -eq (redis-cli -p 7000 cluster info | grep cluster_state:ok | wc -l)
     - uses: actions/setup-java@v3
       with:
         distribution: 'corretto'
@@ -27,3 +34,29 @@ jobs:
         sbt +compile +test
         git add -A
         test 0 -eq $(git diff --staged | wc -l)
+    services:
+      redis0:
+        image: bitnami/redis-cluster:7.0.4
+        ports:
+        - 7000:7000
+        env:
+          ALLOW_EMPTY_PASSWORD: yes
+          REDIS_NODES: 127.0.0.1
+          REDIS_PORT_NUMBER: 7000
+      redis1:
+        image: bitnami/redis-cluster:7.0.4
+        ports:
+        - 7001:7001
+        env:
+          ALLOW_EMPTY_PASSWORD: yes
+          REDIS_NODES: 127.0.0.1
+          REDIS_PORT_NUMBER: 7001
+      redis2:
+        image: bitnami/redis-cluster:7.0.4
+        ports:
+        - 7002:7002
+        env:
+          ALLOW_EMPTY_PASSWORD: yes
+          REDIS_NODES: 127.0.0.1
+          REDIS_PORT_NUMBER: 7002
+
