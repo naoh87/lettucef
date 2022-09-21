@@ -9,6 +9,7 @@ import dev.naoh.lettucef.api.models._
 import dev.naoh.lettucef.core.commands.CommandsDeps
 import dev.naoh.lettucef.core.util.{JavaFutureUtil => JF}
 import io.lettuce.core.CopyArgs
+import io.lettuce.core.ExpireArgs
 import io.lettuce.core.MigrateArgs
 import io.lettuce.core.RestoreArgs
 import io.lettuce.core.ScanArgs
@@ -43,14 +44,29 @@ trait KeyCommands[F[_], K, V] extends CommandsDeps[F, K, V] with KeyCommandsF[F,
   def expire(key: K, seconds: Long): F[Boolean] =
     JF.toSync(underlying.expire(key, seconds)).map(Boolean2boolean)
   
+  def expire(key: K, seconds: Long, expireArgs: ExpireArgs): F[Boolean] =
+    JF.toSync(underlying.expire(key, seconds, expireArgs)).map(Boolean2boolean)
+  
   def expire(key: K, seconds: Duration): F[Boolean] =
     JF.toSync(underlying.expire(key, seconds)).map(Boolean2boolean)
+  
+  def expire(key: K, seconds: Duration, expireArgs: ExpireArgs): F[Boolean] =
+    JF.toSync(underlying.expire(key, seconds, expireArgs)).map(Boolean2boolean)
   
   def expireat(key: K, timestamp: Long): F[Boolean] =
     JF.toSync(underlying.expireat(key, timestamp)).map(Boolean2boolean)
   
+  def expireat(key: K, timestamp: Long, expireArgs: ExpireArgs): F[Boolean] =
+    JF.toSync(underlying.expireat(key, timestamp, expireArgs)).map(Boolean2boolean)
+  
   def expireat(key: K, timestamp: Instant): F[Boolean] =
     JF.toSync(underlying.expireat(key, timestamp)).map(Boolean2boolean)
+  
+  def expireat(key: K, timestamp: Instant, expireArgs: ExpireArgs): F[Boolean] =
+    JF.toSync(underlying.expireat(key, timestamp, expireArgs)).map(Boolean2boolean)
+  
+  def expiretime(key: K): F[Long] =
+    JF.toSync(underlying.expiretime(key)).map(Long2long)
   
   def keys(pattern: K): F[Seq[K]] =
     JF.toSync(underlying.keys(pattern)).map(_.asScala.toSeq)
@@ -82,14 +98,29 @@ trait KeyCommands[F[_], K, V] extends CommandsDeps[F, K, V] with KeyCommandsF[F,
   def pexpire(key: K, milliseconds: Long): F[Boolean] =
     JF.toSync(underlying.pexpire(key, milliseconds)).map(Boolean2boolean)
   
+  def pexpire(key: K, milliseconds: Long, expireArgs: ExpireArgs): F[Boolean] =
+    JF.toSync(underlying.pexpire(key, milliseconds, expireArgs)).map(Boolean2boolean)
+  
   def pexpire(key: K, milliseconds: Duration): F[Boolean] =
     JF.toSync(underlying.pexpire(key, milliseconds)).map(Boolean2boolean)
+  
+  def pexpire(key: K, milliseconds: Duration, expireArgs: ExpireArgs): F[Boolean] =
+    JF.toSync(underlying.pexpire(key, milliseconds, expireArgs)).map(Boolean2boolean)
   
   def pexpireat(key: K, timestamp: Long): F[Boolean] =
     JF.toSync(underlying.pexpireat(key, timestamp)).map(Boolean2boolean)
   
+  def pexpireat(key: K, timestamp: Long, expireArgs: ExpireArgs): F[Boolean] =
+    JF.toSync(underlying.pexpireat(key, timestamp, expireArgs)).map(Boolean2boolean)
+  
   def pexpireat(key: K, timestamp: Instant): F[Boolean] =
     JF.toSync(underlying.pexpireat(key, timestamp)).map(Boolean2boolean)
+  
+  def pexpireat(key: K, timestamp: Instant, expireArgs: ExpireArgs): F[Boolean] =
+    JF.toSync(underlying.pexpireat(key, timestamp, expireArgs)).map(Boolean2boolean)
+  
+  def pexpiretime(key: K): F[Long] =
+    JF.toSync(underlying.pexpiretime(key)).map(Long2long)
   
   def pttl(key: K): F[Long] =
     JF.toSync(underlying.pttl(key)).map(Long2long)
@@ -114,6 +145,12 @@ trait KeyCommands[F[_], K, V] extends CommandsDeps[F, K, V] with KeyCommandsF[F,
   
   def sort(key: K, sortArgs: SortArgs): F[Seq[V]] =
     JF.toSync(underlying.sort(key, sortArgs)).map(_.asScala.toSeq)
+  
+  def sortReadOnly(key: K): F[Seq[V]] =
+    JF.toSync(underlying.sortReadOnly(key)).map(_.asScala.toSeq)
+  
+  def sortReadOnly(key: K, sortArgs: SortArgs): F[Seq[V]] =
+    JF.toSync(underlying.sortReadOnly(key, sortArgs)).map(_.asScala.toSeq)
   
   def sortStore(key: K, sortArgs: SortArgs, destination: K): F[Long] =
     JF.toSync(underlying.sortStore(key, sortArgs, destination)).map(Long2long)

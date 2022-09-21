@@ -10,10 +10,16 @@
     opt: [ nullable ]
   - fun: RedisFuture<Long> exists(K... keys);
   - fun: RedisFuture<Boolean> expire(K key, long seconds);
+  - fun: RedisFuture<Boolean> expire(K key, long seconds, ExpireArgs expireArgs);
   - fun: RedisFuture<Boolean> expire(K key, Duration seconds);
+  - fun: RedisFuture<Boolean> expire(K key, Duration seconds, ExpireArgs expireArgs);
   - fun: RedisFuture<Boolean> expireat(K key, long timestamp);
+  - fun: RedisFuture<Boolean> expireat(K key, long timestamp, ExpireArgs expireArgs);
   - fun: RedisFuture<Boolean> expireat(K key, Date timestamp);
+  - fun: RedisFuture<Boolean> expireat(K key, Date timestamp, ExpireArgs expireArgs);
   - fun: RedisFuture<Boolean> expireat(K key, Instant timestamp);
+  - fun: RedisFuture<Boolean> expireat(K key, Instant timestamp, ExpireArgs expireArgs);
+  - fun: RedisFuture<Long> expiretime(K key);
   - fun: RedisFuture<List<K>> keys(K pattern);
   - fun: RedisFuture<Long> keys(KeyStreamingChannel<K> channel, K pattern);
     opt: [ ignore ]
@@ -27,10 +33,16 @@
   - fun: RedisFuture<Long> objectRefcount(K key);
   - fun: RedisFuture<Boolean> persist(K key);
   - fun: RedisFuture<Boolean> pexpire(K key, long milliseconds);
+  - fun: RedisFuture<Boolean> pexpire(K key, long milliseconds, ExpireArgs expireArgs);
   - fun: RedisFuture<Boolean> pexpire(K key, Duration milliseconds);
+  - fun: RedisFuture<Boolean> pexpire(K key, Duration milliseconds, ExpireArgs expireArgs);
   - fun: RedisFuture<Boolean> pexpireat(K key, long timestamp);
+  - fun: RedisFuture<Boolean> pexpireat(K key, long timestamp, ExpireArgs expireArgs);
   - fun: RedisFuture<Boolean> pexpireat(K key, Date timestamp);
+  - fun: RedisFuture<Boolean> pexpireat(K key, Date timestamp, ExpireArgs expireArgs);
   - fun: RedisFuture<Boolean> pexpireat(K key, Instant timestamp);
+  - fun: RedisFuture<Boolean> pexpireat(K key, Instant timestamp, ExpireArgs expireArgs);
+  - fun: RedisFuture<Long> pexpiretime(K key);
   - fun: RedisFuture<Long> pttl(K key);
   - fun: RedisFuture<K> randomkey();
     opt: [ nullable ]
@@ -43,6 +55,12 @@
     opt: [ ignore ]
   - fun: RedisFuture<List<V>> sort(K key, SortArgs sortArgs);
   - fun: RedisFuture<Long> sort(ValueStreamingChannel<V> channel, K key, SortArgs sortArgs);
+    opt: [ ignore ]
+  - fun: RedisFuture<List<V>> sortReadOnly(K key);
+  - fun: RedisFuture<Long> sortReadOnly(ValueStreamingChannel<V> channel, K key);
+    opt: [ ignore ]
+  - fun: RedisFuture<List<V>> sortReadOnly(K key, SortArgs sortArgs);
+  - fun: RedisFuture<Long> sortReadOnly(ValueStreamingChannel<V> channel, K key, SortArgs sortArgs);
     opt: [ ignore ]
   - fun: RedisFuture<Long> sortStore(K key, SortArgs sortArgs, K destination);
   - fun: RedisFuture<Long> touch(K... keys);
@@ -65,6 +83,7 @@
   - java.time.Instant
   - io.lettuce.core.CopyArgs
   - dev.naoh.lettucef.api.models._
+  - io.lettuce.core.ExpireArgs
   - io.lettuce.core.MigrateArgs
   - io.lettuce.core.RestoreArgs
   - io.lettuce.core.ScanArgs
@@ -228,27 +247,44 @@
 - underlying: RedisClusterAsyncCommands[K, V]
   output: ClusterCommands
   methods:
+  - fun: RedisFuture<String> asking();
   - fun: RedisFuture<String> auth(CharSequence password);
   - fun: RedisFuture<String> auth(String username, CharSequence password);
-  - fun: RedisFuture<String> clusterBumpepoch();
-  - fun: RedisFuture<String> clusterMeet(String ip, int port);
-  - fun: RedisFuture<String> clusterForget(String nodeId);
   - fun: RedisFuture<String> clusterAddSlots(int... slots);
+  - fun: RedisFuture<String> clusterBumpepoch();
+  - fun: RedisFuture<Long> clusterCountFailureReports(String nodeId);
+  - fun: RedisFuture<Long> clusterCountKeysInSlot(int slot);
+  - fun: RedisFuture<String> clusterAddSlotsRange(Range<Integer>... ranges);
   - fun: RedisFuture<String> clusterDelSlots(int... slots);
-  - fun: RedisFuture<String> clusterSetSlotNode(int slot, String nodeId);
-  - fun: RedisFuture<String> clusterSetSlotStable(int slot);
-  - fun: RedisFuture<String> clusterSetSlotMigrating(int slot, String nodeId);
-  - fun: RedisFuture<String> clusterSetSlotImporting(int slot, String nodeId);
+  - fun: RedisFuture<String> clusterDelSlotsRange(Range<Integer>... ranges);
+  - fun: RedisFuture<String> clusterFailover(boolean force);
+  - fun: RedisFuture<String> clusterFlushslots();
+  - fun: RedisFuture<String> clusterForget(String nodeId);
+  - fun: RedisFuture<List<K>> clusterGetKeysInSlot(int slot, int count);
   - fun: RedisFuture<String> clusterInfo();
+  - fun: RedisFuture<Long> clusterKeyslot(K key);
+  - fun: RedisFuture<String> clusterMeet(String ip, int port);
   - fun: RedisFuture<String> clusterMyId();
   - fun: RedisFuture<String> clusterNodes();
-  - fun: RedisFuture<List<String>> clusterSlaves(String nodeId);
-  - fun: RedisFuture<List<K>> clusterGetKeysInSlot(int slot, int count);
-  - fun: RedisFuture<Long> clusterCountKeysInSlot(int slot);
-  - fun: RedisFuture<Long> clusterCountFailureReports(String nodeId);
-  - fun: RedisFuture<Long> clusterKeyslot(K key);
+  - fun: RedisFuture<String> clusterReplicate(String nodeId);
+  - fun: RedisFuture<List<String>> clusterReplicas(String nodeId);
+  - fun: RedisFuture<String> clusterReset(boolean hard);
   - fun: RedisFuture<String> clusterSaveconfig();
   - fun: RedisFuture<String> clusterSetConfigEpoch(long configEpoch);
+  - fun: RedisFuture<String> clusterSetSlotImporting(int slot, String nodeId);
+  - fun: RedisFuture<String> clusterSetSlotMigrating(int slot, String nodeId);
+  - fun: RedisFuture<String> clusterSetSlotNode(int slot, String nodeId);
+  - fun: RedisFuture<String> clusterSetSlotStable(int slot);
+  - fun: RedisFuture<List<Object>> clusterShards();
+    dispatch:
+      cType: CLUSTER
+      args:
+      - add(CommandKeyword.SLOTS)
+      parse: RedisData[V]
+      output: List[RedisData[V]]
+      postfix: _.asList
+  - fun: RedisFuture<List<String>> clusterSlaves(String nodeId);
+    opt: [ deprecated ]
   - fun: RedisFuture<List<Object>> clusterSlots();
     dispatch:
       cType: CLUSTER
@@ -257,11 +293,12 @@
       parse: RedisData[V]
       output: List[RedisData[V]]
       postfix: _.asList
-  - fun: RedisFuture<String> asking();
-  - fun: RedisFuture<String> clusterReplicate(String nodeId);
-  - fun: RedisFuture<String> clusterFailover(boolean force);
-  - fun: RedisFuture<String> clusterReset(boolean hard);
-  - fun: RedisFuture<String> clusterFlushslots();
+  - fun: RedisFuture<Boolean> msetnx(Map<K, V> map);
+    opt: [ ignore ]
+  - fun: RedisFuture<String> readOnly();
+    opt: [ ignore ]
+  - fun: RedisFuture<String> readWrite();
+    opt: [ ignore ]
   imports:
   - io.lettuce.core.cluster.api.async.RedisClusterAsyncCommands
   - dev.naoh.lettucef.api.models._
@@ -330,6 +367,8 @@
     opt: [ nullable ]
   - fun: RedisFuture<V> blmove(K source, K destination, LMoveArgs args, double timeout);
     opt: [ nullable ]
+  - fun: RedisFuture<KeyValue<K, List<V>>> blmpop(long timeout, LMPopArgs args, K... keys);
+  - fun: RedisFuture<KeyValue<K, List<V>>> blmpop(double timeout, LMPopArgs args, K... keys);
   - fun: RedisFuture<KeyValue<K, V>> blpop(long timeout, K... keys);
     opt: [ nullable ]
   - fun: RedisFuture<KeyValue<K, V>> blpop(double timeout, K... keys);
@@ -348,6 +387,7 @@
   - fun: RedisFuture<Long> llen(K key);
   - fun: RedisFuture<V> lmove(K source, K destination, LMoveArgs args);
     opt: [ nullable ]
+  - fun: RedisFuture<KeyValue<K, List<V>>> lmpop(LMPopArgs args, K... keys);
   - fun: RedisFuture<V> lpop(K key);
     opt: [ nullable ]
   - fun: RedisFuture<List<V>> lpop(K key, long count);
@@ -374,6 +414,7 @@
   - fun: RedisFuture<Long> rpushx(K key, V... values);
   imports:
   - io.lettuce.core.LMoveArgs
+  - io.lettuce.core.LMPopArgs
   - io.lettuce.core.LPosArgs
 
 - underlying: RedisServerAsyncCommands[K, V]
@@ -383,11 +424,13 @@
   - fun: RedisFuture<String> bgsave();
   - fun: RedisFuture<String> clientCaching(boolean enabled);
   - fun: RedisFuture<K> clientGetname();
+    opt: [ nullable ]
   - fun: RedisFuture<Long> clientGetredir();
   - fun: RedisFuture<Long> clientId();
   - fun: RedisFuture<String> clientKill(String addr);
   - fun: RedisFuture<Long> clientKill(KillArgs killArgs);
   - fun: RedisFuture<String> clientList();
+  - fun: RedisFuture<String> clientNoEvict(boolean on);
   - fun: RedisFuture<String> clientPause(long timeout);
   - fun: RedisFuture<String> clientSetname(K name);
   - fun: RedisFuture<String> clientTracking(TrackingArgs args);
@@ -411,9 +454,11 @@
   - fun: RedisFuture<List<Object>> commandInfo(CommandType... commands);
     opt: [ ignore ]
   - fun: RedisFuture<Map<String, String>> configGet(String parameter);
+  - fun: RedisFuture<Map<String, String>> configGet(String... parameters);
   - fun: RedisFuture<String> configResetstat();
   - fun: RedisFuture<String> configRewrite();
   - fun: RedisFuture<String> configSet(String parameter, String value);
+  - fun: RedisFuture<String> configSet(Map<String, String> kvs);
   - fun: RedisFuture<Long> dbsize();
   - fun: RedisFuture<String> debugCrashAndRecover(Long delay);
   - fun: RedisFuture<String> debugHtstats(int db);
@@ -433,6 +478,8 @@
   - fun: RedisFuture<String> info(String section);
   - fun: RedisFuture<Date> lastsave();
   - fun: RedisFuture<Long> memoryUsage(K key);
+  - fun: RedisFuture<String> replicaof(String host, int port);
+  - fun: RedisFuture<String> replicaofNoOne();
   - fun: RedisFuture<String> save();
   - fun: RedisFuture<String> slaveof(String host, int port);
   - fun: RedisFuture<String> slaveofNoOne();
@@ -478,6 +525,8 @@
   - fun: RedisFuture<Set<V>> sinter(K... keys);
   - fun: RedisFuture<Long> sinter(ValueStreamingChannel<V> channel, K... keys);
     opt: [ ignore ]
+  - fun: RedisFuture<Long> sintercard(K... keys);
+  - fun: RedisFuture<Long> sintercard(long limit, K... keys);
   - fun: RedisFuture<Long> sinterstore(K destination, K... keys);
   - fun: RedisFuture<Boolean> sismember(K key, V member);
   - fun: RedisFuture<Set<V>> smembers(K key);
@@ -548,6 +597,8 @@
   - fun: RedisFuture<Double> zincrby(K key, double amount, V member);
   - fun: RedisFuture<List<V>> zinter(K... keys);
   - fun: RedisFuture<List<V>> zinter(ZAggregateArgs aggregateArgs, K... keys);
+  - fun: RedisFuture<Long> zintercard(K... keys);
+  - fun: RedisFuture<Long> zintercard(long limit, K... keys);
   - fun: RedisFuture<List<ScoredValue<V>>> zinterWithScores(ZAggregateArgs aggregateArgs, K... keys);
   - fun: RedisFuture<List<ScoredValue<V>>> zinterWithScores(K... keys);
   - fun: RedisFuture<Long> zinterstore(K destination, K... keys);
@@ -760,6 +811,9 @@
   - fun: RedisFuture<Set<AclCategory>> aclCat();
   - fun: RedisFuture<Set<CommandType>> aclCat(AclCategory category);
   - fun: RedisFuture<Long> aclDeluser(String... usernames);
+  - fun: RedisFuture<String> aclDryRun(String username, String command, String... args);
+  - fun: RedisFuture<String> aclDryRun(String username, RedisCommand<K, V, ?> command);
+    opt: [ ignore ]
   - fun: RedisFuture<String> aclGenpass();
   - fun: RedisFuture<String> aclGenpass(int bits);
   - fun: RedisFuture<List<Object>> aclGetuser(String username);
@@ -808,12 +862,15 @@
   - fun: RedisFuture<List<Map<K, V>>> masters();
   - fun: RedisFuture<Map<K, V>> master(K key);
   - fun: RedisFuture<List<Map<K, V>>> slaves(K key);
+    opt: [ deprecated ]
   - fun: RedisFuture<Long> reset(K key);
+  - fun: RedisFuture<List<Map<K, V>>> replicas(K key);
   - fun: RedisFuture<String> failover(K key);
   - fun: RedisFuture<String> monitor(K key, String ip, int port, int quorum);
   - fun: RedisFuture<String> set(K key, String option, V value);
   - fun: RedisFuture<String> remove(K key);
   - fun: RedisFuture<K> clientGetname();
+    opt: [ nullable ]
   - fun: RedisFuture<String> clientSetname(K name);
   - fun: RedisFuture<String> clientKill(String addr);
   - fun: RedisFuture<Long> clientKill(KillArgs killArgs);
@@ -834,8 +891,10 @@
 # - fun: RedisFuture<T> eval(byte[] script, ScriptOutputType type, K... keys);
 # - fun: RedisFuture<T> eval(String script, ScriptOutputType type, K[] keys, V... values);
 # - fun: RedisFuture<T> eval(byte[] script, ScriptOutputType type, K[] keys, V... values);
+# - fun: RedisFuture<T> evalReadOnly(byte[] script, ScriptOutputType type, K[] keys, V... values);
 # - fun: RedisFuture<T> evalsha(String digest, ScriptOutputType type, K... keys);
 # - fun: RedisFuture<T> evalsha(String digest, ScriptOutputType type, K[] keys, V... values);
+# - fun: RedisFuture<T> evalshaReadOnly(String digest, ScriptOutputType type, K[] keys, V... values);
   - fun: RedisFuture<List<Boolean>> scriptExists(String... digests);
   - fun: RedisFuture<String> scriptFlush();
   - fun: RedisFuture<String> scriptFlush(FlushMode flushMode);

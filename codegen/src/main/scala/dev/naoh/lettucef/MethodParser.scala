@@ -11,7 +11,7 @@ object MethodParser {
   import cats.parse.Rfc5234
   import cats.parse.{Parser => P}
 
-  val name: P[String] = Rfc5234.alpha.rep.map(_.toList.mkString)
+  val name: P[String] = Rfc5234.alpha.rep.map(_.toList.mkString) | P.char('?').as("?")
 
   val dot: P[String] = P.char('.').as(".")
 

@@ -10,6 +10,7 @@ import dev.naoh.lettucef.api.models._
 import dev.naoh.lettucef.core.commands.CommandsDeps
 import dev.naoh.lettucef.core.util.{JavaFutureUtil => JF}
 import io.lettuce.core.CopyArgs
+import io.lettuce.core.ExpireArgs
 import io.lettuce.core.MigrateArgs
 import io.lettuce.core.RestoreArgs
 import io.lettuce.core.ScanArgs
@@ -44,14 +45,29 @@ trait KeyCommands[F[_], K, V] extends CommandsDeps[F, K, V] with KeyCommandsF[Co
   def expire(key: K, seconds: Long): F[F[Boolean]] =
     JF.toAsync(underlying.expire(key, seconds)).map(_.map(Boolean2boolean))
   
+  def expire(key: K, seconds: Long, expireArgs: ExpireArgs): F[F[Boolean]] =
+    JF.toAsync(underlying.expire(key, seconds, expireArgs)).map(_.map(Boolean2boolean))
+  
   def expire(key: K, seconds: Duration): F[F[Boolean]] =
     JF.toAsync(underlying.expire(key, seconds)).map(_.map(Boolean2boolean))
+  
+  def expire(key: K, seconds: Duration, expireArgs: ExpireArgs): F[F[Boolean]] =
+    JF.toAsync(underlying.expire(key, seconds, expireArgs)).map(_.map(Boolean2boolean))
   
   def expireat(key: K, timestamp: Long): F[F[Boolean]] =
     JF.toAsync(underlying.expireat(key, timestamp)).map(_.map(Boolean2boolean))
   
+  def expireat(key: K, timestamp: Long, expireArgs: ExpireArgs): F[F[Boolean]] =
+    JF.toAsync(underlying.expireat(key, timestamp, expireArgs)).map(_.map(Boolean2boolean))
+  
   def expireat(key: K, timestamp: Instant): F[F[Boolean]] =
     JF.toAsync(underlying.expireat(key, timestamp)).map(_.map(Boolean2boolean))
+  
+  def expireat(key: K, timestamp: Instant, expireArgs: ExpireArgs): F[F[Boolean]] =
+    JF.toAsync(underlying.expireat(key, timestamp, expireArgs)).map(_.map(Boolean2boolean))
+  
+  def expiretime(key: K): F[F[Long]] =
+    JF.toAsync(underlying.expiretime(key)).map(_.map(Long2long))
   
   def keys(pattern: K): F[F[Seq[K]]] =
     JF.toAsync(underlying.keys(pattern)).map(_.map(_.asScala.toSeq))
@@ -83,14 +99,29 @@ trait KeyCommands[F[_], K, V] extends CommandsDeps[F, K, V] with KeyCommandsF[Co
   def pexpire(key: K, milliseconds: Long): F[F[Boolean]] =
     JF.toAsync(underlying.pexpire(key, milliseconds)).map(_.map(Boolean2boolean))
   
+  def pexpire(key: K, milliseconds: Long, expireArgs: ExpireArgs): F[F[Boolean]] =
+    JF.toAsync(underlying.pexpire(key, milliseconds, expireArgs)).map(_.map(Boolean2boolean))
+  
   def pexpire(key: K, milliseconds: Duration): F[F[Boolean]] =
     JF.toAsync(underlying.pexpire(key, milliseconds)).map(_.map(Boolean2boolean))
+  
+  def pexpire(key: K, milliseconds: Duration, expireArgs: ExpireArgs): F[F[Boolean]] =
+    JF.toAsync(underlying.pexpire(key, milliseconds, expireArgs)).map(_.map(Boolean2boolean))
   
   def pexpireat(key: K, timestamp: Long): F[F[Boolean]] =
     JF.toAsync(underlying.pexpireat(key, timestamp)).map(_.map(Boolean2boolean))
   
+  def pexpireat(key: K, timestamp: Long, expireArgs: ExpireArgs): F[F[Boolean]] =
+    JF.toAsync(underlying.pexpireat(key, timestamp, expireArgs)).map(_.map(Boolean2boolean))
+  
   def pexpireat(key: K, timestamp: Instant): F[F[Boolean]] =
     JF.toAsync(underlying.pexpireat(key, timestamp)).map(_.map(Boolean2boolean))
+  
+  def pexpireat(key: K, timestamp: Instant, expireArgs: ExpireArgs): F[F[Boolean]] =
+    JF.toAsync(underlying.pexpireat(key, timestamp, expireArgs)).map(_.map(Boolean2boolean))
+  
+  def pexpiretime(key: K): F[F[Long]] =
+    JF.toAsync(underlying.pexpiretime(key)).map(_.map(Long2long))
   
   def pttl(key: K): F[F[Long]] =
     JF.toAsync(underlying.pttl(key)).map(_.map(Long2long))
@@ -115,6 +146,12 @@ trait KeyCommands[F[_], K, V] extends CommandsDeps[F, K, V] with KeyCommandsF[Co
   
   def sort(key: K, sortArgs: SortArgs): F[F[Seq[V]]] =
     JF.toAsync(underlying.sort(key, sortArgs)).map(_.map(_.asScala.toSeq))
+  
+  def sortReadOnly(key: K): F[F[Seq[V]]] =
+    JF.toAsync(underlying.sortReadOnly(key)).map(_.map(_.asScala.toSeq))
+  
+  def sortReadOnly(key: K, sortArgs: SortArgs): F[F[Seq[V]]] =
+    JF.toAsync(underlying.sortReadOnly(key, sortArgs)).map(_.map(_.asScala.toSeq))
   
   def sortStore(key: K, sortArgs: SortArgs, destination: K): F[F[Long]] =
     JF.toAsync(underlying.sortStore(key, sortArgs, destination)).map(_.map(Long2long))

@@ -254,6 +254,8 @@ object Method {
             s"${arg.name}: _*"
           case _ if tpe.name.expr == "ScoredValue" =>
             s"${arg.name}.map(LettuceValueConverter.toScoredValue): _*"
+          case _ if tpe.name.expr == "Range" =>
+            s"${arg.name}.map(_.toJava): _*"
           case _ =>
             sys.error(s"fail to call (${arg.scalaDef}) => (${this.scalaDef})")
         }

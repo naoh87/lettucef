@@ -18,6 +18,10 @@ trait SetCommandsF[F[_], K, V] {
   
   def sinter(keys: K*): F[Set[V]]
   
+  def sintercard(keys: K*): F[Long]
+  
+  def sintercard(limit: Long, keys: K*): F[Long]
+  
   def sinterstore(destination: K, keys: K*): F[Long]
   
   def sismember(key: K, member: V): F[Boolean]

@@ -13,9 +13,9 @@ trait SentinelCommandsF[F[_], K, V] {
   
   def master(key: K): F[Map[K, V]]
   
-  def slaves(key: K): F[Seq[Map[K, V]]]
-  
   def reset(key: K): F[Long]
+  
+  def replicas(key: K): F[Seq[Map[K, V]]]
   
   def failover(key: K): F[String]
   
@@ -25,7 +25,7 @@ trait SentinelCommandsF[F[_], K, V] {
   
   def remove(key: K): F[String]
   
-  def clientGetname(): F[K]
+  def clientGetname(): F[Option[K]]
   
   def clientSetname(name: K): F[String]
   

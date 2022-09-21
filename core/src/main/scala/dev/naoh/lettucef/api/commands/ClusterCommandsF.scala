@@ -6,58 +6,64 @@ import dev.naoh.lettucef.api.models._
 
 trait ClusterCommandsF[F[_], K, V] {
 
+  def asking(): F[String]
+  
   def auth(password: CharSequence): F[String]
   
   def auth(username: String, password: CharSequence): F[String]
   
+  def clusterAddSlots(slots: Int*): F[String]
+  
   def clusterBumpepoch(): F[String]
   
-  def clusterMeet(ip: String, port: Int): F[String]
+  def clusterCountFailureReports(nodeId: String): F[Long]
   
-  def clusterForget(nodeId: String): F[String]
+  def clusterCountKeysInSlot(slot: Int): F[Long]
   
-  def clusterAddSlots(slots: Int*): F[String]
+  def clusterAddSlotsRange(ranges: RedisRange[Integer]*): F[String]
   
   def clusterDelSlots(slots: Int*): F[String]
   
-  def clusterSetSlotNode(slot: Int, nodeId: String): F[String]
+  def clusterDelSlotsRange(ranges: RedisRange[Integer]*): F[String]
   
-  def clusterSetSlotStable(slot: Int): F[String]
+  def clusterFailover(force: Boolean): F[String]
   
-  def clusterSetSlotMigrating(slot: Int, nodeId: String): F[String]
+  def clusterFlushslots(): F[String]
   
-  def clusterSetSlotImporting(slot: Int, nodeId: String): F[String]
+  def clusterForget(nodeId: String): F[String]
+  
+  def clusterGetKeysInSlot(slot: Int, count: Int): F[Seq[K]]
   
   def clusterInfo(): F[String]
+  
+  def clusterKeyslot(key: K): F[Long]
+  
+  def clusterMeet(ip: String, port: Int): F[String]
   
   def clusterMyId(): F[String]
   
   def clusterNodes(): F[String]
   
-  def clusterSlaves(nodeId: String): F[Seq[String]]
+  def clusterReplicate(nodeId: String): F[String]
   
-  def clusterGetKeysInSlot(slot: Int, count: Int): F[Seq[K]]
+  def clusterReplicas(nodeId: String): F[Seq[String]]
   
-  def clusterCountKeysInSlot(slot: Int): F[Long]
-  
-  def clusterCountFailureReports(nodeId: String): F[Long]
-  
-  def clusterKeyslot(key: K): F[Long]
+  def clusterReset(hard: Boolean): F[String]
   
   def clusterSaveconfig(): F[String]
   
   def clusterSetConfigEpoch(configEpoch: Long): F[String]
   
+  def clusterSetSlotImporting(slot: Int, nodeId: String): F[String]
+  
+  def clusterSetSlotMigrating(slot: Int, nodeId: String): F[String]
+  
+  def clusterSetSlotNode(slot: Int, nodeId: String): F[String]
+  
+  def clusterSetSlotStable(slot: Int): F[String]
+  
+  def clusterShards(): F[List[RedisData[V]]]
+  
   def clusterSlots(): F[List[RedisData[V]]]
-  
-  def asking(): F[String]
-  
-  def clusterReplicate(nodeId: String): F[String]
-  
-  def clusterFailover(force: Boolean): F[String]
-  
-  def clusterReset(hard: Boolean): F[String]
-  
-  def clusterFlushslots(): F[String]
   
 }

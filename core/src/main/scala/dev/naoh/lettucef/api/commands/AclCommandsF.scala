@@ -15,6 +15,8 @@ trait AclCommandsF[F[_], K, V] {
   
   def aclDeluser(usernames: String*): F[Long]
   
+  def aclDryRun(username: String, command: String, args: String*): F[String]
+  
   def aclGenpass(): F[String]
   
   def aclGenpass(bits: Int): F[String]

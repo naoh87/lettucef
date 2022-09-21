@@ -17,7 +17,7 @@ trait ServerCommandsF[F[_], K, V] {
   
   def clientCaching(enabled: Boolean): F[String]
   
-  def clientGetname(): F[K]
+  def clientGetname(): F[Option[K]]
   
   def clientGetredir(): F[Long]
   
@@ -28,6 +28,8 @@ trait ServerCommandsF[F[_], K, V] {
   def clientKill(killArgs: KillArgs): F[Long]
   
   def clientList(): F[String]
+  
+  def clientNoEvict(on: Boolean): F[String]
   
   def clientPause(timeout: Long): F[String]
   
@@ -45,11 +47,15 @@ trait ServerCommandsF[F[_], K, V] {
   
   def configGet(parameter: String): F[Map[String, String]]
   
+  def configGet(parameters: String*): F[Map[String, String]]
+  
   def configResetstat(): F[String]
   
   def configRewrite(): F[String]
   
   def configSet(parameter: String, value: String): F[String]
+  
+  def configSet(kvs: Map[String, String]): F[String]
   
   def dbsize(): F[Long]
   
@@ -80,6 +86,10 @@ trait ServerCommandsF[F[_], K, V] {
   def lastsave(): F[Date]
   
   def memoryUsage(key: K): F[Long]
+  
+  def replicaof(host: String, port: Int): F[String]
+  
+  def replicaofNoOne(): F[String]
   
   def save(): F[String]
   

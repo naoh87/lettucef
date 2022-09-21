@@ -32,6 +32,12 @@ trait SetCommands[F[_], K, V] extends CommandsDeps[F, K, V] with SetCommandsF[Co
   def sinter(keys: K*): F[F[Set[V]]] =
     JF.toAsync(underlying.sinter(keys: _*)).map(_.map(_.asScala.toSet))
   
+  def sintercard(keys: K*): F[F[Long]] =
+    JF.toAsync(underlying.sintercard(keys: _*)).map(_.map(Long2long))
+  
+  def sintercard(limit: Long, keys: K*): F[F[Long]] =
+    JF.toAsync(underlying.sintercard(limit, keys: _*)).map(_.map(Long2long))
+  
   def sinterstore(destination: K, keys: K*): F[F[Long]] =
     JF.toAsync(underlying.sinterstore(destination, keys: _*)).map(_.map(Long2long))
   
