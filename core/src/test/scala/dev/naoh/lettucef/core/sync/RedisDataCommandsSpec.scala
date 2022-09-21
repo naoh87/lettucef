@@ -18,7 +18,7 @@ class RedisDataCommandsSpec extends AnyFreeSpec with Matchers {
       _ <- sync.aclSetuser("hoge", AclSetuserArgs.Builder.allCommands())
       _ <- sync.aclGetuser("hoge").flatTap(notEmpty)
       _ <- sync.aclDeluser("hoge")
-      _ <- sync.clusterSlots().flatTap(notEmpty)
+//      _ <- sync.clusterSlots().flatTap(notEmpty)
       _ <- sync.commandInfo("GET", "SET", "MGET").flatTap(notEmpty)
     } yield {
 

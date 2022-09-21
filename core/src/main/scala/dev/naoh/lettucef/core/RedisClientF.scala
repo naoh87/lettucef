@@ -17,9 +17,20 @@ import scala.jdk.CollectionConverters._
 
 
 class RedisClientF[F[_]](underlying: RedisClient)(implicit F: Async[F]) {
+  def connect[K, V](codec: RedisCodec[K, V]): Resource[F, RedisConnectionF[F, K, V]] =
+    Resource.make(
+      F.blocking(underlying.connect(codec)).map(new RedisConnectionF(_, codec)))(
+      _.closeAsync())
+
   def connect[K, V](codec: RedisCodec[K, V], uri: RedisURI): Resource[F, RedisConnectionF[F, K, V]] =
     Resource.make(
       JavaFutureUtil.toSync(underlying.connectAsync(codec, uri)).map(new RedisConnectionF(_, codec)))(
+      _.closeAsync())
+
+  def connectPubSub[K, V](codec: RedisCodec[K, V]): Resource[F, RedisPubSubF[F, K, V]] =
+    Resource.make(
+      F.blocking(underlying.connectPubSub(codec))
+        .map(new RedisPubSubF(_)))(
       _.closeAsync())
 
   def connectPubSub[K, V](codec: RedisCodec[K, V], uri: RedisURI): Resource[F, RedisPubSubF[F, K, V]] =
