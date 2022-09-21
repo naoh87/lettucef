@@ -17,41 +17,56 @@ trait ClusterCommands[F[_], K, V] extends CommandsDeps[F, K, V] with ClusterComm
 
   protected val underlying: RedisClusterAsyncCommands[K, V] with BaseRedisAsyncCommands[K, V]
   
+  def asking(): F[String] =
+    JF.toSync(underlying.asking())
+  
   def auth(password: CharSequence): F[String] =
     JF.toSync(underlying.auth(password))
   
   def auth(username: String, password: CharSequence): F[String] =
     JF.toSync(underlying.auth(username, password))
   
+  def clusterAddSlots(slots: Int*): F[String] =
+    JF.toSync(underlying.clusterAddSlots(slots: _*))
+  
   def clusterBumpepoch(): F[String] =
     JF.toSync(underlying.clusterBumpepoch())
   
-  def clusterMeet(ip: String, port: Int): F[String] =
-    JF.toSync(underlying.clusterMeet(ip, port))
+  def clusterCountFailureReports(nodeId: String): F[Long] =
+    JF.toSync(underlying.clusterCountFailureReports(nodeId)).map(Long2long)
   
-  def clusterForget(nodeId: String): F[String] =
-    JF.toSync(underlying.clusterForget(nodeId))
+  def clusterCountKeysInSlot(slot: Int): F[Long] =
+    JF.toSync(underlying.clusterCountKeysInSlot(slot)).map(Long2long)
   
-  def clusterAddSlots(slots: Int*): F[String] =
-    JF.toSync(underlying.clusterAddSlots(slots: _*))
+  def clusterAddSlotsRange(ranges: RedisRange[Integer]*): F[String] =
+    JF.toSync(underlying.clusterAddSlotsRange(ranges.map(_.toJava): _*))
   
   def clusterDelSlots(slots: Int*): F[String] =
     JF.toSync(underlying.clusterDelSlots(slots: _*))
   
-  def clusterSetSlotNode(slot: Int, nodeId: String): F[String] =
-    JF.toSync(underlying.clusterSetSlotNode(slot, nodeId))
+  def clusterDelSlotsRange(ranges: RedisRange[Integer]*): F[String] =
+    JF.toSync(underlying.clusterDelSlotsRange(ranges.map(_.toJava): _*))
   
-  def clusterSetSlotStable(slot: Int): F[String] =
-    JF.toSync(underlying.clusterSetSlotStable(slot))
+  def clusterFailover(force: Boolean): F[String] =
+    JF.toSync(underlying.clusterFailover(force))
   
-  def clusterSetSlotMigrating(slot: Int, nodeId: String): F[String] =
-    JF.toSync(underlying.clusterSetSlotMigrating(slot, nodeId))
+  def clusterFlushslots(): F[String] =
+    JF.toSync(underlying.clusterFlushslots())
   
-  def clusterSetSlotImporting(slot: Int, nodeId: String): F[String] =
-    JF.toSync(underlying.clusterSetSlotImporting(slot, nodeId))
+  def clusterForget(nodeId: String): F[String] =
+    JF.toSync(underlying.clusterForget(nodeId))
+  
+  def clusterGetKeysInSlot(slot: Int, count: Int): F[Seq[K]] =
+    JF.toSync(underlying.clusterGetKeysInSlot(slot, count)).map(_.asScala.toSeq)
   
   def clusterInfo(): F[String] =
     JF.toSync(underlying.clusterInfo())
+  
+  def clusterKeyslot(key: K): F[Long] =
+    JF.toSync(underlying.clusterKeyslot(key)).map(Long2long)
+  
+  def clusterMeet(ip: String, port: Int): F[String] =
+    JF.toSync(underlying.clusterMeet(ip, port))
   
   def clusterMyId(): F[String] =
     JF.toSync(underlying.clusterMyId())
@@ -59,20 +74,14 @@ trait ClusterCommands[F[_], K, V] extends CommandsDeps[F, K, V] with ClusterComm
   def clusterNodes(): F[String] =
     JF.toSync(underlying.clusterNodes())
   
-  def clusterSlaves(nodeId: String): F[Seq[String]] =
-    JF.toSync(underlying.clusterSlaves(nodeId)).map(_.asScala.toSeq)
+  def clusterReplicate(nodeId: String): F[String] =
+    JF.toSync(underlying.clusterReplicate(nodeId))
   
-  def clusterGetKeysInSlot(slot: Int, count: Int): F[Seq[K]] =
-    JF.toSync(underlying.clusterGetKeysInSlot(slot, count)).map(_.asScala.toSeq)
+  def clusterReplicas(nodeId: String): F[Seq[String]] =
+    JF.toSync(underlying.clusterReplicas(nodeId)).map(_.asScala.toSeq)
   
-  def clusterCountKeysInSlot(slot: Int): F[Long] =
-    JF.toSync(underlying.clusterCountKeysInSlot(slot)).map(Long2long)
-  
-  def clusterCountFailureReports(nodeId: String): F[Long] =
-    JF.toSync(underlying.clusterCountFailureReports(nodeId)).map(Long2long)
-  
-  def clusterKeyslot(key: K): F[Long] =
-    JF.toSync(underlying.clusterKeyslot(key)).map(Long2long)
+  def clusterReset(hard: Boolean): F[String] =
+    JF.toSync(underlying.clusterReset(hard))
   
   def clusterSaveconfig(): F[String] =
     JF.toSync(underlying.clusterSaveconfig())
@@ -80,22 +89,22 @@ trait ClusterCommands[F[_], K, V] extends CommandsDeps[F, K, V] with ClusterComm
   def clusterSetConfigEpoch(configEpoch: Long): F[String] =
     JF.toSync(underlying.clusterSetConfigEpoch(configEpoch))
   
-  def clusterSlots(): F[List[RedisData[V]]] =
+  def clusterSetSlotImporting(slot: Int, nodeId: String): F[String] =
+    JF.toSync(underlying.clusterSetSlotImporting(slot, nodeId))
+  
+  def clusterSetSlotMigrating(slot: Int, nodeId: String): F[String] =
+    JF.toSync(underlying.clusterSetSlotMigrating(slot, nodeId))
+  
+  def clusterSetSlotNode(slot: Int, nodeId: String): F[String] =
+    JF.toSync(underlying.clusterSetSlotNode(slot, nodeId))
+  
+  def clusterSetSlotStable(slot: Int): F[String] =
+    JF.toSync(underlying.clusterSetSlotStable(slot))
+  
+  def clusterShards(): F[List[RedisData[V]]] =
     JF.toSync(underlying.dispatch(CommandType.CLUSTER, dispatchHelper.createRedisDataOutput(), dispatchHelper.createArgs().add(CommandKeyword.SLOTS))).map(_.asList)
   
-  def asking(): F[String] =
-    JF.toSync(underlying.asking())
-  
-  def clusterReplicate(nodeId: String): F[String] =
-    JF.toSync(underlying.clusterReplicate(nodeId))
-  
-  def clusterFailover(force: Boolean): F[String] =
-    JF.toSync(underlying.clusterFailover(force))
-  
-  def clusterReset(hard: Boolean): F[String] =
-    JF.toSync(underlying.clusterReset(hard))
-  
-  def clusterFlushslots(): F[String] =
-    JF.toSync(underlying.clusterFlushslots())
+  def clusterSlots(): F[List[RedisData[V]]] =
+    JF.toSync(underlying.dispatch(CommandType.CLUSTER, dispatchHelper.createRedisDataOutput(), dispatchHelper.createArgs().add(CommandKeyword.SLOTS))).map(_.asList)
   
 }

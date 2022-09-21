@@ -24,11 +24,11 @@ trait SentinelCommands[F[_], K, V] extends CommandsDeps[F, K, V] with SentinelCo
   def master(key: K): F[Map[K, V]] =
     JF.toSync(underlying.master(key)).map(_.asScala.toMap)
   
-  def slaves(key: K): F[Seq[Map[K, V]]] =
-    JF.toSync(underlying.slaves(key)).map(_.asScala.toSeq.map(_.asScala.toMap))
-  
   def reset(key: K): F[Long] =
     JF.toSync(underlying.reset(key)).map(Long2long)
+  
+  def replicas(key: K): F[Seq[Map[K, V]]] =
+    JF.toSync(underlying.replicas(key)).map(_.asScala.toSeq.map(_.asScala.toMap))
   
   def failover(key: K): F[String] =
     JF.toSync(underlying.failover(key))
@@ -42,8 +42,8 @@ trait SentinelCommands[F[_], K, V] extends CommandsDeps[F, K, V] with SentinelCo
   def remove(key: K): F[String] =
     JF.toSync(underlying.remove(key))
   
-  def clientGetname(): F[K] =
-    JF.toSync(underlying.clientGetname())
+  def clientGetname(): F[Option[K]] =
+    JF.toSync(underlying.clientGetname()).map(Option(_))
   
   def clientSetname(name: K): F[String] =
     JF.toSync(underlying.clientSetname(name))

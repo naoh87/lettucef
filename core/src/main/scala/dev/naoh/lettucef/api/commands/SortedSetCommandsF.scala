@@ -48,6 +48,10 @@ trait SortedSetCommandsF[F[_], K, V] {
   
   def zinter(aggregateArgs: ZAggregateArgs, keys: K*): F[Seq[V]]
   
+  def zintercard(keys: K*): F[Long]
+  
+  def zintercard(limit: Long, keys: K*): F[Long]
+  
   def zinterWithScores(aggregateArgs: ZAggregateArgs, keys: K*): F[Seq[(Double, V)]]
   
   def zinterWithScores(keys: K*): F[Seq[(Double, V)]]

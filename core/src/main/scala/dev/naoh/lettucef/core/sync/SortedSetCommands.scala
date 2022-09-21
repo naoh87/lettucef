@@ -75,6 +75,12 @@ trait SortedSetCommands[F[_], K, V] extends CommandsDeps[F, K, V] with SortedSet
   def zinter(aggregateArgs: ZAggregateArgs, keys: K*): F[Seq[V]] =
     JF.toSync(underlying.zinter(aggregateArgs, keys: _*)).map(_.asScala.toSeq)
   
+  def zintercard(keys: K*): F[Long] =
+    JF.toSync(underlying.zintercard(keys: _*)).map(Long2long)
+  
+  def zintercard(limit: Long, keys: K*): F[Long] =
+    JF.toSync(underlying.zintercard(limit, keys: _*)).map(Long2long)
+  
   def zinterWithScores(aggregateArgs: ZAggregateArgs, keys: K*): F[Seq[(Double, V)]] =
     JF.toSync(underlying.zinterWithScores(aggregateArgs, keys: _*)).map(_.asScala.toSeq.map(LettuceValueConverter.fromScoredValueUnsafe))
   

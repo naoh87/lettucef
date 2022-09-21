@@ -6,6 +6,7 @@ import cats.syntax.functor._
 import dev.naoh.lettucef.core.commands.CommandsDeps
 import dev.naoh.lettucef.core.util.LettuceValueConverter
 import dev.naoh.lettucef.core.util.{JavaFutureUtil => JF}
+import io.lettuce.core.LMPopArgs
 import io.lettuce.core.LMoveArgs
 import io.lettuce.core.LPosArgs
 import io.lettuce.core.api.async._
@@ -21,6 +22,12 @@ trait ListCommands[F[_], K, V] extends CommandsDeps[F, K, V] with ListCommandsF[
   
   def blmove(source: K, destination: K, args: LMoveArgs, timeout: Double): F[Option[V]] =
     JF.toSync(underlying.blmove(source, destination, args, timeout)).map(Option(_))
+  
+  def blmpop(timeout: Long, args: LMPopArgs, keys: K*): F[(K, Option[Seq[V]])] =
+    JF.toSync(underlying.blmpop(timeout, args, keys: _*)).map(kv => LettuceValueConverter.fromKeyValue(kv).fmap(_.map(_.asScala.toSeq)))
+  
+  def blmpop(timeout: Double, args: LMPopArgs, keys: K*): F[(K, Option[Seq[V]])] =
+    JF.toSync(underlying.blmpop(timeout, args, keys: _*)).map(kv => LettuceValueConverter.fromKeyValue(kv).fmap(_.map(_.asScala.toSeq)))
   
   def blpop(timeout: Long, keys: K*): F[Option[(K, V)]] =
     JF.toSync(underlying.blpop(timeout, keys: _*)).map(Option(_).map(kv => LettuceValueConverter.fromKeyValueUnsafe(kv)))
@@ -51,6 +58,9 @@ trait ListCommands[F[_], K, V] extends CommandsDeps[F, K, V] with ListCommandsF[
   
   def lmove(source: K, destination: K, args: LMoveArgs): F[Option[V]] =
     JF.toSync(underlying.lmove(source, destination, args)).map(Option(_))
+  
+  def lmpop(args: LMPopArgs, keys: K*): F[(K, Option[Seq[V]])] =
+    JF.toSync(underlying.lmpop(args, keys: _*)).map(kv => LettuceValueConverter.fromKeyValue(kv).fmap(_.map(_.asScala.toSeq)))
   
   def lpop(key: K): F[Option[V]] =
     JF.toSync(underlying.lpop(key)).map(Option(_))

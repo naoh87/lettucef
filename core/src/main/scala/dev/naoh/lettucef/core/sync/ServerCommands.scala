@@ -30,8 +30,8 @@ trait ServerCommands[F[_], K, V] extends CommandsDeps[F, K, V] with ServerComman
   def clientCaching(enabled: Boolean): F[String] =
     JF.toSync(underlying.clientCaching(enabled))
   
-  def clientGetname(): F[K] =
-    JF.toSync(underlying.clientGetname())
+  def clientGetname(): F[Option[K]] =
+    JF.toSync(underlying.clientGetname()).map(Option(_))
   
   def clientGetredir(): F[Long] =
     JF.toSync(underlying.clientGetredir()).map(Long2long)
@@ -47,6 +47,9 @@ trait ServerCommands[F[_], K, V] extends CommandsDeps[F, K, V] with ServerComman
   
   def clientList(): F[String] =
     JF.toSync(underlying.clientList())
+  
+  def clientNoEvict(on: Boolean): F[String] =
+    JF.toSync(underlying.clientNoEvict(on))
   
   def clientPause(timeout: Long): F[String] =
     JF.toSync(underlying.clientPause(timeout))
@@ -72,6 +75,9 @@ trait ServerCommands[F[_], K, V] extends CommandsDeps[F, K, V] with ServerComman
   def configGet(parameter: String): F[Map[String, String]] =
     JF.toSync(underlying.configGet(parameter)).map(_.asScala.toMap)
   
+  def configGet(parameters: String*): F[Map[String, String]] =
+    JF.toSync(underlying.configGet(parameters: _*)).map(_.asScala.toMap)
+  
   def configResetstat(): F[String] =
     JF.toSync(underlying.configResetstat())
   
@@ -80,6 +86,9 @@ trait ServerCommands[F[_], K, V] extends CommandsDeps[F, K, V] with ServerComman
   
   def configSet(parameter: String, value: String): F[String] =
     JF.toSync(underlying.configSet(parameter, value))
+  
+  def configSet(kvs: Map[String, String]): F[String] =
+    JF.toSync(underlying.configSet(kvs.asJava))
   
   def dbsize(): F[Long] =
     JF.toSync(underlying.dbsize()).map(Long2long)
@@ -125,6 +134,12 @@ trait ServerCommands[F[_], K, V] extends CommandsDeps[F, K, V] with ServerComman
   
   def memoryUsage(key: K): F[Long] =
     JF.toSync(underlying.memoryUsage(key)).map(Long2long)
+  
+  def replicaof(host: String, port: Int): F[String] =
+    JF.toSync(underlying.replicaof(host, port))
+  
+  def replicaofNoOne(): F[String] =
+    JF.toSync(underlying.replicaofNoOne())
   
   def save(): F[String] =
     JF.toSync(underlying.save())

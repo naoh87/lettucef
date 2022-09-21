@@ -31,8 +31,8 @@ trait ServerCommands[F[_], K, V] extends CommandsDeps[F, K, V] with ServerComman
   def clientCaching(enabled: Boolean): F[F[String]] =
     JF.toAsync(underlying.clientCaching(enabled))
   
-  def clientGetname(): F[F[K]] =
-    JF.toAsync(underlying.clientGetname())
+  def clientGetname(): F[F[Option[K]]] =
+    JF.toAsync(underlying.clientGetname()).map(_.map(Option(_)))
   
   def clientGetredir(): F[F[Long]] =
     JF.toAsync(underlying.clientGetredir()).map(_.map(Long2long))
@@ -48,6 +48,9 @@ trait ServerCommands[F[_], K, V] extends CommandsDeps[F, K, V] with ServerComman
   
   def clientList(): F[F[String]] =
     JF.toAsync(underlying.clientList())
+  
+  def clientNoEvict(on: Boolean): F[F[String]] =
+    JF.toAsync(underlying.clientNoEvict(on))
   
   def clientPause(timeout: Long): F[F[String]] =
     JF.toAsync(underlying.clientPause(timeout))
@@ -73,6 +76,9 @@ trait ServerCommands[F[_], K, V] extends CommandsDeps[F, K, V] with ServerComman
   def configGet(parameter: String): F[F[Map[String, String]]] =
     JF.toAsync(underlying.configGet(parameter)).map(_.map(_.asScala.toMap))
   
+  def configGet(parameters: String*): F[F[Map[String, String]]] =
+    JF.toAsync(underlying.configGet(parameters: _*)).map(_.map(_.asScala.toMap))
+  
   def configResetstat(): F[F[String]] =
     JF.toAsync(underlying.configResetstat())
   
@@ -81,6 +87,9 @@ trait ServerCommands[F[_], K, V] extends CommandsDeps[F, K, V] with ServerComman
   
   def configSet(parameter: String, value: String): F[F[String]] =
     JF.toAsync(underlying.configSet(parameter, value))
+  
+  def configSet(kvs: Map[String, String]): F[F[String]] =
+    JF.toAsync(underlying.configSet(kvs.asJava))
   
   def dbsize(): F[F[Long]] =
     JF.toAsync(underlying.dbsize()).map(_.map(Long2long))
@@ -126,6 +135,12 @@ trait ServerCommands[F[_], K, V] extends CommandsDeps[F, K, V] with ServerComman
   
   def memoryUsage(key: K): F[F[Long]] =
     JF.toAsync(underlying.memoryUsage(key)).map(_.map(Long2long))
+  
+  def replicaof(host: String, port: Int): F[F[String]] =
+    JF.toAsync(underlying.replicaof(host, port))
+  
+  def replicaofNoOne(): F[F[String]] =
+    JF.toAsync(underlying.replicaofNoOne())
   
   def save(): F[F[String]] =
     JF.toAsync(underlying.save())

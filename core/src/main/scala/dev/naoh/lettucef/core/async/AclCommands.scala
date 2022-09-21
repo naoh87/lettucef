@@ -28,6 +28,9 @@ trait AclCommands[F[_], K, V] extends CommandsDeps[F, K, V] with AclCommandsF[Co
   def aclDeluser(usernames: String*): F[F[Long]] =
     JF.toAsync(underlying.aclDeluser(usernames: _*)).map(_.map(Long2long))
   
+  def aclDryRun(username: String, command: String, args: String*): F[F[String]] =
+    JF.toAsync(underlying.aclDryRun(username, command, args: _*))
+  
   def aclGenpass(): F[F[String]] =
     JF.toAsync(underlying.aclGenpass())
   

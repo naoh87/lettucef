@@ -5,6 +5,7 @@ import java.time.Duration
 import java.time.Instant
 import dev.naoh.lettucef.api.models._
 import io.lettuce.core.CopyArgs
+import io.lettuce.core.ExpireArgs
 import io.lettuce.core.MigrateArgs
 import io.lettuce.core.RestoreArgs
 import io.lettuce.core.ScanArgs
@@ -28,11 +29,21 @@ trait KeyCommandsF[F[_], K, V] {
   
   def expire(key: K, seconds: Long): F[Boolean]
   
+  def expire(key: K, seconds: Long, expireArgs: ExpireArgs): F[Boolean]
+  
   def expire(key: K, seconds: Duration): F[Boolean]
+  
+  def expire(key: K, seconds: Duration, expireArgs: ExpireArgs): F[Boolean]
   
   def expireat(key: K, timestamp: Long): F[Boolean]
   
+  def expireat(key: K, timestamp: Long, expireArgs: ExpireArgs): F[Boolean]
+  
   def expireat(key: K, timestamp: Instant): F[Boolean]
+  
+  def expireat(key: K, timestamp: Instant, expireArgs: ExpireArgs): F[Boolean]
+  
+  def expiretime(key: K): F[Long]
   
   def keys(pattern: K): F[Seq[K]]
   
@@ -54,11 +65,21 @@ trait KeyCommandsF[F[_], K, V] {
   
   def pexpire(key: K, milliseconds: Long): F[Boolean]
   
+  def pexpire(key: K, milliseconds: Long, expireArgs: ExpireArgs): F[Boolean]
+  
   def pexpire(key: K, milliseconds: Duration): F[Boolean]
+  
+  def pexpire(key: K, milliseconds: Duration, expireArgs: ExpireArgs): F[Boolean]
   
   def pexpireat(key: K, timestamp: Long): F[Boolean]
   
+  def pexpireat(key: K, timestamp: Long, expireArgs: ExpireArgs): F[Boolean]
+  
   def pexpireat(key: K, timestamp: Instant): F[Boolean]
+  
+  def pexpireat(key: K, timestamp: Instant, expireArgs: ExpireArgs): F[Boolean]
+  
+  def pexpiretime(key: K): F[Long]
   
   def pttl(key: K): F[Long]
   
@@ -75,6 +96,10 @@ trait KeyCommandsF[F[_], K, V] {
   def sort(key: K): F[Seq[V]]
   
   def sort(key: K, sortArgs: SortArgs): F[Seq[V]]
+  
+  def sortReadOnly(key: K): F[Seq[V]]
+  
+  def sortReadOnly(key: K, sortArgs: SortArgs): F[Seq[V]]
   
   def sortStore(key: K, sortArgs: SortArgs, destination: K): F[Long]
   
