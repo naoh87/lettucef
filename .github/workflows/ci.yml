@@ -1,0 +1,37 @@
+name: CI on master
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-java@v3
+      with:
+        distribution: 'corretto'
+        java-version: '8'
+        cache: 'sbt'
+    - name: Run test
+      run: |
+        sbt codegen/run scalafix
+        sbt +compile +test
+        git add -A
+        test 0 -eq $(git diff --staged | wc -l)
+    services:
+      redis:
+        image: bitnami/redis:7.0.4
+        ports:
+        - 6379:6379
+        env:
+          ALLOW_EMPTY_PASSWORD: yes
+

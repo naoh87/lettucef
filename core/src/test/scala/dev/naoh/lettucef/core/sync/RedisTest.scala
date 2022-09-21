@@ -4,10 +4,10 @@ import java.nio.ByteBuffer
 import cats.effect.IO
 import cats.effect.Resource
 import cats.effect.unsafe.IORuntime
+import dev.naoh.lettucef.api.Commands
 import dev.naoh.lettucef.api.LettuceF
-import dev.naoh.lettucef.core.RedisClusterSyncCommandsF
 import dev.naoh.lettucef.core.RedisPubSubF
-import io.lettuce.core.cluster.RedisClusterClient
+import io.lettuce.core.RedisClient
 import io.lettuce.core.codec.RedisCodec
 import io.lettuce.core.codec.StringCodec
 
@@ -41,19 +41,19 @@ object RedisTest {
     }
   }
 
-  type CommandF = RedisClusterSyncCommandsF[IO, RedisKey, RedisValue]
+  type CommandF = Commands.CommonSyncCommandsF[IO, RedisKey, RedisValue]
   type PubSubF = RedisPubSubF[IO, RedisKey, RedisValue]
 
   def commands[R](f: CommandF => IO[R]): R =
     LettuceF
-      .cluster[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
+      .client[IO](RedisClient.create("redis://127.0.0.1:6379"))
       .flatMap(_.connect(codec).map(_.sync()))
       .use(f)
       .unsafeRunSync()(IORuntime.global)
 
   def runWith[R](f: (Resource[IO, CommandF], Resource[IO, PubSubF]) => Resource[IO, IO[R]]): R =
     LettuceF
-      .cluster[IO](RedisClusterClient.create("redis://127.0.0.1:7000"))
+      .client[IO](RedisClient.create("redis://127.0.0.1:6379"))
       .use(c => f(c.connect(codec).map(_.sync()), c.connectPubSub(codec)).use(identity))
       .unsafeRunSync()(IORuntime.global)
 }
