@@ -101,7 +101,7 @@ val core_dependency = Seq(
   libraryDependencies ++= Seq(
     "io.lettuce" % "lettuce-core" % "6.2.0.RELEASE",
     "org.typelevel" %% "cats-effect" % "3.3.14",
-    "org.scalatest" %% "scalatest" % "3.2.12" % "test",
+    "org.scalatest" %% "scalatest" % "3.2.14" % "test",
   ),
 )
 
