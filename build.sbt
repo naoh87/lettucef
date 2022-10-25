@@ -130,11 +130,11 @@ lazy val codegen = (project in file("codegen")).settings(
   scalaVersion := scala213,
   run / fork := true,
   libraryDependencies ++= Seq(
-    "org.typelevel" %% "cats-effect" % "3.3.3",
-    "org.typelevel" %% "cats-parse" % "0.3.6",
+    "org.typelevel" %% "cats-effect" % "3.3.14",
+    "org.typelevel" %% "cats-parse" % "0.3.8",
     "io.circe" %% "circe-yaml" % "0.14.1",
-    "co.fs2" %% "fs2-core" % "3.2.7",
-    "co.fs2" %% "fs2-io" % "3.2.4",
+    "co.fs2" %% "fs2-core" % "3.3.0",
+    "co.fs2" %% "fs2-io" % "3.3.0",
   ),
   libraryDependencies ++= Seq(
     "io.circe" %% "circe-core",
