@@ -68,7 +68,7 @@ lazy val extras = (project in file("extras"))
   .settings(common_settings)
   .settings(
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-effect" % "3.3.14",
+      "org.typelevel" %% "cats-effect" % "3.4.1",
     )
   )
 
@@ -100,7 +100,7 @@ lazy val benchmark = (project in file("benchmark"))
 val core_dependency = Seq(
   libraryDependencies ++= Seq(
     "io.lettuce" % "lettuce-core" % "6.2.1.RELEASE",
-    "org.typelevel" %% "cats-effect" % "3.3.14",
+    "org.typelevel" %% "cats-effect" % "3.4.1",
     "org.scalatest" %% "scalatest" % "3.2.14" % "test",
   ),
 )
@@ -130,7 +130,7 @@ lazy val codegen = (project in file("codegen")).settings(
   scalaVersion := scala213,
   run / fork := true,
   libraryDependencies ++= Seq(
-    "org.typelevel" %% "cats-effect" % "3.3.14",
+    "org.typelevel" %% "cats-effect" % "3.4.1",
     "org.typelevel" %% "cats-parse" % "0.3.8",
     "io.circe" %% "circe-yaml" % "0.14.1",
     "co.fs2" %% "fs2-core" % "3.3.0",
