@@ -1,4 +1,4 @@
-val scala213 = "2.13.10"
+val scala213 = "2.13.11"
 val scala310 = "3.2.1"
 
 
