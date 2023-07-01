@@ -96,6 +96,8 @@ trait SortedSetCommandsF[F[_], K, V] {
   
   def zrangebyscoreWithScores(key: K, range: RedisRange[Double], limit: Limit): F[Seq[(Double, V)]]
   
+  def zrangestore(dstKey: K, srcKey: K, range: RedisRange[Long]): F[Long]
+  
   def zrangestorebylex(dstKey: K, srcKey: K, range: RedisRange[V], limit: Limit): F[Long]
   
   def zrangestorebyscore(dstKey: K, srcKey: K, range: RedisRange[Double], limit: Limit): F[Long]
@@ -125,6 +127,8 @@ trait SortedSetCommandsF[F[_], K, V] {
   def zrevrangebyscoreWithScores(key: K, range: RedisRange[Double]): F[Seq[(Double, V)]]
   
   def zrevrangebyscoreWithScores(key: K, range: RedisRange[Double], limit: Limit): F[Seq[(Double, V)]]
+  
+  def zrevrangestore(dstKey: K, srcKey: K, range: RedisRange[Long]): F[Long]
   
   def zrevrangestorebylex(dstKey: K, srcKey: K, range: RedisRange[V], limit: Limit): F[Long]
   
