@@ -11,6 +11,9 @@ case class RedisRange[A](from: Boundary[A], to: Boundary[A]) {
   def toJavaNumber(implicit ev: A => java.lang.Number): LRange[java.lang.Number] =
     LRange.from(from.toJava, to.toJava)
 
+  def toJavaAuto[B](implicit ev: A => B): LRange[B] =
+    LRange.from(from.toJava, to.toJava)
+
   def toJava: LRange[A] =
     LRange.from(from.toJava, to.toJava)
 }

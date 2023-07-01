@@ -28,6 +28,8 @@ trait ClusterCommandsF[F[_], K, V] {
   
   def clusterFailover(force: Boolean): F[String]
   
+  def clusterFailover(force: Boolean, takeOver: Boolean): F[String]
+  
   def clusterFlushslots(): F[String]
   
   def clusterForget(nodeId: String): F[String]
