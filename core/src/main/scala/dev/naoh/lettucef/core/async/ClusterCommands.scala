@@ -40,16 +40,19 @@ trait ClusterCommands[F[_], K, V] extends CommandsDeps[F, K, V] with ClusterComm
     JF.toAsync(underlying.clusterCountKeysInSlot(slot)).map(_.map(Long2long))
   
   def clusterAddSlotsRange(ranges: RedisRange[Integer]*): F[F[String]] =
-    JF.toAsync(underlying.clusterAddSlotsRange(ranges.map(_.toJava): _*))
+    JF.toAsync(underlying.clusterAddSlotsRange(ranges.map(_.toJavaAuto): _*))
   
   def clusterDelSlots(slots: Int*): F[F[String]] =
     JF.toAsync(underlying.clusterDelSlots(slots: _*))
   
   def clusterDelSlotsRange(ranges: RedisRange[Integer]*): F[F[String]] =
-    JF.toAsync(underlying.clusterDelSlotsRange(ranges.map(_.toJava): _*))
+    JF.toAsync(underlying.clusterDelSlotsRange(ranges.map(_.toJavaAuto): _*))
   
   def clusterFailover(force: Boolean): F[F[String]] =
     JF.toAsync(underlying.clusterFailover(force))
+  
+  def clusterFailover(force: Boolean, takeOver: Boolean): F[F[String]] =
+    JF.toAsync(underlying.clusterFailover(force, takeOver))
   
   def clusterFlushslots(): F[F[String]] =
     JF.toAsync(underlying.clusterFlushslots())
