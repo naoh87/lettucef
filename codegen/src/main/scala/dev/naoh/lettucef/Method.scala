@@ -255,7 +255,7 @@ object Method {
           case _ if tpe.name.expr == "ScoredValue" =>
             s"${arg.name}.map(LettuceValueConverter.toScoredValue): _*"
           case _ if tpe.name.expr == "Range" =>
-            s"${arg.name}.map(_.toJava): _*"
+            s"${arg.name}.map(_.toJavaAuto): _*"
           case _ =>
             sys.error(s"fail to call (${arg.scalaDef}) => (${this.scalaDef})")
         }
@@ -266,7 +266,7 @@ object Method {
           case "RedisRange" =>
             this.tpe.p1.name.expr match {
               case "Number" => s"${arg.name}.toJavaNumber"
-              case _ => s"${arg.name}.toJava"
+              case _ => s"${arg.name}.toJavaAuto"
             }
           case _ =>
             assert(this.tpe.scalaDef == arg.tpe.scalaDef, s"call failure (${this.scalaDef})(${arg.scalaDef})")
