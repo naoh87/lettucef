@@ -1,5 +1,5 @@
-val scala213 = "2.13.10"
-val scala310 = "3.2.1"
+val scala213 = "2.13.11"
+val scala33 = "3.3.0"
 
 
 def dev(ghUser: String, name: String, email: String): Developer =
@@ -57,7 +57,7 @@ lazy val streams = (project in file("streams"))
   .settings(common_settings)
   .settings(
     libraryDependencies ++= Seq(
-      "co.fs2" %% "fs2-core" % "3.4.0",
+      "co.fs2" %% "fs2-core" % "3.7.0",
     ),
   )
   .dependsOn(core)
@@ -68,7 +68,7 @@ lazy val extras = (project in file("extras"))
   .settings(common_settings)
   .settings(
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-effect" % "3.4.2",
+      "org.typelevel" %% "cats-effect" % "3.5.0",
     )
   )
 
@@ -99,8 +99,8 @@ lazy val benchmark = (project in file("benchmark"))
 
 val core_dependency = Seq(
   libraryDependencies ++= Seq(
-    "io.lettuce" % "lettuce-core" % "6.2.1.RELEASE",
-    "org.typelevel" %% "cats-effect" % "3.4.2",
+    "io.lettuce" % "lettuce-core" % "6.2.4.RELEASE",
+    "org.typelevel" %% "cats-effect" % "3.4.8",
     "org.scalatest" %% "scalatest" % "3.2.14" % "test",
   ),
 )
@@ -118,7 +118,7 @@ val common_settings = Seq(
 
 val publishSetting = Seq(
   scalaVersion := scala213,
-  crossScalaVersions := Seq(scala213, scala310),
+  crossScalaVersions := Seq(scala213, scala33),
   publishMavenStyle := true,
   Test / publishArtifact := false,
   publishTo := sonatypePublishToBundle.value
@@ -130,8 +130,8 @@ lazy val codegen = (project in file("codegen")).settings(
   scalaVersion := scala213,
   run / fork := true,
   libraryDependencies ++= Seq(
-    "org.typelevel" %% "cats-effect" % "3.4.2",
-    "org.typelevel" %% "cats-parse" % "0.3.8",
+    "org.typelevel" %% "cats-effect" % "3.4.8",
+    "org.typelevel" %% "cats-parse" % "0.3.9",
     "io.circe" %% "circe-yaml" % "0.14.1",
     "co.fs2" %% "fs2-core" % "3.4.0",
     "co.fs2" %% "fs2-io" % "3.3.0",
