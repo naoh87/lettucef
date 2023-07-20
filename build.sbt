@@ -99,7 +99,7 @@ lazy val benchmark = (project in file("benchmark"))
 
 val core_dependency = Seq(
   libraryDependencies ++= Seq(
-    "io.lettuce" % "lettuce-core" % "6.2.4.RELEASE",
+    "io.lettuce" % "lettuce-core" % "6.2.5.RELEASE",
     "org.typelevel" %% "cats-effect" % "3.4.8",
     "org.scalatest" %% "scalatest" % "3.2.14" % "test",
   ),
