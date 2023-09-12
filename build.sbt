@@ -57,7 +57,7 @@ lazy val streams = (project in file("streams"))
   .settings(common_settings)
   .settings(
     libraryDependencies ++= Seq(
-      "co.fs2" %% "fs2-core" % "3.7.0",
+      "co.fs2" %% "fs2-core" % "3.9.2",
     ),
   )
   .dependsOn(core)
