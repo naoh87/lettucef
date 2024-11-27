@@ -68,7 +68,7 @@ lazy val extras = (project in file("extras"))
   .settings(common_settings)
   .settings(
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-effect" % "3.5.0",
+      "org.typelevel" %% "cats-effect" % "3.5.7",
     )
   )
 
